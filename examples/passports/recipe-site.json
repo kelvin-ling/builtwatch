@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "id": "recipe-site",
+  "name": "Static Recipe Archive",
+  "purpose": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code.",
+  "technologies": ["Hugo", "HTML", "CSS", "GitHub Pages"],
+  "services": [],
+  "consequential_actions": [],
+  "data_categories": [],
+  "assumptions": [
+    "All recipe content is authored by the owner",
+    "No visitor information is collected or stored"
+  ],
+  "constraints": ["No third-party scripts of any kind on the published pages"],
+  "jurisdictions": ["United Kingdom"],
+  "unknowns": [],
+  "provenance": {
+    "name": "user_stated",
+    "purpose": "user_stated",
+    "services": "user_stated"
+  }
+}

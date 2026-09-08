@@ -1,0 +1,418 @@
+# Replay snapshot. Real content retrieved from the publisher URL below
+# on 2026-09-08 by scripts/capture_replay.py.
+# Quoted in findings as historical material, clearly labelled mode='replay'.
+source_id: eu-ai-act-article-50
+source_name: EU AI Act Article 50 — Transparency Obligations
+publisher: artificialintelligenceact.eu (unofficial consolidated text)
+url: https://artificialintelligenceact.eu/article/50/
+retrieved_at: '2026-09-08T05:01:26.692490+00:00'
+captured_by: scripts/capture_replay.py
+published_at: null
+effective_at: null
+fetch_status: ok
+content: 'AI Act Explorer
+
+  Chapter IV
+
+  Transparency Obligations for Providers and Deployers of Certain AI Systems
+
+  Article 50
+
+  : Transparency Obligations for Providers and Deployers of Certain AI Systems
+
+  Comes into force 2 August 2026, according to
+
+  Article 113
+
+  Related recitals:
+
+  120
+
+  136
+
+  137
+
+  1.
+
+  Providers shall ensure that AI systems intended to interact directly with natural persons are designed
+  and developed in such a way that the natural persons concerned are informed that they are interacting
+  with an
+
+  AI system
+
+  AI system
+
+  means a machine-based system that is designed to operate with varying levels of autonomy and that may
+  exhibit adaptiveness after deployment, and that, for explicit or implicit objectives, infers, from the
+  input it receives, how to generate outputs such as predictions, content, recommendations, or decisions
+  that can influence physical or virtual environments
+
+  Article 3(1)
+
+  , unless this is obvious from the point of view of a natural person who is reasonably well-informed,
+  observant and circumspect, taking into account the circumstances and the context of use. This obligation
+  shall not apply to AI systems authorised by law to detect, prevent, investigate or prosecute criminal
+  offences,
+
+  subject
+
+  subject
+
+  for the purpose of real-world testing, means a natural person who participates in testing in real-world
+  conditions
+
+  Article 3(58)
+
+  to appropriate safeguards for the rights and freedoms of third parties, unless those systems are available
+  for the public to report a criminal offence.
+
+  Related recitals:
+
+  132
+
+  2.
+
+  Providers of AI systems, including general-purpose AI systems, generating synthetic audio, image, video
+  or text content, shall ensure that the outputs of the
+
+  AI system
+
+  AI system
+
+  means a machine-based system that is designed to operate with varying levels of autonomy and that may
+  exhibit adaptiveness after deployment, and that, for explicit or implicit objectives, infers, from the
+  input it receives, how to generate outputs such as predictions, content, recommendations, or decisions
+  that can influence physical or virtual environments
+
+  Article 3(1)
+
+  are marked in a machine-readable format and detectable as artificially generated or manipulated. Providers
+  shall ensure their technical solutions are effective, interoperable, robust and reliable as far as this
+  is technically feasible, taking into account the specificities and limitations of various types of content,
+  the costs of implementation and the generally acknowledged state of the art, as may be reflected in
+  relevant technical standards. This obligation shall not apply to the extent the AI systems perform an
+  assistive function for standard editing or do not substantially alter the
+
+  input data
+
+  input data
+
+  means data provided to or directly acquired by an
+
+  AI system
+
+  AI system
+
+  means a machine-based system that is designed to operate with varying levels of autonomy and that may
+  exhibit adaptiveness after deployment, and that, for explicit or implicit objectives, infers, from the
+  input it receives, how to generate outputs such as predictions, content, recommendations, or decisions
+  that can influence physical or virtual environments
+
+  Article 3(1)
+
+  on the basis of which the system produces an output
+
+  Article 3(33)
+
+  provided by the
+
+  deployer
+
+  deployer
+
+  means a natural or legal person, public authority, agency or other body using an AI system under its
+  authority except where the AI system is used in the course of a personal non-professional activity
+
+  Article 3(4)
+
+  or the semantics thereof, or where authorised by law to detect, prevent, investigate or prosecute criminal
+  offences.
+
+  Related recitals:
+
+  133
+
+  3.
+
+  Deployers of an
+
+  emotion recognition system
+
+  emotion recognition system
+
+  means an
+
+  AI system
+
+  AI system
+
+  means a machine-based system that is designed to operate with varying levels of autonomy and that may
+  exhibit adaptiveness after deployment, and that, for explicit or implicit objectives, infers, from the
+  input it receives, how to generate outputs such as predictions, content, recommendations, or decisions
+  that can influence physical or virtual environments
+
+  Article 3(1)
+
+  for the purpose of identifying or inferring emotions or intentions of natural persons on the basis of
+  their
+
+  biometric data
+
+  biometric data
+
+  means personal data resulting from specific technical processing relating to the physical, physiological
+  or behavioural characteristics of a natural person, such as facial images or dactyloscopic data
+
+  Article 3(34)
+
+  Article 3(39)
+
+  or a
+
+  biometric categorisation system
+
+  biometric categorisation system
+
+  means an
+
+  AI system
+
+  AI system
+
+  means a machine-based system that is designed to operate with varying levels of autonomy and that may
+  exhibit adaptiveness after deployment, and that, for explicit or implicit objectives, infers, from the
+  input it receives, how to generate outputs such as predictions, content, recommendations, or decisions
+  that can influence physical or virtual environments
+
+  Article 3(1)
+
+  for the purpose of assigning natural persons to specific categories on the basis of their
+
+  biometric data
+
+  biometric data
+
+  means personal data resulting from specific technical processing relating to the physical, physiological
+  or behavioural characteristics of a natural person, such as facial images or dactyloscopic data
+
+  Article 3(34)
+
+  , unless it is ancillary to another commercial service and strictly necessary for objective technical
+  reasons
+
+  Article 3(40)
+
+  shall inform the natural persons exposed thereto of the operation of the system, and shall process the
+
+  personal data
+
+  personal data
+
+  Any information relating to an identified or identifiable natural person (''
+
+  data
+
+  subject
+
+  subject
+
+  for the purpose of real-world testing, means a natural person who participates in testing in real-world
+  conditions
+
+  Article 3(58)
+
+  data
+
+  subject
+
+  subject
+
+  for the purpose of real-world testing, means a natural person who participates in testing in real-world
+  conditions
+
+  Article 3(58)
+
+  An identified or identifiable natural person to whom personal data relate
+
+  GDPR Art. 4(1)
+
+  ''). Includes name, ID number, location data, online identifiers, or factors specific to physical, physiological,
+  genetic, mental, economic, cultural or social identity
+
+  GDPR Art. 4(1)
+
+  in accordance with Regulations (EU) 2016/679 and (EU) 2018/1725 and Directive (EU) 2016/680, as applicable.
+  This obligation shall not apply to AI systems used for biometric categorisation and emotion recognition,
+  which are permitted by law to detect, prevent or investigate criminal offences,
+
+  subject
+
+  subject
+
+  for the purpose of real-world testing, means a natural person who participates in testing in real-world
+  conditions
+
+  Article 3(58)
+
+  to appropriate safeguards for the rights and freedoms of third parties, and in accordance with Union
+  law.
+
+  Related recitals:
+
+  132
+
+  4.
+
+  Deployers of an
+
+  AI system
+
+  AI system
+
+  means a machine-based system that is designed to operate with varying levels of autonomy and that may
+  exhibit adaptiveness after deployment, and that, for explicit or implicit objectives, infers, from the
+  input it receives, how to generate outputs such as predictions, content, recommendations, or decisions
+  that can influence physical or virtual environments
+
+  Article 3(1)
+
+  that generates or manipulates image, audio or video content constituting a
+
+  deep fake
+
+  deep fake
+
+  means AI-generated or manipulated image, audio or video content that resembles existing persons, objects,
+  places, entities or events and would falsely appear to a person to be authentic or truthful
+
+  Article 3(60)
+
+  , shall disclose that the content has been artificially generated or manipulated. This obligation shall
+  not apply where the use is authorised by law to detect, prevent, investigate or prosecute criminal offence.
+  Where the content forms part of an evidently artistic, creative, satirical, fictional or analogous work
+  or programme, the transparency obligations set out in this paragraph are limited to disclosure of the
+  existence of such generated or manipulated content in an appropriate manner that does not hamper the
+  display or enjoyment of the work.
+
+  Deployers of an
+
+  AI system
+
+  AI system
+
+  means a machine-based system that is designed to operate with varying levels of autonomy and that may
+  exhibit adaptiveness after deployment, and that, for explicit or implicit objectives, infers, from the
+  input it receives, how to generate outputs such as predictions, content, recommendations, or decisions
+  that can influence physical or virtual environments
+
+  Article 3(1)
+
+  that generates or manipulates text which is published with the purpose of informing the public on matters
+  of public interest shall disclose that the text has been artificially generated or manipulated. This
+  obligation shall not apply where the use is authorised by law to detect, prevent, investigate or prosecute
+  criminal offences or where the AI-generated content has undergone a process of human review or editorial
+  control and where a natural or legal person holds editorial responsibility for the publication of the
+  content.
+
+  Related recitals:
+
+  134
+
+  5.
+
+  The information referred to in paragraphs 1 to 4 shall be provided to the natural persons concerned
+  in a clear and distinguishable manner at the latest at the time of the first interaction or exposure.
+  The information shall conform to the applicable accessibility requirements.
+
+  6.
+
+  Paragraphs 1 to 4 shall not affect the requirements and obligations set out in Chapter III, and shall
+  be without prejudice to other transparency obligations laid down in Union or national law for deployers
+  of AI systems.
+
+  7.
+
+  The Commission shall encourage and facilitate the drawing up of codes of practice at Union level to
+  facilitate the effective implementation of the obligations regarding the detection, marking and labelling
+  of artificially generated or manipulated content. The Commission, taking utmost account of the opinion
+  of the Board, shall assess whether adherence to those codes of practice is adequate to ensure compliance
+  with the obligations laid down in paragraphs 2 and 4 of this Article, in accordance with the procedure
+  laid down in
+
+  Article 56
+
+  (6). If it deems the code of practice to be inadequate, the Commission may adopt an implementing act
+  specifying common rules for the implementation of those obligations in accordance with the examination
+  procedure laid down in
+
+  Article 98
+
+  (2).
+
+  The
+
+  AI Office
+
+  AI Office
+
+  means the Commission’s function of contributing to the implementation, monitoring and supervision of
+  AI systems and general-purpose AI models, and AI governance, provided for in Commission Decision of
+  24 January 2024; references in this Regulation to the AI Office shall be construed as references to
+  the Commission
+
+  Article 3(47)
+
+  shall encourage and facilitate the drawing up of codes of practice at Union level to facilitate the
+  effective implementation of the obligations regarding the detection and labelling of artificially generated
+  or manipulated content. The Commission may adopt implementing acts to approve those codes of practice
+  in accordance with the procedure laid down in
+
+  Article 56
+
+  (6). If it deems the code is not adequate, the Commission may adopt an implementing act specifying common
+  rules for the implementation of those obligations in accordance with the examination procedure laid
+  down in
+
+  Article 98
+
+  (2).
+
+  amended
+
+  Related recitals:
+
+  135
+
+  Cookies on this website
+
+  We use cookies to understand how the explorer is used. Functional cookies are
+
+  always on; everything else is your choice, shared with
+
+  artificialintelligenceact.eu so you are only asked once. Read the
+
+  Cookie Policy
+
+  and the
+
+  Privacy Statement
+
+  .
+
+  Functional
+
+  (always on)
+
+  Statistics
+
+  Marketing
+
+  Preferences
+
+  Accept all
+
+  Reject all
+
+  Save preferences
+
+  Manage preferences'

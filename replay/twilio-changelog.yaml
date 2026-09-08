@@ -1,0 +1,455 @@
+# Replay snapshot. Real content retrieved from the publisher URL below
+# on 2026-09-08 by scripts/capture_replay.py.
+# Quoted in findings as historical material, clearly labelled mode='replay'.
+source_id: twilio-changelog
+source_name: Twilio Changelog
+publisher: Twilio
+url: https://www.twilio.com/en-us/changelog
+retrieved_at: '2026-09-08T05:01:26.364333+00:00'
+captured_by: scripts/capture_replay.py
+published_at: null
+effective_at: null
+fetch_status: ok
+content: 'Changelog
+
+  Product changelog and announcements
+
+  See additions and changes to the Twilio platform and Twilio Segment Customer Data Platform. You can
+  also subscribe to our Changelog RSS feed below.
+
+  Explore updates
+
+  Subscribe to Changelog RSS feed
+
+  (an RSS feed reader is required)
+
+  Filter
+
+  Filter By:
+
+  Products
+
+  Agent Connect
+
+  Authy
+
+  Autopilot
+
+  Branded Calling
+
+  CLI
+
+  Connections
+
+  Conversation Intelligence
+
+  Conversation Memory
+
+  Conversation Orchestrator
+
+  Conversation Relay
+
+  Conversations API
+
+  Elastic SIP trunking
+
+  SendGrid Email API
+
+  Engage
+
+  Event Streams
+
+  Flex
+
+  Frontline
+
+  Interconnect
+
+  Lookup
+
+  Marketing Campaigns
+
+  Messaging
+
+  Microvisor
+
+  Pay
+
+  Personalized support
+
+  Phone Numbers
+
+  Programmable Chat
+
+  Programmable Fax
+
+  Programmable Messaging API
+
+  Programmable Wireless
+
+  Protocols
+
+  Proxy
+
+  Rich Communication Services
+
+  Segment
+
+  Segment AI
+
+  Serverless
+
+  Short Codes
+
+  Studio
+
+  Super SIM
+
+  Super Network
+
+  TaskRouter
+
+  Trust Onboard
+
+  Twilio Email
+
+  Twilio for Salesforce
+
+  Twilio Platform
+
+  Twilio SendGrid Platform
+
+  Unify
+
+  Verify
+
+  Video API
+
+  Voice API
+
+  Warehouse Activations
+
+  WhatsApp Business API
+
+  Clear all filters
+
+  See results
+
+  Clear all filters
+
+  Sep 04, 2026
+
+  GA
+
+  Elastic SIP trunking
+
+  Voice API
+
+  International Call Forwarding  - Compliance Blocking for Spain & France
+
+  In Spain and France, an incoming call intended for a non-Spanish or non-French destination that is then
+  forwarded internationally while presenting a Spanish or French domestic caller ID is now blocked, in
+  line with local regulatory requirements.
+
+  Learn more
+
+  Sep 02, 2026
+
+  Verify
+
+  Verify Custom Templates are now Generally Available
+
+  Verify Custom Templates
+
+  give you the flexibility and security to use custom SMS/RCS and Voice message templates beyond standard
+
+  defaults or pre-approved options
+
+  .
+
+  To learn more about how to create a custom template for your business needs, check out our
+
+  support guide
+
+  .
+
+  Learn more
+
+  Sep 02, 2026
+
+  Java
+
+  Critical fix: Java Helper Library 13.0.0: fixes crash on unknown fields in nested API responses
+
+  The Java Helper Library now handles unknown fields gracefully in nested response objects, but if customers
+  are on an affected version, their integration is at risk until they upgrade.
+
+  Versions 10.0.0 through 12.1.1 parse nested response types (profile, configuration, webhook, and others)
+  with strict deserialization. When an API response comes back with a field the SDK doesn''t recognize,
+  the request fails with ApiConnectionException: Unable to deserialize response: Unrecognized field. Because
+  Twilio APIs can add new optional fields at any time, this is a latent break. Customers’ integrations
+  work today and can start failing without warning the moment a new field ships.
+
+  In 13.0.0, the Java Helper Library ignores unknown fields in all response objects, matching how every
+  other Twilio Helper Library already behaves.
+
+  What to do
+
+  Upgrade to Java Helper Library 13.0.0 or later as soon as possible. Version 13 does include breaking
+  changes so follow the
+
+  upgrade guide
+
+  to migrate safely. Once customers are on 13.0.0, their integration handles new optional fields in API
+  responses without hitting deserialization errors.
+
+  The Python, Node.js, C#, Ruby, PHP, and Go Helper Libraries are not affected. They already handle unknown
+  response fields the same way.
+
+  Learn more
+
+  Aug 27, 2026
+
+  Twilio SendGrid Platform
+
+  Update to Twilio SendGrid Link Branding: Automatic SSL Certificate Provisioning
+
+  Twilio SendGrid has added automatic SSL certificate provisioning as a toggle within the standard link
+  branding setup flow. When enabled, SendGrid provisions and hosts the SSL certificate needed to serve
+  tracking and branded links over HTTPS, removing the need to purchase, install, and maintain a certificate
+  through an external CDN or DNS provider.
+
+  Twilio SendGrid recommends activating this setting for all link branding domains. Gmail is rolling out
+  warnings on non-HTTPS links by the end of October 2026, and tracking links without SSL will see reduced
+  click-through as a result. Enabling automatic SSL requires adding two additional DNS records provided
+  by SendGrid, alongside the CNAME records already used for link branding.
+
+  The Link Branding API now supports a new auto_ssl parameter when creating a branded link. Setting auto_ssl
+  to true provisions the certificate automatically, returns the additional DNS records needed to complete
+  setup, and reports certificate status through a new auto_ssl_available field once the certificate is
+  issued and live. auto_ssl can only be set when a link is created and can''t be changed afterward.
+
+  Learn more
+
+  Aug 19, 2026
+
+  Verify
+
+  Verify tightens fraud prevention geo permissions for Italy and Argentina
+
+  Twilio has observed  a sudden rise in SMS Pumping fraud (aka SMS Artificially Inflated Traffic) targeting
+  messages to Italy (IT) and Argentina (AR). To protect customers from this activity, Twilio Verify is
+  tightening its fraud prevention posture for these two countries, effective August 19, 2026.
+
+  Specifically, Twilio is  updating the default Verify Geo Permissions setting for Italy and Argentina
+  from "Allow all traffic" — the default state at account creation — to "Monitor all traffic for fraud."
+  This change applies to all existing  accounts where IT and/or AR remain in  the default "Allow all traffic"
+  state.
+
+  What this means for customers
+
+  If your account still has IT and/or AR set to the default
+
+  "Allow all traffic"
+
+  permission, it will be updated to
+
+  "Monitor all traffic for fraud"
+
+  starting August 19, 2026.
+
+  If you''ve already changed the geo permission for IT or AR away from the default “Allow all traffic”
+  (to any other state), your configuration will not be modified by this update.
+
+  The protection provided by "Monitor all traffic for fraud" requires that you have Fraud Guard enabled.
+
+  No action is required for customers with Fraud Guard enabled. This update happens automatically for
+  in-scope accounts. Customers that revert the status back to “Allow all traffic” risk SMS Pumping fraud
+  and are responsible for payment to all traffic to IT and AR.
+
+  You can review or change your geo permissions at any time from the
+
+  Verify Geo Permissions page
+
+  in the Twilio Console.
+
+  Learn more
+
+  Aug 14, 2026
+
+  Messaging
+
+  Beta
+
+  Bulk Messaging Supports WhatsApp Content Templates
+
+  Customers can now send Content Templates to many recipients at once and personalize the template for
+  each recipient using the Bulk Messaging API. This update enhances and simplifies sending notifications
+  and marketing messages campaigns. With Bulk Messaging''s configurable fallback, this release also enables
+  new fallback strategies including WhatsApp to SMS and RCS to WhatsApp.
+
+  Read the tutorial
+
+  to get started today!
+
+  Learn more
+
+  Aug 13, 2026
+
+  Functions Classic is being deprecated and existing Functions (Classic) are moving to the new Functions
+
+  Twilio is retiring Functions Classic and automatically migrating all accounts to the new Functions.
+  No action is required from customers.
+
+  What''s changing with Twilio Functions
+
+  Starting September 13, 2026, customers won’t be able to create new Functions (Classic) and assets. Existing
+  Functions (Classic) and assets will continue running, and customers can still edit and deploy existing
+  code during this window.
+
+  Between September 14 and October 26, 2026, Twilio will migrate all active Functions (Classic), existing
+  URLs, function and asset names, environment variables, and deployed code to the new Functions.
+
+  Need a hand?
+
+  These resources will help:
+
+  Migrating from Functions (Classic) to the new Functions Editor
+
+  Upgrading Node.js for Twilio Functions
+
+  Functions Documentation
+
+  Serverless Toolkit
+
+  Learn more
+
+  Aug 12, 2026
+
+  Messaging
+
+  GA
+
+  Consent Management API Now Supports Toll-Free Network-Level Opt-Out Overrides
+
+  Customers can now use the Consent Management API to programmatically re-opt-in users on US and Canada
+  Toll-Free numbers.
+
+  Previously, opt-outs on US/CA Toll free numbers were strictly enforced at the network level, meaning
+  an opt out block could only be lifted if the user texted an opt-in keyword like "START". Now, if a user
+  provides valid re-opt-in consent outside of a messaging channel (e.g., via a web form, email, or in-app
+  preference center), you can log their updated consent directly through the Consent Management API. Twilio
+  will automatically pass this signal to downstream networks to clear the opt-out block and resume messaging.
+
+  Key Highlights:
+
+  Programmatic Re-Opt-In: Seamlessly restore message deliverability for users who re-consent via external
+  channels.
+
+  Fewer Failed Sends: Eliminate
+
+  21610
+
+  (Unsubscribed Recipient) and
+
+  30004
+
+  (Message Blocked) error codes for users who have re-consented to receive messages.
+
+  Centralized Compliance: Keep your Twilio messaging traffic perfectly synced with your CRM and internal
+  omnichannel engagement and consent workflows.
+
+  For more information, see our
+
+  Consent Management API docs
+
+  .
+
+  Learn more
+
+  Aug 12, 2026
+
+  Twilio end-user certificates for all REST API endpoints will be rotated on September 9, 2026
+
+  On September 9, 2026, Twilio will rotate the end-user TLS certificate for all REST API endpoints. Only
+  the end-user certificate and certificate serial number will be renewed; root and intermediate certificates
+  will remain the same.
+
+  This is a routine update that won’t impact most customers unless they’re pinning certificates or are
+  managing them manually. Customers using the
+
+  Twilio Helper Libraries
+
+  don’t need to take any action since the change will be handled automatically.
+
+  Twilio recommends against certificate pinning because it creates potential security risks, can cause
+  downtimes for services, and a higher probability of failed API requests.
+
+  How to test your connection
+
+  The new certificate will be available for testing at https://tls-test.twilio.com starting August 12,
+  2026. If the request succeeds with a 200 OK, no further action is required.
+
+  Need a hand?
+
+  These resources have more detail:
+
+  Monitoring Updates to Twilio REST API Security Settings
+
+  Security best practices
+
+  Learn more
+
+  Aug 06, 2026
+
+  GA
+
+  Twilio Email
+
+  Dedicated IPs and IP Management for Twilio Email
+
+  Dedicated IPs are now available for Twilio Email, enabling streamlined control over email deliverability
+  directly within the Twilio console. This functionality simplifies sending reputation management at scale.
+
+  To ensure deliverability from day one, newly provisioned dedicated IPs automatically enter a 41-day
+  warm-up schedule, complete with shared pool overflow protection to smooth out volume spikes. Organizations
+  can also segment traffic by grouping IPs into custom pools, assigning specific IPs directly to sub-accounts,
+  and configuring flexible fallback options to maintain continuous email flow.
+
+  To learn more about how to manage your email reputation and IP warmup, see the
+
+  Twilio Docs
+
+  .
+
+  Learn more
+
+  Loading
+
+  Error: Unable to load changelog
+
+  Deep dive on recent Twilio product updates
+
+  Twilio Releases webinar
+
+  Hear about the latest product announcements, releases, and updates from Twilio experts.
+
+  Watch Release webinars
+
+  $twilio update
+
+  Get up to speed on new Twilio innovations, developer news, and insights in our YouTube series.
+
+  Watch on YouTube
+
+  Blog - Product News
+
+  Read detailed coverage of new product and feature releases.
+
+  Read the blog
+
+  Docs
+
+  Access our API reference documentation, quickstarts, SDKs, and multi-language code samples.
+
+  View docs'

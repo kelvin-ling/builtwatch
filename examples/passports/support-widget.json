@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "support-widget",
+  "name": "Website Support Chat Widget",
+  "purpose": "A chat widget embedded on the company marketing site that answers visitor questions using a language model.",
+  "technologies": ["TypeScript", "Cloudflare Workers"],
+  "services": ["Amazon Bedrock"],
+  "consequential_actions": [
+    {
+      "description": "Responds to website visitors in natural language on behalf of the company",
+      "target": "website visitor",
+      "reversible": true
+    }
+  ],
+  "data_categories": ["chat message content"],
+  "assumptions": [],
+  "constraints": [],
+  "jurisdictions": [],
+  "unknowns": [
+    "Jurisdiction of the visitors was never recorded — the site is publicly reachable but the operator has not stated which markets it serves",
+    "It is not recorded whether the widget discloses to visitors that they are talking to an AI system",
+    "Whether chat transcripts are retained, and for how long, is not recorded"
+  ],
+  "provenance": {
+    "name": "user_stated",
+    "purpose": "user_stated",
+    "services": "user_stated"
+  }
+}

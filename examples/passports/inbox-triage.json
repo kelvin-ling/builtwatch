@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "inbox-triage",
+  "name": "Client Inbox Triage Bot",
+  "purpose": "Reads the owner's shared client inbox each morning, drafts replies with a large language model, and sends the approved drafts to clients as email from the business domain.",
+  "technologies": ["Python 3.12", "AWS Lambda", "EventBridge Scheduler"],
+  "services": ["Gmail API", "Anthropic Claude via Amazon Bedrock", "SendGrid"],
+  "consequential_actions": [
+    {
+      "description": "Sends email to external clients from the business domain",
+      "target": "client email address",
+      "reversible": false
+    },
+    {
+      "description": "Generates reply text with an LLM that is presented to clients as coming from the business",
+      "target": "client-facing correspondence",
+      "reversible": true
+    }
+  ],
+  "data_categories": ["email address", "name", "email message body", "business contact details"],
+  "assumptions": [
+    "Clients understand replies may be drafted with AI assistance",
+    "Sending volume stays under a few hundred messages per day"
+  ],
+  "constraints": ["Must not send without the owner approving the draft"],
+  "jurisdictions": ["United Kingdom", "Germany"],
+  "unknowns": [],
+  "provenance": {
+    "name": "user_stated",
+    "purpose": "user_stated",
+    "services": "user_stated",
+    "jurisdictions": "user_stated"
+  }
+}

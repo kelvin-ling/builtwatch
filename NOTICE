@@ -1,0 +1,40 @@
+BuiltWatch
+Copyright (c) 2026 Kelvin Ling
+Licensed under the MIT License. See LICENSE.
+
+This product includes third-party software under their own licenses:
+
+  strands-agents (Apache License 2.0)
+      https://github.com/strands-agents/sdk-python
+  strands-agents-tools (Apache License 2.0)
+      https://github.com/strands-agents/tools
+  boto3 / botocore (Apache License 2.0)
+      https://github.com/boto/boto3
+  pydantic (MIT License)
+      https://github.com/pydantic/pydantic
+  httpx (BSD 3-Clause License)
+      https://github.com/encode/httpx
+  PyYAML (MIT License)
+      https://github.com/yaml/pyyaml
+  typer (MIT License)
+      https://github.com/fastapi/typer
+  rich (MIT License)
+      https://github.com/Textualize/rich
+  selectolax (MIT License)
+      https://github.com/rushter/selectolax
+
+RETRIEVED CONTENT
+
+The replay corpus in replay/ contains material retrieved from the publishers named in
+sources/registry.yaml, captured on the dates recorded in each file. It is included for
+reproducible demonstration and evaluation, is attributed to its publisher with the source
+URL, and remains the property of its respective rights holders. It is not relicensed
+under the MIT License above.
+
+Findings quote short passages from that material for the purpose of identifying and
+citing the development under discussion.
+
+AI ASSISTANCE DISCLOSURE
+
+This project was developed with the assistance of AI coding tools (Claude Code), as
+permitted by the Agents for Humans hackathon rules.

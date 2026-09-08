@@ -1,0 +1,65 @@
+[project]
+name = "builtwatch"
+version = "0.1.0"
+description = "BuiltWatch keeps an inventory of the systems you have built and tells you when the outside world changes in a way that affects them."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Kelvin Ling" }]
+
+dependencies = [
+    "strands-agents>=1.54.0",
+    "boto3>=1.40.0",
+    "pydantic>=2.9.0",
+    "httpx>=0.27.0",
+    "PyYAML>=6.0.2",
+    "typer>=0.15.0",
+    "rich>=13.9.0",
+    "selectolax>=0.3.21",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.8.0",
+]
+
+[project.scripts]
+builtwatch = "builtwatch.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/builtwatch"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "SIM", "UP", "RUF", "PL", "BLE"]
+ignore = [
+    # typer's whole API is function calls in argument defaults.
+    "B008",
+    # A CLI command and a pipeline pass legitimately take many arguments and branches.
+    "PLR0913", "PLR0917", "PLR0912", "PLR0915", "PLR0911",
+    # Deliberate function-local imports: breaking import cycles, and keeping CLI startup
+    # fast by not importing boto3/strands until a command actually needs them.
+    "PLC0415",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Retrieval and model output are the two places where anything can go wrong. Catching
+# broadly is the design: every failure must be *recorded* as a failure rather than
+# escaping and aborting a scan, or worse, looking like a quiet clean result.
+"src/builtwatch/fetch.py" = ["BLE001"]
+"src/builtwatch/agent/relevance.py" = ["BLE001"]
+# Tests assert on literal expected values; that is the point of a test.
+"tests/*" = ["PLR2004"]

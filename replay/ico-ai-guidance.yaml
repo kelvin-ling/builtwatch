@@ -1,0 +1,65 @@
+# Replay snapshot. Real content retrieved from the publisher URL below
+# on 2026-09-08 by scripts/capture_replay.py.
+# Quoted in findings as historical material, clearly labelled mode='replay'.
+source_id: ico-ai-guidance
+source_name: UK ICO — Artificial Intelligence and Data Protection
+publisher: UK Information Commissioner's Office
+url: https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/
+retrieved_at: '2026-09-08T05:01:27.343930+00:00'
+captured_by: scripts/capture_replay.py
+published_at: null
+effective_at: null
+fetch_status: ok
+content: 'Skip to main content
+
+  Artificial intelligence
+
+  The guidance on this page is suitable for businesses in the public, private and third sectors.
+
+  Detailed guidance
+
+  Artificial
+
+  intelligence (AI) and data protection
+
+  A detailed overview of how to apply the principles of the UK GDPR to the use of information in AI systems.
+
+  Explaining decisions made with AI
+
+  Practical advice to help explain the processes, services and decisions delivered or assisted by AI to
+  the individuals affected.
+
+  Biometric data guidance: Biometric recognition
+
+  What is biometric data, what is meant by "biometric recognition", demonstrating compliance with data
+  protection obligations and processing biometric data fairly and lawfully.
+
+  Resources
+
+  AI and data protection risk toolkit
+
+  Practical support for organisations assessing the risks to individual rights and freedoms caused by
+  their own AI systems.
+
+  Data analytics toolkit
+
+  Create tailored advice for your project to help you recognise some of the central risks to the rights
+  and freedoms of individuals created by the use of data analytics.
+
+  Help us improve our website
+
+  Was this page helpful?
+
+  (optional)
+
+  Yes
+
+  No
+
+  Please tell us more about your experience.
+
+  (optional)
+
+  Honeypot
+
+  Back to top'

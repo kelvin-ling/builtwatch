@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+
+# Local state — never commit a real inventory
+*.db
+*.db-journal
+.env
+.env.*
+!.env.example
+data/
+.DS_Store
+
+# Live fetch cache (replay corpus IS committed, live cache is not)
+.cache/

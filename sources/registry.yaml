@@ -1,0 +1,91 @@
+# BuiltWatch source registry
+#
+# This file is the ONLY place a fetchable URL can come from. Nothing a user types and
+# nothing a retrieved document says can add an entry here. Coverage is exactly this list
+# and nothing more — `builtwatch source list` prints it verbatim.
+#
+# Adding a source is a deliberate, reviewable act: open a pull request against this file.
+#
+# Categories: vendor_policy | api_change | regulation | privacy_ai | communications
+#             | security | standards
+
+sources:
+  # -- vendor policies ---------------------------------------------------------------
+  - id: anthropic-aup
+    name: Anthropic Usage Policy
+    category: vendor_policy
+    url: https://www.anthropic.com/legal/aup
+    publisher: Anthropic
+    notes: Governs permitted uses of Claude models, including via Amazon Bedrock.
+
+  # -- API changes and deprecations --------------------------------------------------
+  - id: stripe-upgrades
+    name: Stripe API Upgrades and Versioning
+    category: api_change
+    url: https://docs.stripe.com/upgrades
+    publisher: Stripe
+    notes: Breaking changes and version migration guidance for the Stripe API.
+
+  - id: github-rest-breaking
+    name: GitHub REST API Breaking Changes
+    category: api_change
+    url: https://docs.github.com/en/rest/about-the-rest-api/breaking-changes
+    publisher: GitHub
+
+  - id: aws-bedrock-history
+    name: Amazon Bedrock Document History
+    category: api_change
+    url: https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug-doc-history.html
+    publisher: Amazon Web Services
+
+  - id: twilio-changelog
+    name: Twilio Changelog
+    category: api_change
+    url: https://www.twilio.com/en-us/changelog
+    publisher: Twilio
+
+  # -- laws and regulations ----------------------------------------------------------
+  - id: eu-ai-act-article-50
+    name: EU AI Act Article 50 — Transparency Obligations
+    category: regulation
+    url: https://artificialintelligenceact.eu/article/50/
+    publisher: artificialintelligenceact.eu (unofficial consolidated text)
+    notes: >
+      Unofficial consolidated presentation of the AI Act. Convenient and stable to fetch,
+      but NOT the authoritative text. Findings citing this source should be verified
+      against EUR-Lex before any decision is taken on them.
+
+  # -- privacy and AI requirements ---------------------------------------------------
+  - id: edpb-news
+    name: European Data Protection Board — News
+    category: privacy_ai
+    url: https://www.edpb.europa.eu/news_en
+    publisher: European Data Protection Board
+
+  - id: ico-ai-guidance
+    name: UK ICO — Artificial Intelligence and Data Protection
+    category: privacy_ai
+    url: https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/
+    publisher: UK Information Commissioner's Office
+
+  # -- communications restrictions ---------------------------------------------------
+  - id: gmail-sender-guidelines
+    name: Gmail Email Sender Guidelines
+    category: communications
+    url: https://support.google.com/mail/answer/81126
+    publisher: Google
+    notes: Bulk sender authentication, unsubscribe and spam-rate requirements.
+
+  # -- security incidents and failure patterns ---------------------------------------
+  - id: cisa-kev
+    name: CISA Known Exploited Vulnerabilities Catalog
+    category: security
+    url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog
+    publisher: US Cybersecurity and Infrastructure Security Agency
+
+  # -- standards and guidance --------------------------------------------------------
+  - id: nist-ai-rmf
+    name: NIST AI Risk Management Framework
+    category: standards
+    url: https://www.nist.gov/itl/ai-risk-management-framework
+    publisher: US National Institute of Standards and Technology

@@ -1,0 +1,365 @@
+# Replay snapshot. Real content retrieved from the publisher URL below
+# on 2026-09-08 by scripts/capture_replay.py.
+# Quoted in findings as historical material, clearly labelled mode='replay'.
+source_id: stripe-upgrades
+source_name: Stripe API Upgrades and Versioning
+publisher: Stripe
+url: https://docs.stripe.com/upgrades
+retrieved_at: '2026-09-08T05:01:25.489165+00:00'
+captured_by: scripts/capture_replay.py
+published_at: null
+effective_at: null
+fetch_status: ok
+content: 'Skip to content
+
+  Upgrade your API version
+
+  Create account
+
+  or
+
+  Sign in
+
+  Search
+
+  /
+
+  Ask AI
+
+  Create account
+
+  Sign in
+
+  Get started
+
+  Payments
+
+  Revenue
+
+  Platforms and marketplaces
+
+  Money management
+
+  Developer resources
+
+  APIs & SDKs
+
+  Help
+
+  Overview
+
+  Versioning
+
+  Changelog
+
+  Upgrade your API version
+
+  Upgrade your SDK version
+
+  Essentials
+
+  SDKs
+
+  API
+
+  Testing
+
+  Stripe CLI
+
+  Tools
+
+  Stripe Dashboard
+
+  Stripe Projects
+
+  Workbench
+
+  Developers Dashboard
+
+  Stripe for Visual Studio Code
+
+  Terraform
+
+  Stripe Discord server
+
+  Features
+
+  Workflows
+
+  Batch jobs
+
+  Event destinations
+
+  Stripe health alerts
+
+  Stripe Signals
+
+  File uploads
+
+  AI tools
+
+  Agent plugins
+
+  Model Context Protocol
+
+  Agent skills
+
+  Stripe Directory
+
+  Extend Stripe
+
+  Overview
+
+  Build Stripe apps
+
+  Use apps from Stripe
+
+  Build extensions
+
+  Custom objects
+
+  Security and privacy
+
+  Security
+
+  Activity logs
+
+  Stripebot web crawler
+
+  Privacy
+
+  Partners
+
+  Partner ecosystem
+
+  Partner certification
+
+  Canada
+
+  English (United States)
+
+  API
+
+  upgrades
+
+  Learn how to manage API versions and handle breaking changes in major releases.
+
+  Ask about this page
+
+  Copy for LLM
+
+  View as Markdown
+
+  Install tools
+
+  Check the
+
+  Developer Changelog
+
+  for the complete record of changes to Stripe’s API.
+
+  Your API version controls the API and webhook behavior you see (for example, what parameters you can
+  include in requests, what properties you see in responses, and so on). Your version gets set the first
+  time you make an API request.
+
+  Each major release, such as
+
+  Basil
+
+  , includes changes that aren’t backward-compatible with previous releases. Upgrading to a new major
+  release can require updates to existing code. Each monthly release includes only backward-compatible
+  changes, and uses the same name as the last major release. You can safely upgrade to a new monthly release
+  without breaking any existing code. To upgrade your API version, follow
+
+  these steps
+
+  .
+
+  When a
+
+  Connect
+
+  platform makes requests on behalf of connected accounts without specifying an API version, Stripe always
+  uses the platform’s API version. Regardless of a connected account’s API version, the platform’s requests
+  on its behalf always return responses matching the API version of the request.
+
+  Backward-compatible changes
+
+  Stripe considers the following changes to be backward-compatible:
+
+  Adding new API resources.
+
+  Adding new optional request parameters to existing API methods.
+
+  Adding new properties to existing API responses.
+
+  Changing the order of properties in existing API responses.
+
+  Changing the length or format of opaque strings, such as object IDs, error messages, and other human-readable
+  strings.
+
+  This includes adding or removing fixed prefixes (such as
+
+  ch
+
+  _
+
+  on charge IDs).
+
+  Make sure that your integration can handle Stripe-generated object IDs, which can contain up to 255
+  characters. For example, if you’re using MySQL, store the IDs in a
+
+  VARCHAR(255) COLLATE utf8
+
+  _
+
+  bin
+
+  column (the
+
+  COLLATE
+
+  configuration provides case-sensitivity during lookups).
+
+  Adding new event types.
+
+  Make sure that your webhook listener gracefully handles unfamiliar event types.
+
+  Upgrade your API version
+
+  If you’re running an older version of the API, upgrade to the latest version to take advantage of new
+  features and enhanced functionality.
+
+  Upgrading your API version affects:
+
+  The API calls you make without a
+
+  Stripe-Version
+
+  header: the parameters you can send and the structure of objects returned.
+
+  The structure of objects received with
+
+  Stripe.js
+
+  methods such as
+
+  confirmCardPayment
+
+  .
+
+  The structure of objects sent to your webhook endpoints (both Account and
+
+  Connect
+
+  ). However, if an endpoint has an explicit version set, it always uses that version.
+
+  Automated Billing operations performed by Stripe (for example, generating an
+
+  invoice
+
+  for a new subscription period) use your account’s default API version. See the API changelog for details
+  about how your default API version impacts these operations.
+
+  View your API version and the latest available upgrade in Workbench
+
+  See the
+
+  API version used by recent requests
+
+  on your account and the latest available upgrade from the
+
+  Overview
+
+  tab in Workbench.
+
+  When performing an API upgrade, make sure that you specify the API version that you’re integrating against
+  in your code instead of relying on your account’s default API version. To test a newer version for API
+  calls, set the
+
+  Stripe-Version
+
+  header (in live or testing environments). Learn how to manage versioning in our
+
+  server-side SDKs
+
+  .
+
+  Upgrade and test your webhooks
+
+  Private preview
+
+  Thin events
+
+  for API v1 resources are available in private preview. You can use them to streamline integration upgrades
+  without changing your webhook configuration. Previously, thin events only supported API v2 resources.
+
+  Learn more and request access
+
+  .
+
+  Read our guide on
+
+  how to handle webhook versioning
+
+  .
+
+  Perform the upgrade
+
+  When you’re confident that your code can handle the latest API version, perform the upgrade using Workbench:
+
+  Open the
+
+  Overview
+
+  tab in Workbench.
+
+  In the
+
+  API versions
+
+  section, click
+
+  Upgrade available
+
+  , which is visible if a newer API version is available.
+
+  Review which API version will be assigned to your account, and click
+
+  Upgrade.
+
+  This switches the version used by API calls that don’t have the
+
+  Stripe-Version
+
+  header and also switches the version used to render objects sent to your webhooks.
+
+  Caution
+
+  The default API version of your account at the time the event occurred defines the resources inside
+  of
+
+  events retrieved from the API
+
+  . If your code retrieves events created when your default API version was different, it must account
+  for any differences in the event versions.
+
+  Roll back your API version
+
+  For 72 hours after you’ve upgraded your API version, you can safely roll back to the version you were
+  upgrading from in Workbench.
+
+  After you’ve rolled back, webhooks that were sent with the new object structure and failed will be retried
+  with the old structure.
+
+  Stay informed
+
+  Developer changelog
+
+  Complete record of changes to the Stripe API
+
+  Stripe roadmap
+
+  Preview upcoming Stripe product releases
+
+  On this page'
