@@ -1,3 +1,11 @@
+## Latest verification and connection fix
+
+The account site is deployed at the existing URL. The first account release failed at the gateway because the Sites Cloudflare runtime rejects fetch `redirect: "error"`. Fixed with `redirect: "manual"` and explicit rejection of 3xx responses; do not revert to `error` even if Node tests or current web docs accept it. `npm test` now includes an actual Miniflare runtime test. It requires local loopback-port permission in sandboxed environments.
+
+81 Python tests and 5 JavaScript/runtime tests pass. A real AWS background scan completed across all 11 sources for $0.05344974, while workspace GET remained available. A live header-spoofing check confirmed Sites strips client-supplied identity headers. The supported Sites bypass token does not supply a signed-in user; it cannot establish the owner's migration identity.
+
+Connection fix source: `1374554e81c9c0cef2ed0314fd6cbeb6a0bb7d9c`, saved Sites version 3. Deployment succeeded 2026-09-08 12:50 UTC. Public-access approval remains pending. The user was asked to refresh after reporting the initial connection failure. Do not claim confirmed browser sign-in success until the user verifies it. Legacy owner S3 inventory is retained, not yet assigned to a new account.
+
 # Separate-account upgrade — 8 September 2026
 
 Current work replaces the shared-key web workspace with Sites ChatGPT sign-in and account-partitioned DynamoDB. See [ACCOUNTS.md](ACCOUNTS.md) for user steps, security boundaries, deployment and limitations. The previous owner database remains in S3. The site access policy is still owner-only unless explicitly changed after user approval.
