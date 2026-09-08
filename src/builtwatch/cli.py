@@ -334,6 +334,62 @@ def finding_export(
 
 
 @app.command()
+def doctor() -> None:
+    """Probe which Bedrock models this account can actually invoke, and recommend a pair.
+
+    The control plane lists models an account may not be entitled to use, so this performs
+    a real one-token invocation per model. Total cost is a fraction of a cent.
+    """
+    from .doctor import diagnose
+
+    settings = _settings()
+    with console.status("Probing Bedrock model entitlement..."):
+        report = diagnose(settings)
+
+    console.print(
+        Panel(
+            f"account: {report['account']}\nprincipal: {report['arn']}\n"
+            f"region: {report['region']}",
+            title="AWS identity",
+        )
+    )
+
+    table = Table("model", "invocable", "$/1K in", "$/1K out", "detail")
+    probed = {r.model_id: r for r in report["screen_results"] + report["assess_results"]}
+    for result in probed.values():
+        table.add_row(
+            result.model_id,
+            "[green]yes[/green]" if result.ok else "[red]no[/red]",
+            f"{result.input_price:.6f}",
+            f"{result.output_price:.6f}",
+            (result.error_code or "") if not result.ok else "",
+        )
+    console.print(table)
+
+    for result in report["screen_results"] + report["assess_results"]:
+        if not result.ok and result.hint:
+            console.print(f"[yellow]{result.error_code}[/yellow]: {result.hint}")
+            break
+
+    if not report["usable"]:
+        console.print(
+            "\n[red]No usable model pair. "
+            "BuiltWatch cannot run the real-model path.[/red]"
+        )
+        raise typer.Exit(1)
+
+    console.print(
+        Panel(
+            f"screen: [bold]{report['screen_pick']}[/bold]\n"
+            f"assess: [bold]{report['assess_pick']}[/bold]\n\n"
+            f"export BW_SCREEN_MODEL={report['screen_pick']}\n"
+            f"export BW_ASSESS_MODEL={report['assess_pick']}",
+            title="[green]Recommended configuration[/green]",
+        )
+    )
+
+
+@app.command()
 def status() -> None:
     """Show inventory size, recent runs, coverage health, and spend to date."""
     settings = _settings()

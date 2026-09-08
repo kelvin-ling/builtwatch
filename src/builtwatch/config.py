@@ -14,12 +14,33 @@ from pathlib import Path
 # Bedrock on-demand pricing, USD per 1K tokens, us-east-1. Used for pre-flight estimates
 # and for the running total that trips the ceiling. Update if AWS repricing occurs.
 MODEL_PRICES: dict[str, tuple[float, float]] = {
-    "us.anthropic.claude-haiku-4-5-20251001-v1:0": (0.0008, 0.004),
+    # Anthropic — preferred. Strongest instruction-following for the grounding rules,
+    # which is what keeps fabricated citations out of findings.
+    "us.anthropic.claude-haiku-4-5-20251001-v1:0": (0.001, 0.005),
     "us.anthropic.claude-sonnet-4-5-20250929-v1:0": (0.003, 0.015),
+    # Amazon Nova — fallback. No model-provider agreement required, and dramatically
+    # cheaper. Nova Lite screens for roughly 1/16th the cost of Claude Haiku.
+    "us.amazon.nova-micro-v1:0": (0.000035, 0.00014),
+    "us.amazon.nova-lite-v1:0": (0.00006, 0.00024),
+    "us.amazon.nova-pro-v1:0": (0.0008, 0.0032),
 }
 
-DEFAULT_SCREEN_MODEL = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
-DEFAULT_ASSESS_MODEL = "us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+# Ordered preference. `builtwatch doctor` probes these and picks the first pair that
+# actually invokes, so an account without Anthropic entitlement still runs the product.
+SCREEN_MODEL_LADDER: list[str] = [
+    "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "us.amazon.nova-lite-v1:0",
+    "us.amazon.nova-micro-v1:0",
+]
+ASSESS_MODEL_LADDER: list[str] = [
+    "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+    "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "us.amazon.nova-pro-v1:0",
+    "us.amazon.nova-lite-v1:0",
+]
+
+DEFAULT_SCREEN_MODEL = SCREEN_MODEL_LADDER[0]
+DEFAULT_ASSESS_MODEL = ASSESS_MODEL_LADDER[0]
 
 
 def _env_float(name: str, default: float) -> float:
