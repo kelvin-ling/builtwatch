@@ -1,3 +1,13 @@
+# BuiltWatch — web-first implementation
+
+Professional Agents track. The primary interaction is the responsive web workspace:
+remember systems, inspect relevant external developments, and export focused handoffs.
+Public sample browsing is read-only; private owner access enables profile management,
+live checks, and dispositions. Use Strands/Nova for relevance investigation and a small
+serverless deployment with durable history. See README.md for the current product.
+
+## Original brief
+
 # BuiltWatch — project brief
 
 You keep building. BuiltWatch remembers what you built and tells you when the world changes in a way that matters.

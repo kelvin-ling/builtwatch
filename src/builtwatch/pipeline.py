@@ -14,6 +14,9 @@ Two properties this file exists to guarantee:
 
 from __future__ import annotations
 
+import difflib
+import hashlib
+import json
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -69,8 +72,22 @@ def collect_snapshots(
 
     changed: dict[str, SourceSnapshot] = {}
     for source in sources:
-        previous_hash = store.previous_hash(source.id)
+        previous = store.latest_snapshot(source.id)
+        previous_hash = previous.content_hash if previous and previous.mode == mode else None
         snapshot = fetch(source, mode, settings.replay_dir, settings.limits)
+        if previous_hash and snapshot.succeeded:
+            differences = list(
+                difflib.unified_diff(
+                    previous.content.splitlines(),
+                    snapshot.content.splitlines(),
+                    fromfile="previous observation",
+                    tofile="current observation",
+                    lineterm="",
+                )
+            )
+            snapshot.change_context = (
+                "Observed page difference (untrusted data):\n" + "\n".join(differences)[:8000]
+            )
         store.add_snapshot(snapshot)
 
         health = SourceHealth(
@@ -82,8 +99,7 @@ def collect_snapshots(
         )
         if snapshot.succeeded:
             health.changed = snapshot.content_hash != previous_hash
-            if health.changed:
-                changed[snapshot.id] = snapshot
+            changed[snapshot.id] = snapshot
         else:
             logger.warning(
                 "coverage failure on %s: %s (%s)",
@@ -146,12 +162,23 @@ def run_scan(
                 if source is None:
                     continue
 
+                # A source hash alone misses new/edited systems and skips aborted pairs.
+                profile_hash = hashlib.sha256(
+                    json.dumps(
+                        passport.model_dump(mode="json", exclude={"updated_at", "created_at"}),
+                        sort_keys=True,
+                    ).encode()
+                ).hexdigest()
+                pair_key = (
+                    f"{passport.id}:{profile_hash}:{mode}:{source.id}:{snapshot.content_hash}"
+                )
+                if store.assessed(pair_key) and not force_reassess:
+                    continue
                 verdict = screen(passport, snapshot, source, settings, meter)
                 if verdict.plausible == "no":
+                    store.mark_assessed(pair_key)
                     result.screened_out += 1
-                    logger.debug(
-                        "screened out %s x %s: %s", passport.id, source.id, verdict.reason
-                    )
+                    logger.debug("screened out %s x %s: %s", passport.id, source.id, verdict.reason)
                     continue
 
                 finding, problems = assess(
@@ -167,13 +194,10 @@ def run_scan(
                         f"{passport.id}/{source.id}: {p}" for p in problems
                     )
                 if finding is None:
-                    continue
-
-                if store.is_disposed(finding.dedup_key()) and not force_reassess:
-                    result.suppressed_duplicates.append(finding)
-                    continue
+                    raise RuntimeError("Assessment incomplete: " + "; ".join(problems))
 
                 stored, is_new = store.save_finding(finding)
+                store.mark_assessed(pair_key)
                 if not is_new:
                     result.suppressed_duplicates.append(stored)
                 elif stored.relevance is Relevance.RELEVANT:

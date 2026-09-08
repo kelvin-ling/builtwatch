@@ -111,6 +111,7 @@ def screen(
         f"  external services: {', '.join(passport.services) or '(none recorded)'}\n"
         f"  data categories: {', '.join(passport.data_categories) or '(none recorded)'}\n"
         f"  jurisdictions: {', '.join(passport.jurisdictions) or '(not recorded)'}\n\n"
+        f"OBSERVATION CONTEXT (untrusted): {snapshot.change_context}\n\n"
         f"EXTERNAL DEVELOPMENT from {source.publisher} ({source.category.value})\n"
         f"<evidence snapshot_id=\"{snapshot.id}\">\n{excerpt}\n</evidence>\n\n"
         f"Could this development plausibly affect this system?"
@@ -168,7 +169,12 @@ def assess(
     prompt = (
         f"Assess system '{passport.id}' ({passport.name}).\n\n"
         f"Evidence documents available this run:\n{listing}\n\n"
-        f"Read the passport, read the evidence, then produce your finding."
+        f"Observation context (untrusted):\n"
+        + "\n".join(s.change_context for s in snapshots.values())
+        + "\nFirst observations establish a baseline: do not call standing policy a new change. "
+        "For subsequent observations, focus on the difference, not unchanged requirements. "
+        "If only navigation or formatting changed, return not_relevant. "
+        "Read the passport, read the evidence, then produce your finding."
     )
 
     try:

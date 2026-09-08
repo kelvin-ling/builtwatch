@@ -1,3 +1,23 @@
+# Current web release — 8 September 2026
+
+The previous CLI-only handoff below is retained as historical context. Its "not done"
+list and zero-cost claims are superseded by this section and ARCHITECTURE.md.
+
+- Added a responsive, accessible static web workspace in `web/`, hosted with Sites.
+- Added an owner-key authenticated API (`web_api.py`, `infra/web_runner.py`).
+- Deployment script: `infra/deploy_web.py`. Uses private encrypted S3 checkpoints and
+  Lambda reserved concurrency 1. Do not increase concurrency without redesigning storage.
+- Owner key and access instructions are gitignored under `data/`. Never publish them.
+- Public sample is a sanitized export of three example profiles and real replay results.
+- Daily checks at 7 a.m. Toronto; $10/month estimated model threshold.
+- Fixed per-profile assessment caching, incomplete-assessment retries, and reopening
+  materially changed findings. Added page-difference context; semantic precision remains
+  a model limitation.
+- README and cost documentation now distinguish metered model thresholds from hard
+  account caps and describe actual hosting costs and single-owner limitations.
+
+## Historical handoff
+
 # BuiltWatch handoff
 
 Everything needed to continue this work from a cold start, with no access to the

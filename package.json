@@ -1,0 +1,1 @@
+{"name":"builtwatch-web","private":true,"version":"0.2.0","scripts":{"build":"node scripts/build-web.mjs","check":"node --check web/app.js"}}

@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183c36"><meta name="description" content="Remember what you built. Know when outside changes need your attention."><title>BuiltWatch — Keep an eye on what you built</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css"><script src="/config.js"></script><script defer src="/app.js"></script></head>
+<body>
+<a class="skip" href="#main">Skip to workspace</a>
+<div class="shell">
+<aside class="sidebar"><a class="brand" href="#overview"><span class="brand-mark" aria-hidden="true">b<span>•</span></span>BuiltWatch</a><div class="workspace-label">YOUR WATCH DESK</div><nav aria-label="Main navigation"><button data-view="overview" class="nav active"><span aria-hidden="true">◫</span> Overview</button><button data-view="systems" class="nav"><span aria-hidden="true">▦</span> Your systems <span class="nav-count" id="nav-systems">0</span></button><button data-view="findings" class="nav"><span aria-hidden="true">◎</span> Needs attention <span class="nav-count" id="nav-findings">0</span></button><button data-view="sources" class="nav"><span aria-hidden="true">⌁</span> Watched sources</button><button data-view="history" class="nav"><span aria-hidden="true">↺</span> Check history</button></nav><div class="sidebar-bottom"><div class="quiet-symbol" aria-hidden="true">◌</div><strong>A little less to keep in mind.</strong><p>You keep building.<br>We’ll keep watch.</p><button class="text-button" id="how-button">How BuiltWatch works <span aria-hidden="true">↗</span></button><div class="built-with">Built with Strands Agents</div></div></aside>
+<div class="body"><header class="topbar"><span id="breadcrumb">Workspace / <strong>Overview</strong></span><div class="top-actions"><span class="mode-tag" id="mode">Sample workspace</span><button class="avatar" id="connect" aria-label="Connect your workspace">↗</button></div></header>
+<div id="mode-banner" class="demo-banner"><span><strong>Take a look around.</strong> These are saved AI findings for three example systems.</span><button class="text-button" id="connect-banner">Open your workspace <span aria-hidden="true">→</span></button></div>
+<main id="main" tabindex="-1"><div id="view"><div class="empty">Loading your watch desk…</div></div></main>
+<footer><span>BuiltWatch <span class="footer-dot">·</span> Fewer surprises after you ship.</span><span>Selected sources. Evidence you can inspect.</span></footer></div></div>
+<dialog id="modal" aria-labelledby="modal-title"><div id="modal-content"></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+</body></html>

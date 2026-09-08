@@ -15,6 +15,8 @@ call site must invoke the agent with `structured_output_model` set rather than c
 from __future__ import annotations
 
 import logging
+import os
+import time
 
 from strands.hooks import (
     AfterModelCallEvent,
@@ -59,6 +61,9 @@ class BudgetGuard(HookProvider):
         registry.add_callback(BeforeToolCallEvent, self._before_tool)
 
     def _before_model(self, event: BeforeModelCallEvent) -> None:
+        deadline = float(os.environ.get("BW_DEADLINE", "0"))
+        if deadline and time.time() > deadline:
+            raise BudgetExceeded("Time limit reached; unassessed pairs will resume next check")
         self.model_calls += 1
         if self.model_calls > self.max_iterations:
             raise BudgetExceeded(

@@ -167,6 +167,7 @@ class SourceSnapshot(BaseModel):
 
     content: str = ""
     content_hash: str = ""
+    change_context: str = "First observation: existing guidance, not a newly detected change."
 
     published_at: date | None = None
     effective_at: date | None = None

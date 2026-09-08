@@ -18,9 +18,7 @@ def _settings(tmp_path, registry_body: dict, replay: dict[str, dict | None]) -> 
     replay_dir.mkdir()
     for source_id, payload in replay.items():
         if payload is not None:
-            (replay_dir / f"{source_id}.yaml").write_text(
-                yaml.safe_dump(payload), encoding="utf-8"
-            )
+            (replay_dir / f"{source_id}.yaml").write_text(yaml.safe_dump(payload), encoding="utf-8")
     settings = Settings()
     settings.registry_path = registry
     settings.replay_dir = replay_dir
@@ -139,9 +137,7 @@ def test_rewritten_source_does_not_re_notify_the_same_development(
 
     # The page is edited around the substance. Hash changes; the news does not.
     (settings.replay_dir / "gmail-sender-guidelines.yaml").write_text(
-        yaml.safe_dump(
-            {"content": SNAPSHOT_TEXT + "\n\nPage last reviewed 8 September 2026."}
-        ),
+        yaml.safe_dump({"content": SNAPSHOT_TEXT + "\n\nPage last reviewed 8 September 2026."}),
         encoding="utf-8",
     )
 
@@ -207,8 +203,7 @@ def test_unchanged_source_is_not_reassessed(tmp_path, store, passport, monkeypat
     monkeypatch.setattr(
         pipeline,
         "screen",
-        lambda *a, **k: screens.append(1)
-        or ScreenVerdict(plausible="no", reason="unrelated"),
+        lambda *a, **k: screens.append(1) or ScreenVerdict(plausible="no", reason="unrelated"),
     )
 
     pipeline.run_scan(store, settings, mode="replay")
@@ -265,3 +260,65 @@ def test_unexpected_error_marks_run_aborted(tmp_path, store, passport, monkeypat
     # And it is persisted that way, so `builtwatch status` cannot show a phantom run.
     reloaded = store.get_run(result.run.id)
     assert reloaded.status == "aborted"
+
+
+def test_new_system_is_checked_even_when_source_unchanged(tmp_path, store, passport, monkeypatch):
+    settings = _settings(
+        tmp_path,
+        {"sources": [GMAIL_SOURCE]},
+        {"gmail-sender-guidelines": {"content": SNAPSHOT_TEXT}},
+    )
+    store.upsert_system(passport)
+    seen = []
+    monkeypatch.setattr(
+        pipeline,
+        "screen",
+        lambda p, *a, **k: seen.append(p.id) or ScreenVerdict(plausible="no", reason="unrelated"),
+    )
+    pipeline.run_scan(store, settings)
+    second = passport.model_copy(update={"id": "new-system"})
+    store.upsert_system(second)
+    pipeline.run_scan(store, settings)
+    assert seen == [passport.id, "new-system"]
+
+
+def test_failed_assessment_is_retried_on_unchanged_source(tmp_path, store, passport, monkeypatch):
+    settings = _settings(
+        tmp_path,
+        {"sources": [GMAIL_SOURCE]},
+        {"gmail-sender-guidelines": {"content": SNAPSHOT_TEXT}},
+    )
+    store.upsert_system(passport)
+    monkeypatch.setattr(
+        pipeline, "screen", lambda *a, **k: ScreenVerdict(plausible="yes", reason="email")
+    )
+    monkeypatch.setattr(pipeline, "assess", lambda *a, **k: (None, ["model unavailable"]))
+    assert pipeline.run_scan(store, settings).run.status == "aborted"
+    calls = []
+    monkeypatch.setattr(
+        pipeline,
+        "screen",
+        lambda *a, **k: calls.append(1) or ScreenVerdict(plausible="no", reason="unrelated"),
+    )
+    pipeline.run_scan(store, settings)
+    assert len(calls) == 1
+
+
+def test_profile_edit_invalidates_assessment_cache(tmp_path, store, passport, monkeypatch):
+    settings = _settings(
+        tmp_path,
+        {"sources": [GMAIL_SOURCE]},
+        {"gmail-sender-guidelines": {"content": SNAPSHOT_TEXT}},
+    )
+    store.upsert_system(passport)
+    calls = []
+    monkeypatch.setattr(
+        pipeline,
+        "screen",
+        lambda *a, **k: calls.append(1) or ScreenVerdict(plausible="no", reason="unrelated"),
+    )
+    pipeline.run_scan(store, settings)
+    passport.services.append("New email provider")
+    store.upsert_system(passport)
+    pipeline.run_scan(store, settings)
+    assert len(calls) == 2

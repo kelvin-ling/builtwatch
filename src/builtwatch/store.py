@@ -27,6 +27,10 @@ from .models import (
 )
 
 SCHEMA = """
+CREATE TABLE IF NOT EXISTS assessments (
+    pair_key TEXT PRIMARY KEY, completed_at TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS systems (
     id           TEXT PRIMARY KEY,
     name         TEXT NOT NULL,
@@ -120,6 +124,16 @@ class Store:
 
     def close(self) -> None:
         self.conn.close()
+
+    def assessed(self, key: str) -> bool:
+        return bool(self.conn.execute(
+            "SELECT 1 FROM assessments WHERE pair_key=?", (key,)
+        ).fetchone())
+
+    def mark_assessed(self, key: str) -> None:
+        self.conn.execute("INSERT OR IGNORE INTO assessments VALUES (?,?)",
+                          (key, datetime.now(timezone.utc).isoformat()))
+        self.conn.commit()
 
     # -- systems -----------------------------------------------------------------
 

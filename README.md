@@ -34,7 +34,7 @@ Trust in a watcher comes from what it refuses to claim.
 - **It does not make legal or compliance determinations.** A finding is a review prompt with citations attached, never a verdict.
 - **It does not change your code.** It hands off to you or to a coding agent of your choosing.
 - **It does not treat silence as safety.** A source it failed to fetch is reported as a coverage failure, loudly and separately from "nothing changed."
-- **It does not guess.** When an applicability fact is missing from a system's profile, it returns `insufficient_information` and names the missing fact.
+- **It records uncertainty.** When an applicability fact is missing from a system's profile, it returns `insufficient_information` and names the missing fact.
 
 ## How it works
 
@@ -53,7 +53,7 @@ with Claude, and sends them through the Gmail API to clients in the UK and Germa
 builtwatch system import passports/inbox-triage.json
 ```
 
-Extraction never fills a gap with a plausible guess. Anything it could not determine lands in `unknowns` and stays visible.
+Extraction is instructed to preserve gaps rather than invent details; users should review the profile. Anything it could not determine lands in `unknowns` and stays visible.
 
 ### 2. A curated source registry
 
@@ -63,9 +63,9 @@ Extraction never fills a gap with a plausible guess. Anything it could not deter
 
 This is where Strands does the work, and it is split in two for a reason — cost.
 
-**Stage 1 — screen** (Claude Haiku, no tools, high recall). For each (system, change) pair: could this plausibly matter? Most pairs die here for a fraction of a cent.
+**Stage 1 — screen** (Amazon Nova Lite, no tools, high recall). For each (system, change) pair: could this plausibly matter? Most pairs die here for a fraction of a cent.
 
-**Stage 2 — assess** (Claude Sonnet, tool-using, bounded). Survivors get a real investigation. The agent must call tools to read the passport and the evidence before it can answer:
+**Stage 2 — assess** (Amazon Nova Pro, tool-using, bounded). Survivors get a real investigation. The agent must call tools to read the passport and the evidence before it can answer:
 
 | Tool | What it does |
 |---|---|
@@ -74,7 +74,7 @@ This is where Strands does the work, and it is split in two for a reason — cos
 | `read_evidence` | A chunk of one document, wrapped in `<evidence>` delimiters |
 | `search_evidence` | Targeted passage lookup inside long documents |
 
-Every tool is read-only. **There is no tool that fetches a URL, sends a message, writes a passport, or runs code.** The worst a hostile document can talk the agent into is reading another stored snapshot.
+Every tool is read-only. **There is no tool that fetches a URL, sends a message, writes a passport, or runs code.** Retrieved text can still influence the model’s reasoning. Read-only tools limit its ability to act.
 
 ### 4. Grounding is verified, not trusted
 
@@ -102,11 +102,31 @@ builtwatch finding dismiss find_a1b2c3 --reason "We removed that dependency in M
 
 A saved artifact, carrying its own evidence, that a person can read or a coding agent can act on.
 
-## Interface
+## Web workspace
 
-BuiltWatch is a **command-line tool**. There is no web UI. Everything the product does —
-intake, scanning, review, disposition, export — is reachable from `builtwatch`, and the
-local mode needs no AWS deployment at all.
+Open **https://builtwatch.kelvinlingac.chatgpt.site**.
+
+The public sample workspace shows saved, real Strands/Nova replay results for three
+example systems. It is read-only and never invokes a model. Findings are historical
+assessments, not announcements of newly detected changes today.
+
+Choose **Open your workspace** and enter the private access key supplied with the
+deployment. The key stays in browser session storage. The owner workspace supports:
+
+- Add and edit system profiles with a plain-language form, or import neutral JSON.
+- Review findings, source passages, applicability facts, unknowns, and suggested actions.
+- Acknowledge or dismiss findings; download a Markdown builder handoff or JSON profile.
+- Inspect source coverage and check history, including incomplete checks and model cost.
+- Request a live check; automatic checks run daily at 7 a.m. America/Toronto.
+
+No repository provider is required. Profile entry is manual and free of model charges;
+the CLI additionally supports model-assisted plain-text extraction.
+
+This deployment is a **single-owner workspace**, protected by a high-entropy access key.
+It does not offer public account registration or multiple independent tenants.
+A running check may temporarily make the private API busy; the static sample remains
+available. Keep the access key private. Local access instructions are in the gitignored
+`data/WORKSPACE_ACCESS.md` file created at deployment.
 
 ## Architecture
 
@@ -121,7 +141,7 @@ source .venv/bin/activate
 
 builtwatch source list                      # exactly what is watched
 builtwatch system import examples/passports/inbox-triage.json
-builtwatch scan --mode replay               # reproducible, free, cited historical material
+builtwatch scan --mode replay               # reproducible historical retrieval; model calls are metered
 builtwatch finding list
 ```
 
@@ -129,20 +149,24 @@ builtwatch finding list
 
 ## Cost and abuse resistance
 
-BuiltWatch is designed to cost approximately nothing at rest and to be incapable of running up a surprise bill.
+BuiltWatch minimizes idle compute and avoids anonymous AI spending.
 
-- **Idle cost is zero.** Nothing polls or holds a connection. The scheduler invokes a function; between invocations, no compute exists.
-- **Layered ceilings** — per run, per day, per month — enforced by a Strands hook ([`BudgetGuard`](src/builtwatch/agent/guard.py)), not by prompt text. A ceiling a model can talk its way past is not a ceiling. Hitting one **aborts the run** rather than silently degrading it.
-- **Bounded before it is spent**: capped model iterations, capped tool calls, capped output tokens, and snapshots truncated before they ever reach a prompt.
-- **The cheap model does the volume.** Only plausible pairs reach the expensive one.
-- **Fetching is hostile to misuse**: HTTPS only, registry URLs only, resolved IPs must be public (blocks SSRF against cloud metadata and private ranges), cross-host redirects not followed, and response bodies size-capped *while streaming*.
-- **Public demo mode** (`BW_DEMO_MODE=1`) is read-only replay: no live fetching, no writes, no user-supplied sources.
+- The frontend is static. Lambda has no provisioned concurrency or always-on server.
+- Estimated model usage is checked before calls: $0.25/run, $0.50/day, $10/month
+  in the web deployment. An in-flight call can exceed a threshold before usage is known.
+- Acknowledged findings can surface again when their material evidence changes.
+- Completed assessments are cached by profile, source content, and live/replay mode.
+  New profiles, edited profiles, and interrupted pairs are still assessed.
+- Retrieval is bounded and limited to the committed source registry.
+- API reads and writes require the owner's key; public visitors use static sample data.
+- Private SQLite checkpoints are encrypted in S3, with one concurrent Lambda writer.
+  Storage, requests, bandwidth, and logs can still incur charges; no zero-cost guarantee.
 
 See [docs/COST_CONTROLS.md](docs/COST_CONTROLS.md) for the numbers and the AWS budget configuration.
 
 ## Security posture
 
-Retrieved content is treated as data at every layer: delimited and labelled untrusted in the prompt, handled by an agent with no outbound-capable tools, and validated structurally on the way out. Prompt-injection resistance here is an architectural property, not an instruction.
+Retrieved content is treated as data at every layer: delimited and labelled untrusted in the prompt, handled by an agent with no outbound-capable tools, and validated structurally on the way out. These controls reduce prompt-injection risk; they do not prove the model’s conclusions are correct.
 
 ## Development
 
@@ -155,7 +179,7 @@ Tests cover relevant, irrelevant, ambiguous, duplicate, stale, and failed-source
 
 ## Disclosure
 
-Built with the assistance of AI coding tools (Claude Code), as permitted by the hackathon rules. Third-party dependencies retain their own licenses; see [NOTICE](NOTICE).
+Built with the assistance of AI coding tools (Claude Code and OpenAI Codex), as permitted by the hackathon rules. Third-party dependencies retain their own licenses; see [NOTICE](NOTICE).
 
 ## License
 
