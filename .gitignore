@@ -19,3 +19,5 @@ data/
 
 # Live fetch cache (replay corpus IS committed, live cache is not)
 .cache/
+
+node_modules/

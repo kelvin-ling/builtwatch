@@ -37,9 +37,11 @@ export function createWorker(assets) {
     try {
       const upstream = await fetch(new URL(url.pathname, env.BW_API_URL), {method:request.method,
         headers:{'Content-Type':'application/json','x-bw-account':account,'x-bw-time':stamp,'x-bw-nonce':nonce,'x-bw-signature':signature},
-        ...(request.method === 'GET' ? {} : {body}),signal:AbortSignal.timeout(25000), redirect:'error'});
+        ...(request.method === 'GET' ? {} : {body}),signal:AbortSignal.timeout(25000), redirect:'manual'});
+      if (upstream.status >= 300 && upstream.status < 400) return json({error:'The workspace service returned an unexpected redirect.'},502);
       return new Response(await upstream.text(), {status:upstream.status,headers:{...security,'Content-Type':'application/json'}});
-    } catch {
+    } catch (error) {
+      console.error("workspace_proxy_failed", error.name, error.message);
       return json({error:'The workspace service is temporarily unavailable. Please try again.'},503);
     }
   }};
