@@ -1,3 +1,9 @@
+## Owner sign-in and inventory migration verified
+
+The user confirmed the fixed site opens their private workspace. While Sites remained owner-only, exactly one account had verified HMAC requests after the fixed deployment; this matched the user's real sign-in, with no competing automated identity requests in that interval. Copied the legacy owner data into that account: 1 system, 22 snapshots, 2 runs, 11 findings, 0 dispositions; assessment cache and cost ledger also retained. Read-back counts verified; model ledger total $0.1202207. Original S3 database remains untouched. The target partition has a `legacy-migration` marker.
+
+**Pending approvals:** public Site access (asked, no answer yet); disabling the legacy `builtwatch-workspace-daily` schedule (asked after verified migration, no answer yet). Automatic approval review rejected combining migration with retiring the legacy schedule, so the approved safer migration retained the old schedule. The new `builtwatch-accounts-daily` schedule is enabled. Do not silently disable the old one or change Site access. The code/account upgrade and real owner sign-in are working; broader-user acceptance remains pending wider access and a second account.
+
 ## Latest verification and connection fix
 
 The account site is deployed at the existing URL. The first account release failed at the gateway because the Sites Cloudflare runtime rejects fetch `redirect: "error"`. Fixed with `redirect: "manual"` and explicit rejection of 3xx responses; do not revert to `error` even if Node tests or current web docs accept it. `npm test` now includes an actual Miniflare runtime test. It requires local loopback-port permission in sandboxed environments.

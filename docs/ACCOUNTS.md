@@ -26,7 +26,7 @@ Each workspace supports 10 systems. Model thresholds: $0.25/run, $0.50/day, $2/m
 - DynamoDB point-in-time recovery retains seven days. Lambda logs retain seven days. Secrets live in Sites/Lambda runtime settings and ignored local operator files.
 - Daily jobs are queued asynchronously, with bounded worker concurrency and job age. Duplicate jobs do not re-run completed checks. Source failures and aborted assessments remain visible.
 - Website deployment does not widen the Sites access policy. Public access needs explicit authorization.
-- The legacy owner SQLite database remains preserved in private S3; migrating it requires the owner's verified new account identity. It must never be assigned to the first arbitrary visitor.
+- The owner inventory was copied to the uniquely verified owner account while Site access remained owner-only, and counts were verified. The original SQLite database remains preserved in private S3. The legacy daily schedule is retained pending approval to disable it; the new account schedule is already enabled.
 - This is an early production pilot, not an unrestricted commercial service: curated coverage, small allowances, no team sharing, no email notifications, no service-level commitment, and no independent penetration test.
 - Before a wider launch, verify sign-in with a second real ChatGPT account and conduct browser/mobile acceptance testing. Offline and HTTP tests do not establish those results.
 
