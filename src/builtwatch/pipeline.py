@@ -188,6 +188,14 @@ def run_scan(
         run.status = "aborted"
         run.abort_reason = str(exc)
         logger.error("scan aborted on budget: %s", exc)
+    except Exception as exc:
+        # Any unexpected failure must leave the run visibly aborted. A run stuck at
+        # "running" is indistinguishable from one still in flight, which is precisely
+        # the ambiguity this product exists to eliminate. The exception is recorded and
+        # re-raised context is preserved in the reason.
+        run.status = "aborted"
+        run.abort_reason = f"{type(exc).__name__}: {exc}"
+        logger.exception("scan aborted on unexpected error")
 
     run.input_tokens = meter.input_tokens
     run.output_tokens = meter.output_tokens

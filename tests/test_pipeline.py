@@ -235,3 +235,33 @@ def test_budget_abort_marks_run_aborted_not_clean(tmp_path, store, passport, mon
     assert result.run.status == "aborted"
     assert "daily ceiling" in result.run.abort_reason
     assert "aborted" in result.summary_line().lower()
+
+
+def test_unexpected_error_marks_run_aborted(tmp_path, store, passport, monkeypatch):
+    """A crash must leave the run visibly aborted, never stuck at 'running'.
+
+    A run left in 'running' is indistinguishable from one still in flight — the exact
+    ambiguity BuiltWatch exists to eliminate.
+    """
+    settings = _settings(
+        tmp_path,
+        {"sources": [GMAIL_SOURCE]},
+        {"gmail-sender-guidelines": {"content": SNAPSHOT_TEXT}},
+    )
+    store.upsert_system(passport)
+
+    def boom(*a, **k):
+        raise RuntimeError("Bedrock said no")
+
+    monkeypatch.setattr(pipeline, "screen", boom)
+
+    result = pipeline.run_scan(store, settings, mode="replay")
+
+    assert result.run.status == "aborted"
+    assert "RuntimeError" in result.run.abort_reason
+    assert "Bedrock said no" in result.run.abort_reason
+    assert result.run.finished_at is not None
+
+    # And it is persisted that way, so `builtwatch status` cannot show a phantom run.
+    reloaded = store.get_run(result.run.id)
+    assert reloaded.status == "aborted"
