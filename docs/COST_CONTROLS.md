@@ -56,6 +56,30 @@ the daily and monthly ceilings hold **across process restarts** — not just wit
 
 `builtwatch status` prints spend against ceilings.
 
+## Measured, not estimated
+
+First full run against real models — 3 systems x 11 sources, all sources changed (a
+worst case: every source is new on a first run), Nova Lite screening and Nova Pro
+assessing:
+
+```
+11 source(s) checked, 11 changed, 0 failed
+29 findings across 3 systems
+297,283 input tokens / 20,287 output tokens
+$0.2539 total, 4 minutes wall clock
+```
+
+That is the pathological case. A steady-state night changes 0-2 sources, so Layer 0
+eliminates almost all of it before a single token is spent. Measured, on an immediate
+re-run with nothing changed:
+
+```
+0 new finding(s)
+Estimated cost $0.0000 (0 in / 0 out)
+```
+
+Not "cheap" — actually zero. No source changed, so no model was invoked at all.
+
 ## Realistic monthly cost
 
 Nightly scan, 12 systems, 11 sources:
