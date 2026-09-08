@@ -79,7 +79,10 @@ Real model calls cost money and the account is capped at $20/month.
 - Scope experiments: `BW_MAX_SOURCES=2 builtwatch scan --system inbox-triage`
 - `builtwatch status` shows spend against ceilings.
 
-## Current state
+## Picking this up cold?
 
-See [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSION_CHECKLIST.md) for what is done and what
-is outstanding, including the open blockers.
+**Start with [docs/HANDOFF.md](docs/HANDOFF.md).** It carries the AWS access setup, the
+model configuration (Anthropic is not entitled on this account — use Nova), exact
+reproduction commands, current state, and the traps that have already cost time.
+
+Then [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSION_CHECKLIST.md) for what is outstanding.

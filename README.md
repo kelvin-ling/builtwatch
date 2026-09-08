@@ -102,9 +102,16 @@ builtwatch finding dismiss find_a1b2c3 --reason "We removed that dependency in M
 
 A saved artifact, carrying its own evidence, that a person can read or a coding agent can act on.
 
+## Interface
+
+BuiltWatch is a **command-line tool**. There is no web UI. Everything the product does —
+intake, scanning, review, disposition, export — is reachable from `builtwatch`, and the
+local mode needs no AWS deployment at all.
+
 ## Architecture
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full diagram and the deployed AWS topology.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full diagram and the deployed AWS
+topology. Continuing this work? Start at [docs/HANDOFF.md](docs/HANDOFF.md).
 
 ## Quick start
 
