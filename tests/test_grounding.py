@@ -85,6 +85,7 @@ def test_real_quote_survives_conversion(passport, snapshot):
         adoption_status="adopted",
         evidence=[DraftEvidence(snapshot_id=snapshot.id, passage=SNAPSHOT_TEXT[:120])],
         system_facts=[DraftSystemFact(key="services[0]", value="Gmail API")],
+        facts=["Bulk senders must authenticate outgoing mail with SPF and DKIM."],
     )
     ctx = InvestigationContext(passport=passport, snapshots={}, sources={})
     finding, problems = _to_finding(draft, passport, {snapshot.id: snapshot}, "run_x", ctx)
@@ -92,3 +93,24 @@ def test_real_quote_survives_conversion(passport, snapshot):
     assert problems == []
     assert finding.relevance is Relevance.RELEVANT
     assert finding.evidence[0].passage == SNAPSHOT_TEXT[:120]
+
+
+def test_relevant_without_a_stated_fact_is_rejected(passport, snapshot):
+    """Reasoning alone is not grounds to interrupt someone.
+
+    Nova Pro reliably filled `inferences` while leaving `facts` empty, producing findings
+    whose entire basis was the model's own reasoning. A relevance claim must rest on
+    something the source actually states.
+    """
+    finding = make_finding(passport, snapshot)
+    finding.facts = []
+    problems = finding.validate_grounding(passport)
+    assert any("states no fact from the source" in p for p in problems)
+
+
+def test_facts_not_required_for_not_relevant(passport, snapshot):
+    from builtwatch.models import Relevance
+
+    finding = make_finding(passport, snapshot, relevance=Relevance.NOT_RELEVANT)
+    finding.facts = []
+    assert finding.validate_grounding(passport) == []

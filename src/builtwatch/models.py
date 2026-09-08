@@ -319,6 +319,10 @@ class Finding(BaseModel):
                 problems.append("relevant finding has no evidence passage")
             if not self.system_facts:
                 problems.append("relevant finding cites no system fact")
+            if not self.facts:
+                # Without a stated fact there is nothing the source actually says — only
+                # the model's own reasoning, which is not grounds to interrupt someone.
+                problems.append("relevant finding states no fact from the source")
         index = passport.fact_index()
         for ref in self.system_facts:
             if ref.key not in index:
