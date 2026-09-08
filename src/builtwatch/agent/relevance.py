@@ -100,6 +100,7 @@ def screen(
         system_prompt=SCREEN_SYSTEM_PROMPT,
         hooks=[guard],
         callback_handler=None,
+        structured_output_model=ScreenVerdict,
     )
     excerpt = snapshot.content[:3000]
     prompt = (
@@ -114,7 +115,16 @@ def screen(
         f"<evidence snapshot_id=\"{snapshot.id}\">\n{excerpt}\n</evidence>\n\n"
         f"Could this development plausibly affect this system?"
     )
-    return agent.structured_output(ScreenVerdict, prompt)
+    try:
+        result = agent(prompt)
+    finally:
+        # Charge whatever was consumed even if the call raised part-way through.
+        guard.reconcile(agent)
+    verdict = result.structured_output
+    if verdict is None:
+        # A model that failed to produce the schema must not silently drop the pair.
+        return ScreenVerdict(plausible="possible", reason="screening produced no verdict")
+    return verdict
 
 
 def assess(
@@ -146,6 +156,7 @@ def assess(
         tools=build_tools(ctx),
         hooks=[guard],
         callback_handler=None,
+        structured_output_model=FindingDraft,
     )
 
     listing = "\n".join(
@@ -161,14 +172,26 @@ def assess(
     )
 
     try:
-        result = agent.structured_output(FindingDraft, prompt)
+        result = agent(prompt)
     except BudgetExceeded:
+        guard.reconcile(agent)
         raise
     except Exception as exc:
+        guard.reconcile(agent)
         logger.warning("assessment failed for %s: %s", passport.id, exc)
         return None, [f"assessment error: {type(exc).__name__}: {exc}"]
+    else:
+        guard.reconcile(agent)
 
-    return _to_finding(result, passport, snapshots, scan_run_id, ctx)
+    draft = result.structured_output
+    if draft is None:
+        return None, ["assessment produced no structured finding"]
+    if not ctx.reads:
+        # The agent answered without opening a single document. Whatever it produced is
+        # not grounded in evidence, by definition.
+        return None, ["assessment answered without reading any evidence"]
+
+    return _to_finding(draft, passport, snapshots, scan_run_id, ctx)
 
 
 def _to_finding(

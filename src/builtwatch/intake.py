@@ -83,11 +83,18 @@ def from_text(
         system_prompt=EXTRACTION_PROMPT,
         hooks=[guard],
         callback_handler=None,
+        structured_output_model=ExtractedPassport,
     )
-    extracted = agent.structured_output(
-        ExtractedPassport,
-        f"Structure this system description:\n\n<description>\n{description}\n</description>",
-    )
+    try:
+        result = agent(
+            "Structure this system description:\n\n"
+            f"<description>\n{description}\n</description>"
+        )
+    finally:
+        guard.reconcile(agent)
+    extracted = result.structured_output
+    if extracted is None:
+        raise ValueError("extraction produced no structured passport")
 
     passport = SystemPassport(
         id=system_id or _slugify(extracted.name),
