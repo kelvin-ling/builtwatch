@@ -1,0 +1,42 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createHmac,createHash} from 'node:crypto';
+import {createWorker} from '../server/worker.mjs';
+const worker=createWorker({'/index.html':{content:'BuiltWatch',type:'text/html'}});
+const origin='https://builtwatch.example';
+const env={BW_API_URL:'https://backend.example/',BW_PROXY_SECRET:'secret-for-tests'};
+test('anonymous visitors see sample but cannot read or mutate workspaces',async()=>{
+  assert.equal((await worker.fetch(new Request(origin),env)).status,200);
+  assert.equal((await worker.fetch(new Request(origin+'/api/workspace'),env)).status,401);
+  const session=await (await worker.fetch(new Request(origin+'/api/session'),env)).json();
+  assert.equal(session.signed_in,false);
+});
+test('cross-origin writes are rejected even for a signed-in user',async()=>{
+  const r=await worker.fetch(new Request(origin+'/api/systems',{method:'POST',headers:{'oai-authenticated-user-id':'alice','Origin':'https://evil.example','X-BuiltWatch-Request':'1'},body:'{}'}),env);
+  assert.equal(r.status,403);
+});
+test('proxy signs server-derived identity and ignores client account and authorization headers',async()=>{
+  const original=globalThis.fetch;
+  try {
+    globalThis.fetch=async(url,opts)=>{
+      const h=opts.headers;
+      assert.equal(h['x-bw-account'],createHash('sha256').update('alice').digest('hex'));
+      assert.equal(h.authorization,undefined);
+      const message=['POST','/api/systems',h['x-bw-account'],h['x-bw-time'],h['x-bw-nonce'],createHash('sha256').update('{}').digest('hex')].join('\n');
+      assert.equal(h['x-bw-signature'],createHmac('sha256',env.BW_PROXY_SECRET).update(message).digest('hex'));
+      return new Response('{"saved":true}');
+    };
+    const r=await worker.fetch(new Request(origin+'/api/systems',{method:'POST',headers:{'oai-authenticated-user-id':'alice','x-bw-account':'bob','Authorization':'Bearer client','Origin':origin,'X-BuiltWatch-Request':'1'},body:'{}'}),env);
+    assert.equal(r.status,200);
+    assert.equal(r.headers.get('Cache-Control'),'no-store');
+  } finally {globalThis.fetch=original;}
+});
+test('backend failure is visible and secrets are never returned',async()=>{
+  const original=globalThis.fetch;
+  try{
+    globalThis.fetch=async()=>{throw Error('secret upstream failure');};
+    const r=await worker.fetch(new Request(origin+'/api/workspace',{headers:{'oai-authenticated-user-id':'alice'}}),env);
+    assert.equal(r.status,503);
+    assert.ok(!(await r.text()).includes('secret'));
+  }finally{globalThis.fetch=original;}
+});

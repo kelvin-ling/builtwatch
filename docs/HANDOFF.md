@@ -1,3 +1,15 @@
+# Separate-account upgrade — 8 September 2026
+
+Current work replaces the shared-key web workspace with Sites ChatGPT sign-in and account-partitioned DynamoDB. See [ACCOUNTS.md](ACCOUNTS.md) for user steps, security boundaries, deployment and limitations. The previous owner database remains in S3. The site access policy is still owner-only unless explicitly changed after user approval.
+
+New code: `server/worker.mjs`, `builtwatch/accounts.py`, `builtwatch/dynamo_store.py`, `infra/accounts_runner.py`, `infra/deploy_accounts.py`. Runtime settings: Sites `BW_API_URL` and secret `BW_PROXY_SECRET`. New AWS resources: `builtwatch-accounts`, `builtwatch-accounts-api`, `builtwatch-accounts-worker`, `builtwatch-accounts-daily`.
+
+Validation: 81 offline Python tests cover both SQLite and DynamoDB implementations; four Worker boundary tests cover anonymous access, CSRF, server-derived account signatures and upstream failures. Browser UI/sign-in with a second real account has not been tested.
+
+---
+
+Earlier release notes follow (historical, not the current account architecture).
+
 # Current web release — 8 September 2026
 
 The previous CLI-only handoff below is retained as historical context. Its "not done"

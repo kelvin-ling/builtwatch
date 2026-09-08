@@ -29,11 +29,31 @@ SNAPSHOT_TEXT = (
 )
 
 
-@pytest.fixture
-def store(tmp_path) -> Store:
-    s = Store(tmp_path / "test.db")
-    yield s
-    s.close()
+@pytest.fixture(params=["sqlite", "dynamo"])
+def store(tmp_path, request):
+    if request.param == "sqlite":
+        s = Store(tmp_path / "test.db")
+        yield s
+        s.close()
+    else:
+        import boto3
+        from moto import mock_aws
+
+        from builtwatch.dynamo_store import DynamoStore, tenant_id
+
+        with mock_aws():
+            table = boto3.resource("dynamodb", region_name="us-east-1").create_table(
+                TableName="pipeline-test",
+                BillingMode="PAY_PER_REQUEST",
+                KeySchema=[
+                    {"AttributeName": "pk", "KeyType": "HASH"},
+                    {"AttributeName": "sk", "KeyType": "RANGE"},
+                ],
+                AttributeDefinitions=[
+                    {"AttributeName": x, "AttributeType": "S"} for x in ["pk", "sk"]
+                ],
+            )
+            yield DynamoStore(table, tenant_id("pipeline-test-user"))
 
 
 @pytest.fixture

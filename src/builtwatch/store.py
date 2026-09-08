@@ -135,6 +135,15 @@ class Store:
                           (key, datetime.now(timezone.utc).isoformat()))
         self.conn.commit()
 
+    def reserve_scan(self, now: float, cooldown: int) -> bool:
+        self.conn.execute("CREATE TABLE IF NOT EXISTS web_meta (key TEXT PRIMARY KEY, value TEXT)")
+        row = self.conn.execute("SELECT value FROM web_meta WHERE key='last_scan'").fetchone()
+        if row and now - float(row[0]) < cooldown:
+            return False
+        self.conn.execute("INSERT OR REPLACE INTO web_meta VALUES ('last_scan',?)", (str(now),))
+        self.conn.commit()
+        return True
+
     # -- systems -----------------------------------------------------------------
 
     def upsert_system(self, passport: SystemPassport) -> None:

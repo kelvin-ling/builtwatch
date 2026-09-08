@@ -63,10 +63,12 @@ def response(status: int, body: Any) -> dict:
     }
 
 
-def dispatch(event: dict, store: Store, settings: Settings, enqueue) -> dict:
+def dispatch(
+    event: dict, store: Store, settings: Settings, enqueue, *, verified: bool = False
+) -> dict:
     method = event.get("requestContext", {}).get("http", {}).get("method", "GET")
     path = event.get("rawPath", "/")
-    if not authorized(event):
+    if not verified and not authorized(event):
         return response(401, {"error": "Connect with your workspace access key."})
     try:
         raw = event.get("body") or "{}"
@@ -104,22 +106,17 @@ def dispatch(event: dict, store: Store, settings: Settings, enqueue) -> dict:
         if path == "/api/scan" and method == "POST":
             if not store.list_systems():
                 return response(409, {"error": "Add a system before checking sources."})
-            # Persist the reservation before enqueueing; accidental double-clicks cost nothing.
-            store.conn.execute(
-                "CREATE TABLE IF NOT EXISTS web_meta (key TEXT PRIMARY KEY, value TEXT)"
-            )
-            row = store.conn.execute("SELECT value FROM web_meta WHERE key='last_scan'").fetchone()
+            if store.spent_this_month() >= settings.limits.max_cost_per_month_usd:
+                return response(429, {"error": "Monthly model allowance reached."})
+            if store.spent_today() >= settings.limits.max_cost_per_day_usd:
+                return response(
+                    429, {"error": "Daily model allowance reached. Try again tomorrow."}
+                )
             now = datetime.now(timezone.utc).timestamp()
-            if row and now - float(row[0]) < SCAN_COOLDOWN_SECONDS:
+            if not store.reserve_scan(now, SCAN_COOLDOWN_SECONDS):
                 return response(
                     429, {"error": "A check was requested recently. Try again in 30 minutes."}
                 )
-            if store.spent_this_month() >= settings.limits.max_cost_per_month_usd:
-                return response(429, {"error": "Monthly model budget reached."})
-            store.conn.execute(
-                "INSERT OR REPLACE INTO web_meta VALUES ('last_scan',?)", (str(now),)
-            )
-            store.conn.commit()
             enqueue()
             return response(202, {"queued": True})
         return response(404, {"error": "Route not found"})
