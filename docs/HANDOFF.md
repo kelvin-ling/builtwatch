@@ -1,3 +1,7 @@
+## Legacy schedule retired with user approval
+
+The user explicitly approved turning off the old schedule. AWS read-back verified `builtwatch-workspace-daily` DISABLED and `builtwatch-accounts-daily` ENABLED. Original S3 data is preserved. Only public Site access remains pending approval; subsequent historical notes describing both schedules as active are superseded.
+
 ## Owner sign-in and inventory migration verified
 
 The user confirmed the fixed site opens their private workspace. While Sites remained owner-only, exactly one account had verified HMAC requests after the fixed deployment; this matched the user's real sign-in, with no competing automated identity requests in that interval. Copied the legacy owner data into that account: 1 system, 22 snapshots, 2 runs, 11 findings, 0 dispositions; assessment cache and cost ledger also retained. Read-back counts verified; model ledger total $0.1202207. Original S3 database remains untouched. The target partition has a `legacy-migration` marker.
