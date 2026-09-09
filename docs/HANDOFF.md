@@ -1,3 +1,24 @@
+# Verified business-view release — 9 September 2026
+
+Public Sites version 8 deployed successfully at 13:16 UTC.
+Source: `c0d376c8893de52221d8bda3d74fa9fc43166325`.
+Version: `appgprj_6a9fa33453988191895d1c0403f10071~appgver_2375a419c1f88191b6d48658ad52beab`.
+Deployment: `appgdep_6aa15c41f2a0819182fcb5509bdfa1da`.
+
+Business (default), Operations and Technical are presentation views, not access roles.
+Account preferences persist in the tenant and merge without changing daily monitoring.
+Business context uses existing actions/assumptions/constraints/regions; no new mandatory
+profile fields. Intake and screening now include these conditions. FTC business-news
+summaries are the twelfth fixed source, within the existing twelve-source ceiling.
+A real safe fetch succeeded; a dated public replay is committed. No linked-article crawl.
+The existing historical demo remains historical and does not pretend to assess new news.
+All monthly cost guards remain unchanged. Switching views uses no model calls.
+
+99 Python and 15 Node/runtime tests pass. Live verification confirmed the Business
+default, saved Operations preference, unchanged paused-monitoring setting, rejection of
+an admin view value, owner isolation and twelve-source registry. Temporary test data was
+removed. Browser visual QA and a new paid model assessment were not performed.
+
 # Verified release — 9 September 2026
 
 Sites version 7 is public and succeeded at 2026-09-09 12:44 UTC.
