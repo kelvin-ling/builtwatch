@@ -271,6 +271,14 @@ class SystemFactRef(BaseModel):
     value: str
 
 
+class AppImpact(BaseModel):
+    """Reasoned consequence anchored to a cited, recorded app fact."""
+
+    fact_key: str = Field(description="Exact key of a system_fact cited in this finding.")
+    consequence: str = Field(min_length=20, max_length=600)
+    review_question: str = Field(min_length=10, max_length=400)
+
+
 class Finding(BaseModel):
     id: str
     scan_run_id: str
@@ -291,6 +299,7 @@ class Finding(BaseModel):
     unknowns: list[str] = Field(default_factory=list, description="Could not be determined.")
     review_suggestions: list[str] = Field(default_factory=list)
 
+    app_impact: AppImpact | None = None
     validation_issues: list[str] = Field(default_factory=list)
     adoption_status: AdoptionStatus = AdoptionStatus.UNKNOWN
     created_at: datetime = Field(default_factory=utcnow)
@@ -327,6 +336,8 @@ class Finding(BaseModel):
                 # Without a stated fact there is nothing the source actually says — only
                 # the model's own reasoning, which is not grounds to interrupt someone.
                 problems.append("relevant finding states no fact from the source")
+        if self.app_impact and self.app_impact.fact_key not in {r.key for r in self.system_facts}:
+            problems.append("app impact is not anchored to a cited system fact")
         index = passport.fact_index()
         for ref in self.system_facts:
             if ref.key not in index:

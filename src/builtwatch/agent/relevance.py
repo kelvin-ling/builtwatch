@@ -24,6 +24,7 @@ from strands.models import BedrockModel
 from ..config import BudgetExceeded, CostMeter, Settings
 from ..models import (
     AdoptionStatus,
+    AppImpact,
     Evidence,
     Finding,
     Relevance,
@@ -82,6 +83,13 @@ class FindingDraft(BaseModel):
     inferences: list[str] = Field(default_factory=list, description="Your reasoning.")
     unknowns: list[str] = Field(default_factory=list, description="Not determinable.")
     review_suggestions: list[str] = Field(default_factory=list)
+    app_impact: AppImpact | None = Field(
+        default=None,
+        description=(
+            "Required for relevant findings: cite a system_fact key; explain the specific "
+            "possible consequence for THIS app and a concrete question its owner should review."
+        ),
+    )
 
 
 def _bedrock(settings: Settings, model_id: str) -> BedrockModel:
@@ -273,10 +281,13 @@ def _to_finding(
         inferences=draft.inferences,
         unknowns=draft.unknowns,
         review_suggestions=draft.review_suggestions,
+        app_impact=draft.app_impact,
         adoption_status=AdoptionStatus(draft.adoption_status),
     )
 
     problems.extend(finding.validate_grounding(passport))
+    if draft.relevance == "relevant" and draft.app_impact is None:
+        problems.append("relevant assessment did not explain its app-specific impact")
 
     from ..quality import dependency_mismatch
 
@@ -286,6 +297,7 @@ def _to_finding(
         finding.relevance = Relevance.NOT_RELEVANT
         finding.inferences = ["The affected product is not a recorded dependency of this system."]
         finding.unknowns = []
+        finding.app_impact = None
         finding.review_suggestions = []
     finding.validation_issues = problems
     if problems and finding.relevance is Relevance.RELEVANT:

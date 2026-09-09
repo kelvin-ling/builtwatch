@@ -71,6 +71,17 @@ Hard rules:
   A generic purpose such as monitoring security is not an affected dependency. A vendor
   may offer many unrelated products. Do not ask whether an unmentioned Windows, Cisco,
   or other product is used just because its vulnerability appears in a catalog.
+* APP-SPECIFIC EXPLANATION. For every relevant verdict, populate app_impact.
+  Its fact_key MUST identify a system_fact you cite. Prefer the affected action,
+  assumption or constraint to a generic vendor name. In consequence, name this app
+  and explain what part of its work might stop working, produce a wrong result, exceed
+  a boundary, or need human review because of the cited development. State the causal
+  connection, not "this could affect the app" or a repeated news headline. Qualify
+  uncertainty. Never invent losses, missing dependencies or a legal conclusion.
+  review_question must be a specific question the owner or builder can investigate
+  about that behavior. A link to documentation alone is not a review question.
+  If you cannot support a connection, use not_relevant or insufficient_information;
+  do not fabricate an impact to fill the schema.
 * BUSINESS CONTEXT. An automation depends on real-world conditions as well as software.
   Check recorded actions, assumptions and constraints: customer communications, consent,
   advertised claims, eligibility, prices, delivery promises and human review boundaries.

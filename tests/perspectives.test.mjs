@@ -22,3 +22,16 @@ test('business context uses recorded facts and never invents a condition',()=>{
  assert.deepEqual(result.assumptions,['Price list is current']);
  assert.deepEqual(result.limits,['A person approves quotes']);
 });
+
+test('impact brief connects the correct app fact and flags a changed assumption',()=>{
+ const app={id:'quotes',name:'Quote helper',purpose:'Draft customer quotes',assumptions:['The price list is current'],services:['Sheets']};
+ const finding={system_id:'quotes',relevance:'relevant',title:'Price change',facts:['Supplier prices changed'],system_facts:[{key:'services[0]',value:'Sheets'},{key:'assumptions[0]',value:'The price list is current'}],inferences:['Quotes may use old prices'],review_suggestions:['Check the price list'],app_impact:{fact_key:'assumptions[0]',consequence:'Quote helper may draft outdated prices.',review_question:'Has the current price list been approved?'}};
+ const b=p.brief(finding,app);assert.equal(b.app,'Quote helper');assert.equal(b.connection,'The price list is current');assert.equal(b.consequence,'Quote helper may draft outdated prices.');assert.equal(b.stale,false);
+ const changed=p.brief(finding,{...app,assumptions:['Prices are entered by a person']});assert.equal(changed.stale,true);assert.match(changed.consequence,/profile changed/);
+ const legacy=p.brief({...finding,app_impact:null},app);assert.equal(legacy.connection,'The price list is current');assert.equal(legacy.consequence,'Quotes may use old prices');
+ const unrelated={id:'other',name:'Other app',purpose:'Read news'};assert.equal(p.brief(finding,unrelated).anchored,false);
+});
+test('grouping keeps findings attached to their own apps',()=>{
+ const groups=p.grouped([{id:'one',system_id:'a'},{id:'two',system_id:'b'},{id:'three',system_id:'a'}],[{id:'a',name:'App A'},{id:'b',name:'App B'}]);
+ assert.deepEqual(groups.map(g=>[g.system.name,g.findings.map(x=>x.id)]),[['App A',['one','three']],['App B',['two']]]);
+});

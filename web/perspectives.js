@@ -10,5 +10,24 @@
  function ordered(items,sources,lens){const order=views[normalize(lens)].order;const categories=new Map(sources.map(x=>[x.id,x.category]));return [...items].sort((a,b)=>{const rank=x=>{const index=order.indexOf(categories.get(x.source_id));return index<0?99:index;};return rank(a)-rank(b);});}
  function topic(f,sources){return topics[sources.find(x=>x.id===f.source_id)?.category]||'Other developments';}
  function context(system){return {actions:(system.consequential_actions||[]).map(x=>x.description),assumptions:system.assumptions||[],limits:system.constraints||[],regions:system.jurisdictions||[]};}
- root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context};
+
+ function factIndex(system){const out={purpose:system?.purpose};for(const key of ['technologies','services','data_categories','assumptions','constraints','jurisdictions'])for(const [i,value] of (system?.[key]||[]).entries())out[`${key}[${i}]`]=value;for(const [i,value] of (system?.consequential_actions||[]).entries())out[`consequential_actions[${i}]`]=value.description;return out;}
+ function brief(f,system){
+  const norm=x=>String(x??'').trim().replace(/\s+/g,' ').toLowerCase(),index=factIndex(system);
+  const refs=f.system_facts||[],valid=refs.filter(x=>Object.hasOwn(index,x.key)&&norm(index[x.key])===norm(x.value));
+  const preferred=['consequential_actions','assumptions','constraints','services','data_categories','jurisdictions','technologies','purpose'];
+  const rank=x=>{const n=preferred.indexOf(x.key.split('[')[0]);return n<0?99:n;};
+  const ref=valid.find(x=>x.key===f.app_impact?.fact_key)||[...valid].sort((a,b)=>rank(a)-rank(b))[0];
+  const stale=refs.some(x=>!valid.includes(x));
+  const fieldLabels={purpose:'Purpose',consequential_actions:'Action',assumptions:'Assumption',constraints:'Boundary',services:'Service',data_categories:'Data',jurisdictions:'Region',technologies:'Technology'};
+  return {app:system?.name||f.system_id,purpose:system?.purpose||'Purpose not recorded',
+   connection:ref?ref.value:'No matching recorded detail establishes the connection yet.',
+   connectionLabel:ref?fieldLabels[ref.key.split('[')[0]]||'Recorded detail':'Connection not established',
+   change:f.facts?.[0]||f.title,
+   consequence:stale?'The app profile changed after this assessment. Recheck the connection before acting.':f.relevance==='not_relevant'?(f.inferences?.[0]||'No applicable connection was established.'):f.relevance==='insufficient_information'?(f.unknowns?.[0]||'The effect on this app is not established.'):(f.app_impact?.consequence||f.inferences?.[0]||'A specific consequence was not established in this assessment.'),
+   review:stale?'Does the finding still apply to the app’s current behavior?':f.relevance==='not_relevant'?'No action requested for this assessment.':f.app_impact?.review_question||f.review_suggestions?.[0]||'Which recorded activity or condition would make this development apply?',
+   stale,anchored:!!ref,structured:!!f.app_impact};
+ }
+ function grouped(items,systems){const groups=new Map();for(const f of items){if(!groups.has(f.system_id))groups.set(f.system_id,{system:systems.find(x=>x.id===f.system_id)||{id:f.system_id,name:f.system_id,purpose:'App profile unavailable'},findings:[]});groups.get(f.system_id).findings.push(f);}return [...groups.values()];}
+ root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context,brief,grouped};
 })(typeof window!=='undefined'?window:globalThis);

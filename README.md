@@ -225,3 +225,16 @@ must connect a source development to a specific recorded fact; it may not invent
 commercial impact. Live coverage is 12 curated sources, now including the US FTC
 Business Blog summaries. This is bounded source monitoring, not an all-news service.
 The existing monthly spending controls remain unchanged.
+
+### App-specific review briefs
+
+Review items lead with the affected app and show the cited app detail, source development,
+possible consequence and concrete review question. Results are grouped by app. Older
+findings use their existing recorded facts and reasoning, without paid rewriting. If
+those facts no longer match the app profile, the brief flags that the connection needs
+rechecking. New relevant assessments must include an app-impact explanation anchored to
+a cited fact; unsupported explanations are withheld. Consequences remain reasoning to
+verify, not guarantees of impact.
+
+The current hosting is AWS application services plus a Sites/Cloudflare website and
+gateway. A custom domain can attach to the same Site; see [cutover steps](docs/CUSTOM_DOMAIN.md).

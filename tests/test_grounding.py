@@ -86,6 +86,11 @@ def test_real_quote_survives_conversion(passport, snapshot):
         evidence=[DraftEvidence(snapshot_id=snapshot.id, passage=SNAPSHOT_TEXT[:120])],
         system_facts=[DraftSystemFact(key="services[0]", value="Gmail API")],
         facts=["Bulk senders must authenticate outgoing mail with SPF and DKIM."],
+        app_impact={
+            "fact_key": "services[0]",
+            "consequence": "Gmail may reject this workflow's mail if sender rules are unmet.",
+            "review_question": "Does this workflow meet the applicable sender rules?",
+        },
     )
     ctx = InvestigationContext(passport=passport, snapshots={}, sources={})
     finding, problems = _to_finding(draft, passport, {snapshot.id: snapshot}, "run_x", ctx)
@@ -130,6 +135,11 @@ def test_passage_selection_copies_exact_source(passport, snapshot):
         evidence=[DraftEvidence(passage_id=passage_id)],
         system_facts=[DraftSystemFact(key="services[0]", value="Gmail API")],
         facts=["Authentication is required."],
+        app_impact={
+            "fact_key": "services[0]",
+            "consequence": "Gmail may reject this workflow's mail if sender rules are unmet.",
+            "review_question": "Does this workflow meet the applicable sender rules?",
+        },
     )
     finding, problems = _to_finding(draft, passport, ctx.snapshots, "run_x", ctx)
     assert not problems
@@ -188,3 +198,41 @@ def test_screening_receives_business_conditions_without_a_technology_stack(
     assert verdict.plausible == "possible"
     for fact in [*passport.assumptions, *passport.constraints, "Draft quotes for customers"]:
         assert fact in prompts[0]
+
+
+def test_impact_must_reference_a_cited_app_fact(passport, snapshot):
+    from builtwatch.models import AppImpact
+
+    finding = make_finding(passport, snapshot)
+    finding.app_impact = AppImpact(
+        fact_key="assumptions[99]",
+        consequence="This workflow may send messages to the wrong audience.",
+        review_question="Is the audience correctly recorded?",
+    )
+    assert "app impact is not anchored to a cited system fact" in finding.validate_grounding(
+        passport
+    )
+
+
+def test_new_relevant_assessment_without_app_impact_is_withheld(passport, snapshot):
+    from builtwatch.agent.relevance import FindingDraft, _to_finding
+    from builtwatch.agent.tools import InvestigationContext
+
+    draft = FindingDraft(
+        relevance="relevant",
+        title="Sender requirements",
+        development_key="sender-rules",
+        evidence=[{"snapshot_id": snapshot.id, "passage": SNAPSHOT_TEXT}],
+        system_facts=[{"key": "services[0]", "value": "Gmail API"}],
+        facts=["Bulk senders must authenticate outgoing mail."],
+    )
+    finding, problems = _to_finding(
+        draft,
+        passport,
+        {snapshot.id: snapshot},
+        "run_x",
+        InvestigationContext(passport, {snapshot.id: snapshot}, {}),
+    )
+    assert finding.relevance is Relevance.INSUFFICIENT_INFORMATION
+    assert any("app-specific impact" in x for x in problems)
+    assert finding.validation_issues
