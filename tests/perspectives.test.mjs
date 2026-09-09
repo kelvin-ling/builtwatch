@@ -70,3 +70,12 @@ test('diagnosis assigns a plain-language owner and action to every result type',
  assert.equal(p.diagnosis(clear,app).owner,'No action');
  assert.match(p.diagnosis(clear,app).action,/nothing needs fixing/i);
 });
+
+test('only results that need user action enter the attention list',()=>{
+ const app={id:'mail',name:'Mailer',purpose:'Sends mail'};
+ assert.equal(p.requiresAttention({relevance:'relevant',disposition:'open',system_facts:[]},app),true);
+ assert.equal(p.requiresAttention({relevance:'insufficient_information',disposition:'open',unknowns:['Whether recipients opted in'],system_facts:[]},app),true);
+ assert.equal(p.requiresAttention({relevance:'insufficient_information',disposition:'open',unknowns:['Downgraded automatically: not grounded'],system_facts:[]},app),false);
+ assert.equal(p.requiresAttention({relevance:'not_relevant',disposition:'open',system_facts:[]},app),false);
+ assert.equal(p.requiresAttention({relevance:'relevant',disposition:'acknowledged',system_facts:[]},app),false);
+});

@@ -43,6 +43,11 @@
   if(f.relevance==='not_relevant')return {status:'No app change needed',problemLabel:'Why it does not apply',problem:b.consequence,actionLabel:'What to do next',action:'Nothing needs fixing for this item. Revisit it only if the app or its dependencies change.',owner:'No action'};
   return {status:'Review this app',problemLabel:'Possible problem',problem:b.consequence,actionLabel:'What to do next',action:b.review,owner:'You'};
  }
+ function requiresAttention(f,system){
+  if((f.disposition||'open')!=='open')return false;
+  if(f.relevance==='relevant')return true;
+  return f.relevance==='insufficient_information'&&diagnosis(f,system).owner!=='BuiltWatch';
+ }
  function automation(system,finding){
   const first=(items,fallback)=>items?.[0]||fallback;
   const map={
@@ -56,5 +61,5 @@
   return {...map,event:{change:b.change,connection:b.connection,review:b.review,stale:b.stale},anchor:anchors[b.connectionLabel]||'condition'};
  }
  function grouped(items,systems){const groups=new Map();for(const f of items){if(!groups.has(f.system_id))groups.set(f.system_id,{system:systems.find(x=>x.id===f.system_id)||{id:f.system_id,name:f.system_id,purpose:'App profile unavailable'},findings:[]});groups.get(f.system_id).findings.push(f);}return [...groups.values()];}
- root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context,brief,diagnosis,automation,grouped};
+ root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context,brief,diagnosis,requiresAttention,automation,grouped};
 })(typeof window!=='undefined'?window:globalThis);
