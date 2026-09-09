@@ -107,6 +107,7 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
         if path == "/api/workspace" and result["statusCode"] == HTTPStatus.OK:
             data = json.loads(result["body"])
             data["job"] = store.job()
+            data["draft"] = store.get("intake-draft")
             data["account"] = {
                 "automatic_checks": (store.get("preferences") or {}).get("automatic_checks", True)
             }
@@ -124,8 +125,25 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
             },
         )
     try:
+        body = {}
+        if path in {"/api/intake", "/api/preferences"} and method == "POST":
+            try:
+                raw = event.get("body") or "{}"
+                if event.get("isBase64Encoded"):
+                    raw = base64.b64decode(raw, validate=True).decode()
+                body = json.loads(raw)
+                if not isinstance(body, dict):
+                    raise ValueError("Expected an object")
+            except (ValueError, TypeError, UnicodeDecodeError):
+                return response(400, {"error": "Please send a valid JSON object."})
+        if path == "/api/intake" and method == "POST":
+            from .web_intake import queue_intake
+
+            return queue_intake(store, settings, body, invoke)
+        if path == "/api/intake" and method == "DELETE":
+            store.delete("intake-draft")
+            return response(200, {"deleted": True})
         if path == "/api/preferences" and method == "POST":
-            body = json.loads(event.get("body") or "{}")
             enabled = body.get("automatic_checks")
             if not isinstance(enabled, bool):
                 return response(400, {"error": "Choose whether automatic checks are enabled."})

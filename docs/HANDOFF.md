@@ -1,3 +1,11 @@
+## Agent-led intake and protected public pilot — release verification
+
+The user approved public deployment, the scoped IAM gateway identity, and continuing without repeated permission questions. Older pending-approval notes below are historical and superseded.
+
+Implemented: description/README/builder-summary intake using Strands Nova Lite, review before saving, summary-based updates, copyable builder-agent findings, 25-workspace admission, five drafts/day, shared request counters, and AWS SigV4 gateway authentication. AWS remains the main application platform; Sites supplies the UI and ChatGPT sign-in. See PUBLIC_LAUNCH.md and ACCOUNTS.md.
+
+88 Python and seven Node/runtime tests passed. Scoped gateway credentials were provisioned and stored as Sites secrets. A real gateway request to AWS succeeded. A live intake test exposed an omitted named service; extraction schema descriptions were strengthened and are being verified before release. The original owner enrollment is preserved. Final release work: finish live extraction check, publish the new UI and D1 migration privately, enable IAM-only URLs, verify, then apply already-authorized public access. Do not claim that these final steps are done until verified.
+
 ## Legacy schedule retired with user approval
 
 The user explicitly approved turning off the old schedule. AWS read-back verified `builtwatch-workspace-daily` DISABLED and `builtwatch-accounts-daily` ENABLED. Original S3 data is preserved. Only public Site access remains pending approval; subsequent historical notes describing both schedules as active are superseded.

@@ -51,12 +51,27 @@ class ExtractedAction(BaseModel):
 class ExtractedPassport(BaseModel):
     name: str = Field(max_length=120)
     purpose: str = Field(max_length=600)
-    technologies: list[str] = Field(default_factory=list)
-    services: list[str] = Field(default_factory=list)
+    technologies: list[str] = Field(
+        default_factory=list, description="Explicitly named languages, frameworks and runtimes."
+    )
+    services: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Every explicitly named external vendor, platform or API dependency, "
+            "including those mentioned in the purpose or actions. "
+            "Do not omit a named API just because it also appears in purpose."
+        ),
+    )
     consequential_actions: list[ExtractedAction] = Field(default_factory=list)
     data_categories: list[str] = Field(default_factory=list)
     assumptions: list[str] = Field(default_factory=list)
-    constraints: list[str] = Field(default_factory=list)
+    constraints: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Stated limits and human approval requirements, "
+            "including whether a person must review or send outputs."
+        ),
+    )
     jurisdictions: list[str] = Field(default_factory=list)
     unknowns: list[str] = Field(default_factory=list)
 
@@ -87,8 +102,7 @@ def from_text(
     )
     try:
         result = agent(
-            "Structure this system description:\n\n"
-            f"<description>\n{description}\n</description>"
+            f"Structure this system description:\n\n<description>\n{description}\n</description>"
         )
     finally:
         guard.reconcile(agent)

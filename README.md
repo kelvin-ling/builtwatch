@@ -1,4 +1,4 @@
-> **Account upgrade:** BuiltWatch now has a separate-account implementation using Sign in with ChatGPT. See [the user guide and deployment notes](docs/ACCOUNTS.md). Access remains restricted until the site owner authorizes wider access. Older single-owner details below describe the legacy backend retained for migration.
+> **Public pilot:** Separate private workspaces with ChatGPT sign-in, agent-prepared app profiles, and copyable builder-agent review requests. See [the user guide](docs/ACCOUNTS.md) and [pilot architecture and limits](docs/PUBLIC_LAUNCH.md).
 
 # BuiltWatch
 

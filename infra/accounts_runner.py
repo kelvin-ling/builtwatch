@@ -9,6 +9,7 @@ import time
 import boto3
 from boto3.dynamodb.conditions import Key
 
+from builtwatch.admission import admit, allow_request
 from builtwatch.accounts import serve, verify, work
 from builtwatch.config import Settings
 from builtwatch.dynamo_store import DynamoStore
@@ -31,6 +32,18 @@ def lambda_handler(event, context):
         tenant = verify(event, os.environ.get("BW_PROXY_SECRET", ""), table)
         if not tenant:
             return response(401, {"error": "Please sign in to BuiltWatch."})
+        if not allow_request(table, tenant):
+            return response(
+                429, {"error": "Your daily request allowance is used. Please return tomorrow."}
+            )
+        if not admit(table, tenant):
+            return response(
+                403,
+                {
+                    "code": "pilot_full",
+                    "error": "All 25 pilot workspaces are currently in use. You can still explore the sample. Please try again later.",
+                },
+            )
         try:
             return serve(event, DynamoStore(table, tenant), settings, invoke)
         except Exception:
@@ -60,6 +73,11 @@ def lambda_handler(event, context):
             if "LastEvaluatedKey" not in page:
                 return {"workspaces": count}
             args["ExclusiveStartKey"] = page["LastEvaluatedKey"]
+    if event.get("task") == "intake":
+        from builtwatch.web_intake import draft_profile
+
+        os.environ["BW_DEADLINE"] = str(time.time() + 90)
+        return draft_profile(event, DynamoStore(table, event["tenant"]), settings)
     if event.get("task") == "scan":
         os.environ["BW_DEADLINE"] = str(time.time() + 480)
         return work(event, DynamoStore(table, event["tenant"]), settings, run_scan)

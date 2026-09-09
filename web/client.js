@@ -21,6 +21,7 @@
             : 'The workspace service is unavailable. Try again shortly. Your connection has been kept.';
         const error = new Error(data.error || fallback);
         error.status = result.status;
+        error.code = data.code;
         throw error;
       }
       return data;

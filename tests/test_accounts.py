@@ -185,3 +185,150 @@ def test_dynamo_retains_history_and_current_revision(table, passport, snapshot):
     store.record_cost("run", "model", 1, 1, 0.02)
     store.record_cost("run", "model", 1, 1, 0.02)
     assert store.spent_today() == 0.02
+
+
+def test_pilot_enrollment_is_capped_and_existing_accounts_keep_access(table):
+    from builtwatch.admission import admit
+
+    for i in range(25):
+        assert admit(table, tenant_id(f"user-{i}"))
+    assert not admit(table, tenant_id("over-capacity"))
+    assert admit(table, tenant_id("user-0"))
+
+
+def test_daily_allowance_stops_work(table):
+    from builtwatch.admission import allow_request
+
+    for _ in range(3):
+        assert allow_request(table, tenant_id("a"), limit=3)
+    assert not allow_request(table, tenant_id("a"), limit=3)
+    assert allow_request(table, tenant_id("b"), limit=3)
+
+
+def test_intake_is_reviewable_and_does_not_silently_save(table, passport):
+    from builtwatch.web_intake import draft_profile
+
+    store = DynamoStore(table, tenant_id("intake-user"))
+    jobs = []
+    r = serve(
+        event(
+            "/api/intake",
+            "POST",
+            json.dumps(
+                {"description": "A workflow that drafts Gmail replies for a person to approve."}
+            ),
+        ),
+        store,
+        Settings(),
+        jobs.append,
+    )
+    assert r["statusCode"] == 202
+    assert not store.list_systems()
+
+    def extract(description, settings, meter, system_id):
+        meter.record(settings.assess_model_id, 100, 50)
+        return passport.model_copy(update={"id": system_id})
+
+    assert draft_profile(jobs[0], store, Settings(), extract)["status"] == "complete"
+    assert store.get("intake-draft")["profile"]["name"] == passport.name
+    assert not store.list_systems()
+    assert store.get("intake-input") is None
+    assert store.spent_today() > 0
+    assert draft_profile(jobs[0], store, Settings(), extract)["status"] == "skipped"
+
+
+def test_intake_failure_removes_input_and_records_cost(table):
+    from builtwatch.web_intake import draft_profile
+
+    store = DynamoStore(table, tenant_id("failed-intake"))
+    jobs = []
+    serve(
+        event(
+            "/api/intake",
+            "POST",
+            json.dumps({"description": "A workflow that sends approved emails through Gmail."}),
+        ),
+        store,
+        Settings(),
+        jobs.append,
+    )
+
+    def extract(description, settings, meter, system_id):
+        meter.record(settings.assess_model_id, 100, 50)
+        raise ValueError("Malformed model output")
+
+    with pytest.raises(ValueError):
+        draft_profile(jobs[0], store, Settings(), extract)
+    assert store.job()["status"] == "failed"
+    assert store.get("intake-input") is None
+    assert store.get("intake-draft") is None
+    assert store.spent_today() > 0
+    assert store.acquire_lock("released")
+
+
+def test_summary_update_preserves_identity_and_requires_review(table, passport):
+    from builtwatch.web_intake import draft_profile
+
+    store = DynamoStore(table, tenant_id("update-user"))
+    store.upsert_system(passport)
+    jobs = []
+    r = serve(
+        event(
+            "/api/intake",
+            "POST",
+            json.dumps(
+                {
+                    "system_id": passport.id,
+                    "description": "Local-only workflow. Email sending is now disabled.",
+                }
+            ),
+        ),
+        store,
+        Settings(),
+        jobs.append,
+    )
+    assert r["statusCode"] == 202
+
+    def extract(description, settings, meter, system_id):
+        assert "Previous confirmed profile" in description
+        assert "Email sending is now disabled" in description
+        return passport.model_copy(update={"id": system_id, "purpose": "Local only"})
+
+    draft_profile(jobs[0], store, Settings(), extract)
+    draft = store.get("intake-draft")["profile"]
+    assert draft["id"] == passport.id
+    assert draft["purpose"] == "Local only"
+    assert store.get_system(passport.id).purpose == passport.purpose
+
+
+def test_intake_cannot_update_another_accounts_system(table, passport):
+    store = DynamoStore(table, tenant_id("missing-system"))
+    r = serve(
+        event(
+            "/api/intake",
+            "POST",
+            json.dumps(
+                {
+                    "system_id": passport.id,
+                    "description": "Use this summary to update another account system.",
+                }
+            ),
+        ),
+        store,
+        Settings(),
+        lambda x: None,
+    )
+    assert r["statusCode"] == 404
+
+
+def test_account_routes_accept_encoded_json_and_reject_nonobjects(table):
+    import base64
+
+    store = DynamoStore(table, tenant_id("encoded-user"))
+    request = event(
+        "/api/preferences", "POST", base64.b64encode(b'{"automatic_checks":false}').decode()
+    )
+    request["isBase64Encoded"] = True
+    assert serve(request, store, Settings(), None)["statusCode"] == 200
+    assert store.get("preferences")["automatic_checks"] is False
+    assert serve(event("/api/intake", "POST", "[]"), store, Settings(), None)["statusCode"] == 400

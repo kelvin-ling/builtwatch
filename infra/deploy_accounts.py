@@ -92,10 +92,11 @@ def main():
         url=lam.create_function_url_config(FunctionName=API,AuthType='NONE')['FunctionUrl']
     except lam.exceptions.ResourceConflictException:
         url=lam.get_function_url_config(FunctionName=API)['FunctionUrl']
-    # Every HTTP request still needs a fresh server-side HMAC signature.
-    for sid,action,extra in [('signed-proxy-url','lambda:InvokeFunctionUrl',{'FunctionUrlAuthType':'NONE'}),('signed-proxy-invoke','lambda:InvokeFunction',{'InvokedViaFunctionUrl':True})]:
-        with contextlib.suppress(lam.exceptions.ResourceConflictException):
-            lam.add_permission(FunctionName=API,StatementId=sid,Action=action,Principal='*',**extra)
+    # Preserve protected URLs on later deployments; bootstrap permissions only before migration.
+    if lam.get_function_url_config(FunctionName=API)['AuthType']=='NONE':
+        for sid,action,extra in [('signed-proxy-url','lambda:InvokeFunctionUrl',{'FunctionUrlAuthType':'NONE'}),('signed-proxy-invoke','lambda:InvokeFunction',{'InvokedViaFunctionUrl':True})]:
+            with contextlib.suppress(lam.exceptions.ResourceConflictException):
+                lam.add_permission(FunctionName=API,StatementId=sid,Action=action,Principal='*',**extra)
     api_arn=f'arn:aws:lambda:{REGION}:{account}:function:{API}'
     schedule_role=role(iam,API+'-scheduler','scheduler.amazonaws.com',{'Version':'2012-10-17','Statement':[{'Effect':'Allow','Action':'lambda:InvokeFunction','Resource':api_arn}]})
     sch=session.client('scheduler')
