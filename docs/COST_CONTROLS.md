@@ -1,42 +1,50 @@
 # BuiltWatch cost controls
 
-The deployment minimizes idle compute; it does not guarantee a zero bill or a hard
-account-wide spending cap. The owner-approved budget recorded in the earlier handoff is
-$20/month. The web deployment uses lower model thresholds:
+The owner targets **CAD 25 per month**. This is a conservative operating target, not a
+provider-enforced invoice cap. Billing is delayed and infrastructure, taxes, exchange
+rates, other projects and hosting charges can fall outside model estimates.
 
-| Control | Deployed value |
+| Control | Production setting |
 |---|---:|
-| Estimated model threshold per scan | $0.25 |
-| Estimated model threshold per UTC day | $0.50 |
-| Estimated model threshold per UTC month | $10.00 |
-| Manual scan cooldown | 30 minutes |
-| Concurrent Lambda invocations | 1 (required for storage correctness) |
-| Profiles | 10 |
-| Source registry | 11 curated sources |
-| Agent iterations per assessment | 8 |
-| Scheduled scan | Daily, 7 a.m. Toronto |
-| Log retention | 7 days |
-| Old S3 checkpoint versions | 7 days |
+| Shared monthly model reservations, all workspaces | USD 5 |
+| Per-workspace model thresholds | USD 2/month, 0.50/day, 0.25/check |
+| Intake threshold | USD 0.02/draft, five drafts/day/account |
+| Global reported AWS cost pause | USD 10/month |
+| AWS Budget notification backstop | USD 12/month |
+| Admission | 25 workspaces, ten apps each |
+| Registration | 100 lifetime attempts |
+| Gateway requests | 180/minute, 10,000/day; 300/day/account |
+| Authentication | 200/day global; 20/hour/IP; 10/hour/email |
+| Verification/recovery requests | 20/day global |
+| Lambda concurrency | Four API, two workers, one cost monitor |
+| Owner dashboard requests | 100/day, separate from normal traffic |
 
-The cost meter checks prior usage before each call. Usage/pricing are estimates and a
-single in-flight model call can overshoot a threshold. Calls are also bounded by output
-tokens and iteration counts. Scans stop before the function timeout when the deadline
-hook is reached, then persist partial progress. Unexpected hard termination remains a
-limitation: a checkpoint not yet uploaded can lose recent progress and metering.
+The daily cost monitor reads whole-account unblended cost before credits/refunds, including
+other projects. It caches a daily breakdown, Cognito's estimated registration count,
+admitted workspaces, app counts and job status totals. Dashboard visits use this cache;
+they do not query Cost Explorer. CAD is displayed using a 1.5 planning multiplier, not a
+live exchange rate. The monitor runs at 6 a.m. Toronto; daily app checks run at 7 a.m.
 
-Public sample browsing makes no model calls. API calls require an owner bearer key
-before storage access or model work. Unauthorized requests can still incur small Lambda
-request/compute charges. AWS Budgets notifications are alerts, not automatic hard stops.
+Paid checks pause if reported cost reaches USD 10, billing retrieval fails, the cached
+status is missing or older than 48 hours, the owner pauses them, or the shared model
+reserve cannot accept another USD 1 reservation. Actual estimated model use is settled
+after the task; a timed-out task keeps its full reservation. Already-running calls can
+finish and can overshoot a per-call threshold. An owner resume does not override the
+automatic cost guard. The budget alert alone does not stop AWS services.
 
-Profiles saved through the web form do not invoke AI. Only changed/unassessed
-(profile, source, mode) pairs invoke models. The shared cost ledger survives cold starts
-in an encrypted S3 checkpoint. All invocations are serialized; keep concurrency at 1.
+Warnings start at USD 7 account cost or USD 4 model reservations. A completed day with
+at least USD 1 and more than three times its recent baseline triggers an unusual-spend
+warning. SNS sends at most one warning per day after the recipient confirms the AWS
+subscription email. Confirmation status appears in the owner dashboard. Billing and
+email delivery can be delayed; there is no instant fraud-detection guarantee.
 
-Storage, Lambda requests/duration, bandwidth, logs, and scheduling may incur charges
-according to the AWS account's pricing and free-tier eligibility. There is no provisioned
-concurrency or always-on VM. At this small scale these should be modest, but actual costs
-must be monitored in AWS Billing. Sites hosting is outside the AWS usage meter.
+When paid checks pause, stored workspaces and ordinary imports/exports remain usable
+within request limits. Anonymous demo interactions and bulk demo imports run locally
+without models. The downloadable offline demo also works without the hosted service.
+Hosted availability remains subject to provider quotas/outages; unrestricted free cloud
+traffic is not guaranteed. Sites hosting is outside the AWS usage meter.
 
-Earlier CLI measurements reported approximately $0.25 for 3 systems x 11 replay sources;
-those are historical measurements, not a promise for each new scan. Reading replay files
-is offline; running the real model pipeline over them still costs money.
+The account gateway is IAM- and HMAC-protected; unsigned callers cannot invoke its AWS
+Function URL. Profile data stays in tenant partitions. Source retrieval uses a curated
+registry; user-provided URLs cannot trigger arbitrary fetching. Bulk imports validate
+all profiles before saving, use stable IDs for safe retries, and make no model calls.

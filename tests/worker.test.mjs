@@ -52,3 +52,19 @@ test('ChatGPT and forged identity headers no longer grant access',async()=>{
 test('static demo survives a missing or exhausted database',async()=>{
  const r=await worker.fetch(new Request(origin),{});assert.equal(r.status,200);
 });
+
+test('admin requires the configured owner and remains available during live pause',async()=>{
+ const cookie={Cookie:'__Host-bw_session='+('a'.repeat(64))};
+ const original=globalThis.fetch;
+ let calls=0;
+ try{
+  globalThis.fetch=async()=>{calls++;return new Response('{"actual_usd":1.5}');};
+  const nonowner=await worker.fetch(new Request(origin+'/api/admin',{headers:cookie}),{...env,BW_OWNER_ACCOUNT:'other',BW_OWNER_EMAIL:'owner@example.com'});
+  assert.equal(nonowner.status,403);assert.equal(calls,0);
+  const adminEnv={...env,BW_LIVE_ENABLED:'false',BW_OWNER_ACCOUNT:createHash('sha256').update('alice').digest('hex'),BW_OWNER_EMAIL:'alice@example.com',DB:{prepare:sql=>({...env.DB.prepare(sql),all:async()=>({results:[]})})}};
+  const session=await (await worker.fetch(new Request(origin+'/api/session',{headers:cookie}),adminEnv)).json();assert.equal(session.is_admin,true);
+  const allowed=await worker.fetch(new Request(origin+'/api/admin',{headers:cookie}),adminEnv);
+  assert.equal(allowed.status,200);assert.equal((await allowed.json()).actual_usd,1.5);assert.equal(calls,1);
+  assert.equal((await worker.fetch(new Request(origin+'/api/admin',{headers:{Authorization:'Bearer '+'a'.repeat(64)}}),adminEnv)).status,401);
+ }finally{globalThis.fetch=original;}
+});

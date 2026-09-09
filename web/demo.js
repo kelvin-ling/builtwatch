@@ -10,6 +10,10 @@
    if(method==='DELETE'){delete desk.draft;return {};}
    desk.draft={profile:profile(body.description,body.system_id)};desk.job={status:'complete',message:'Local demo draft ready. No AI call was made.'};return {};
   }
+  if(path==='/api/systems/bulk'){
+   const items=body.systems;if(!Array.isArray(items)||!items.length||new Set([...desk.systems.map(x=>x.id),...items.map(x=>x.id)]).size>10)throw Error('Import up to ten apps in total.');
+   for(const item of items)await request('/api/systems',item);return {imported:items.length};
+  }
   if(path==='/api/systems'){
    if(!body?.id||!body.name||!body.purpose)throw Error('A profile needs an ID, name and purpose.');
    if(desk.systems.length>=10&&!desk.systems.some(x=>x.id===body.id))throw Error('Try up to ten systems, or reset the demo.');

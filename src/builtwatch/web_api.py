@@ -20,22 +20,49 @@ SCAN_COOLDOWN_SECONDS = 1800
 
 
 def workspace(store: Store, settings: Settings) -> dict[str, Any]:
+    from .quality import dependency_mismatch, friendly_failure, unverified
+
     findings = []
+    quality = []
     systems = store.list_systems()
     ids = {s.id for s in systems}
     for finding in store.list_findings(limit=300):
         if finding.system_id not in ids:
+            continue
+        profile = next(s for s in systems if s.id == finding.system_id)
+        if unverified(finding):
+            quality.append(
+                {
+                    "system_id": finding.system_id,
+                    "source_id": finding.source_id,
+                    "message": (
+                        "An assessment could not be verified and was withheld. "
+                        "No action is requested."
+                    ),
+                }
+            )
+            continue
+        if finding.source_id == "cisa-kev" and dependency_mismatch(
+            profile, " ".join([finding.title, *finding.facts, *finding.inferences])
+        ):
             continue
         item = finding.model_dump(mode="json")
         actions = store.dispositions_for(finding.id)
         decisions = [a for a in actions if a.action.value != "exported"]
         item["disposition"] = decisions[-1].action.value if decisions else "open"
         findings.append(item)
+    runs = [r.model_dump(mode="json") for r in store.list_runs()]
+    for run in runs:
+        run["abort_reason"] = friendly_failure(run["abort_reason"])
+        for health in run["source_health"]:
+            if health.get("error"):
+                health["error"] = "This source could not be retrieved. Coverage is incomplete."
     return {
+        "quality": quality,
         "systems": [s.model_dump(mode="json") for s in systems],
         "findings": findings,
         "sources": [s.model_dump(mode="json") for s in load_registry(settings.registry_path)],
-        "runs": [r.model_dump(mode="json") for r in store.list_runs()],
+        "runs": runs,
         "spend": {
             "month": store.spent_this_month(),
             "day": store.spent_today(),
@@ -81,6 +108,23 @@ def dispatch(
             raise ValueError("Expected a JSON object")
         if path == "/api/workspace" and method == "GET":
             return response(200, workspace(store, settings))
+        if path == "/api/systems/bulk" and method == "POST":
+            items = body.get("systems")
+            if not isinstance(items, list) or not 1 <= len(items) <= MAX_WEB_SYSTEMS:
+                raise ValueError("Import between one and ten app profiles")
+            profiles = [SystemPassport.model_validate(x) for x in items]
+            ids = [x.id for x in profiles]
+            if len(set(ids)) != len(ids):
+                raise ValueError("Each imported app needs a different ID")
+            if any(not x.name.strip() or not x.purpose.strip() for x in profiles):
+                raise ValueError("Each app needs a name and purpose")
+            existing = {x.id for x in store.list_systems()}
+            if len(existing | set(ids)) > MAX_WEB_SYSTEMS:
+                return response(409, {"error": "Your workspace supports ten apps in total"})
+            # Validate the entire batch before any writes; stable IDs make network retries safe.
+            for profile in profiles:
+                store.upsert_system(profile)
+            return response(200, {"imported": len(profiles), "updated": len(existing & set(ids))})
         if path == "/api/systems" and method == "POST":
             passport = SystemPassport.model_validate(body)
             if not passport.name.strip() or not passport.purpose.strip():

@@ -156,7 +156,7 @@ export function createWorker(assets) {
     if(url.pathname.startsWith('/api/auth/'))return authRoute(request,env,url);
     let user;
     try{user=await signedUser(request,env);}catch{return json({error:'Sign-in is temporarily unavailable. The demo still works.'},503);}
-    if(url.pathname==='/api/session'&&request.method==='GET')return json({signed_in:!!user,email:user?.email||'',workspace_reference:user?.account||null});
+    if(url.pathname==='/api/session'&&request.method==='GET')return json({signed_in:!!user,email:user?.email||'',workspace_reference:user?.account||null,is_admin:!!user&&user.account===env.BW_OWNER_ACCOUNT&&user.email.toLowerCase()===env.BW_OWNER_EMAIL?.toLowerCase()});
     const agentRequest=url.pathname==='/api/agent/sync'&&request.method==='POST';
     let agent;
     if(agentRequest){
@@ -171,11 +171,13 @@ export function createWorker(assets) {
     if(!agentRequest&&request.method!=='GET'&&(request.headers.get('Origin')!==url.origin||request.headers.get('X-BuiltWatch-Request')!=='1'))return json({error:'Make changes from the BuiltWatch website.'},403);
     if(url.search)return json({error:'Query parameters are not supported.'},400);
     const account=user.account;
-    try{if(!await withinEdgeAllowance(env.DB,account))return json({error:'The pilot request allowance is reached. The demo still works; your data is saved.'},429);}catch{return json({error:'The workspace limiter is temporarily unavailable. The demo still works.'},503);}
+    const adminRequest=url.pathname==='/api/admin';
+    if(adminRequest&&(agentRequest||account!==env.BW_OWNER_ACCOUNT||user.email?.toLowerCase()!==env.BW_OWNER_EMAIL?.toLowerCase()))return json({error:'Owner access required.'},403);
+    try{if(!(adminRequest?await claimRequest(env.DB,'admin-requests',new Date().toISOString().slice(0,10),100):await withinEdgeAllowance(env.DB,account)))return json({error:'The pilot request allowance is reached. The demo still works; your data is saved.'},429);}catch{return json({error:'The workspace limiter is temporarily unavailable. The demo still works.'},503);}
     if(url.pathname==='/api/connections'){
       try{return await connectionRoute(request,env,user,url);}catch{return json({error:'Connection could not be updated.'},400);}
     }
-    if(env.BW_LIVE_ENABLED==='false')return json({error:'Live service is paused. The interactive demo remains available.'},503);
+    if(env.BW_LIVE_ENABLED==='false'&&!adminRequest)return json({error:'Live service is paused. The interactive demo remains available.'},503);
     if(!env.BW_API_URL||!env.BW_PROXY_SECRET)return json({error:'Workspace setup is incomplete.'},503);
     let body;try{body=request.method==='GET'?'':await boundedBody(request);}catch{return json({error:'Use valid text under 24 KB.'},413);}
     if(agentRequest){
@@ -199,6 +201,14 @@ export function createWorker(assets) {
         headers:{...authorization,'Content-Type':'application/json','x-bw-account':account,'x-bw-time':stamp,'x-bw-nonce':nonce,'x-bw-signature':signature},
         ...(request.method === 'GET' ? {} : {body}),signal:AbortSignal.timeout(25000), redirect:'manual'});
       if (upstream.status >= 300 && upstream.status < 400) return json({error:'The workspace service returned an unexpected redirect.'},502);
+      if(adminRequest&&upstream.ok){
+        const data=await upstream.json();
+        const rows=await env.DB.prepare("SELECT key,period,used FROM request_quota WHERE key IN ('global-day','auth-global','registrations')").all();
+        const today=new Date().toISOString().slice(0,10);
+        const used=key=>rows.results.find(x=>x.key===key&&(key==='registrations'||x.period===today))?.used||0;
+        data.gateway={requests_today:used('global-day'),request_limit:10000,auth_attempts_today:used('auth-global'),registration_attempts:used('registrations')};
+        return json(data);
+      }
       if(agentRequest&&upstream.ok)await env.DB.prepare('UPDATE agent_connection SET last_sync=? WHERE account=?').bind(Date.now(),account).run();
       return new Response(await upstream.text(), {status:upstream.status,headers:{...security,'Content-Type':'application/json'}});
     } catch (error) {

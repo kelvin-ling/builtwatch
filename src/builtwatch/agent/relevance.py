@@ -38,6 +38,7 @@ from .prompts import ASSESS_SYSTEM_PROMPT, SCREEN_SYSTEM_PROMPT
 from .tools import InvestigationContext, build_tools
 
 logger = logging.getLogger(__name__)
+MIN_EVIDENCE_LENGTH = 20
 
 
 class ScreenVerdict(BaseModel):
@@ -48,8 +49,14 @@ class ScreenVerdict(BaseModel):
 
 
 class DraftEvidence(BaseModel):
-    snapshot_id: str
-    passage: str = Field(description="Verbatim quote copied from an <evidence> block.")
+    passage_id: str | None = Field(
+        default=None,
+        description="ID of the exact <passage> you read. Prefer selecting an ID to retyping text.",
+    )
+    snapshot_id: str = ""
+    passage: str = Field(
+        default="", description="Legacy fallback: exact quote, only when passage_id is unavailable."
+    )
 
 
 class DraftSystemFact(BaseModel):
@@ -94,6 +101,10 @@ def screen(
     meter: CostMeter,
 ) -> ScreenVerdict:
     """Stage 1. Returns a verdict; on budget abort, fails open to 'possible'."""
+    from ..quality import source_out_of_scope
+
+    if source_out_of_scope(passport, source.id):
+        return ScreenVerdict(plausible="no", reason="This vendor is not a recorded dependency.")
     guard = BudgetGuard(meter, settings.screen_model_id, max_iterations=2)
     agent = Agent(
         model=_bedrock(settings, settings.screen_model_id),
@@ -113,7 +124,7 @@ def screen(
         f"  jurisdictions: {', '.join(passport.jurisdictions) or '(not recorded)'}\n\n"
         f"OBSERVATION CONTEXT (untrusted): {snapshot.change_context}\n\n"
         f"EXTERNAL DEVELOPMENT from {source.publisher} ({source.category.value})\n"
-        f"<evidence snapshot_id=\"{snapshot.id}\">\n{excerpt}\n</evidence>\n\n"
+        f'<evidence snapshot_id="{snapshot.id}">\n{excerpt}\n</evidence>\n\n'
         f"Could this development plausibly affect this system?"
     )
     try:
@@ -211,17 +222,24 @@ def _to_finding(
     problems: list[str] = []
 
     evidence: list[Evidence] = []
-    for item in draft.evidence:
+    for draft_item in draft.evidence:
+        item = draft_item
+        if item.passage_id:
+            selected = ctx.passages.get(item.passage_id)
+            if selected is None:
+                problems.append("selected evidence passage was not read")
+                continue
+            item = DraftEvidence(snapshot_id=selected[0], passage=selected[1])
         snap = snapshots.get(item.snapshot_id)
         if snap is None:
             problems.append(f"cited snapshot does not exist: {item.snapshot_id}")
             continue
         # The quoted passage must actually appear in the stored snapshot. This is the
         # check that catches a fabricated quote.
-        if _norm_space(item.passage) not in _norm_space(snap.content):
-            problems.append(
-                f"quoted passage not found verbatim in snapshot {item.snapshot_id}"
-            )
+        if len(item.passage.strip()) < MIN_EVIDENCE_LENGTH or _norm_space(
+            item.passage
+        ) not in _norm_space(snap.content):
+            problems.append(f"quoted passage not found verbatim in snapshot {item.snapshot_id}")
             continue
         evidence.append(
             Evidence(
@@ -255,13 +273,23 @@ def _to_finding(
 
     problems.extend(finding.validate_grounding(passport))
 
+    from ..quality import dependency_mismatch
+
+    if primary_source == "cisa-kev" and dependency_mismatch(
+        passport, " ".join([finding.title, *finding.facts, *finding.inferences])
+    ):
+        finding.relevance = Relevance.NOT_RELEVANT
+        finding.inferences = ["The affected product is not a recorded dependency of this system."]
+        finding.unknowns = []
+        finding.review_suggestions = []
+    finding.validation_issues = problems
     if problems and finding.relevance is Relevance.RELEVANT:
         # An ungrounded "relevant" claim is downgraded, not published. The reason is
         # attached so a reviewer can see the model over-reached.
         finding.relevance = Relevance.INSUFFICIENT_INFORMATION
         finding.unknowns.append(
             "Downgraded automatically: the relevance claim was not grounded "
-            f"({'; '.join(problems)})."
+            "and was withheld from action items."
         )
 
     finding.revision_hash = finding.compute_revision_hash()
@@ -269,4 +297,4 @@ def _to_finding(
 
 
 def _norm_space(text: str) -> str:
-    return " ".join(text.split()).lower()
+    return " ".join(text.split())

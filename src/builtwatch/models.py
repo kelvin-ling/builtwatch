@@ -211,6 +211,7 @@ class ScanRun(BaseModel):
     output_tokens: int = 0
     estimated_cost_usd: float = 0.0
     abort_reason: str | None = None
+    validation_failures: int = 0
 
     @property
     def sources_attempted(self) -> int:
@@ -289,6 +290,7 @@ class Finding(BaseModel):
     unknowns: list[str] = Field(default_factory=list, description="Could not be determined.")
     review_suggestions: list[str] = Field(default_factory=list)
 
+    validation_issues: list[str] = Field(default_factory=list)
     adoption_status: AdoptionStatus = AdoptionStatus.UNKNOWN
     created_at: datetime = Field(default_factory=utcnow)
     revision_hash: str = ""

@@ -318,3 +318,15 @@ Originality, and Presentation. A live demo or AgentCore deployment strengthens t
 Rules require the project be newly created during the submission period. First commit is
 8 September 2026 and no pre-existing code was incorporated. AI assistance is disclosed in
 `NOTICE`; keep that accurate — if another tool contributes, add it there.
+
+## September 9 update — quality, bulk import and cost guard
+
+New implementation: exact passage selection IDs; named vendor/product relevance gates;
+legacy invalid findings withheld behind friendly quality notices; multi-app JSON preview
+and import; responsive animated watch flow; owner-only cached cost and utilization portal.
+Shared model reservations reduced to USD 5. AWS daily account-cost monitor and SNS email
+subscription were explicitly approved by the user, including the recipient and lowering
+BuiltWatch's existing AWS budget to USD 12. Paid model work stops at reported USD 10 or
+stale/failed billing status. CAD 25 is a monthly target, not an exact total invoice cap.
+Do not claim email delivery is enabled until the SNS subscription is confirmed.
+See COST_CONTROLS.md for current settings; older limits above are historical.

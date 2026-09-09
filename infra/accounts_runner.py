@@ -32,6 +32,36 @@ def lambda_handler(event, context):
         tenant = verify(event, os.environ.get("BW_PROXY_SECRET", ""), table)
         if not tenant:
             return response(401, {"error": "Please sign in to BuiltWatch."})
+        if event.get("rawPath") == "/api/admin":
+            if tenant != os.environ.get("BW_OWNER_ACCOUNT"):
+                return response(403, {"error": "Owner access required."})
+            if event["requestContext"]["http"]["method"] == "POST":
+                try:
+                    import base64
+
+                    raw = event.get("body") or "{}"
+                    if event.get("isBase64Encoded"):
+                        raw = base64.b64decode(raw).decode()
+                    paused = json.loads(raw).get("paused")
+                    if not isinstance(paused, bool):
+                        raise ValueError()
+                    table.put_item(Item={"pk": "ADMIN", "sk": "control", "paused": paused})
+                except (ValueError, TypeError, AttributeError):
+                    return response(400, {"error": "Choose pause or resume."})
+            elif event["requestContext"]["http"]["method"] != "GET":
+                return response(405, {"error": "Method not allowed."})
+            cached = table.get_item(Key={"pk": "ADMIN", "sk": "snapshot"}).get("Item", {})
+            data = json.loads(cached.get("payload", "{}"))
+            data["manual_paused"] = (
+                table.get_item(Key={"pk": "ADMIN", "sk": "control"})
+                .get("Item", {})
+                .get("paused", False)
+            )
+            if not data.get("checked_at"):
+                data["warnings"] = [
+                    "Cost monitoring is being configured. Paid checks remain paused until a fresh status is available."
+                ]
+            return response(200, data)
         if not allow_request(table, tenant):
             return response(
                 429, {"error": "Your daily request allowance is used. Please return tomorrow."}

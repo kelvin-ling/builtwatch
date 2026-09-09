@@ -72,7 +72,7 @@ examples/passports/      three demo systems
 
 ## Cost discipline while developing
 
-Real model calls cost money and the account is capped at $20/month.
+Real model calls cost money. The owner targets CAD 25/month; shared model reservations are USD 5/month. See docs/COST_CONTROLS.md for the layered safeguards and their limits.
 
 - `pytest` never calls AWS — stub `pipeline.screen` / `pipeline.assess` with `monkeypatch`.
 - Use `--mode replay` unless you are specifically testing live retrieval.

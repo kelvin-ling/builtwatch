@@ -114,3 +114,39 @@ def test_facts_not_required_for_not_relevant(passport, snapshot):
     finding = make_finding(passport, snapshot, relevance=Relevance.NOT_RELEVANT)
     finding.facts = []
     assert finding.validate_grounding(passport) == []
+
+
+def test_passage_selection_copies_exact_source(passport, snapshot):
+    from builtwatch.agent.relevance import DraftEvidence, DraftSystemFact, FindingDraft, _to_finding
+    from builtwatch.agent.tools import InvestigationContext, passage_blocks
+
+    ctx = InvestigationContext(passport=passport, snapshots={snapshot.id: snapshot}, sources={})
+    passage_blocks(ctx, snapshot.id, snapshot.content)
+    passage_id = next(iter(ctx.passages))
+    draft = FindingDraft(
+        relevance="relevant",
+        title="Sender changes",
+        development_key="sender-change",
+        evidence=[DraftEvidence(passage_id=passage_id)],
+        system_facts=[DraftSystemFact(key="services[0]", value="Gmail API")],
+        facts=["Authentication is required."],
+    )
+    finding, problems = _to_finding(draft, passport, ctx.snapshots, "run_x", ctx)
+    assert not problems
+    assert finding.evidence[0].passage == ctx.passages[passage_id][1]
+    draft.evidence = [DraftEvidence(passage_id="p_invented")]
+    finding, problems = _to_finding(draft, passport, ctx.snapshots, "run_x", ctx)
+    assert problems and finding.validation_issues
+    assert finding.relevance is Relevance.INSUFFICIENT_INFORMATION
+
+
+def test_security_monitoring_does_not_imply_windows_dependency(passport):
+    from builtwatch.quality import dependency_mismatch, source_out_of_scope
+
+    passport.purpose = "Watch Windows vulnerabilities and security news for other apps"
+    assert dependency_mismatch(passport, "Windows OS vulnerability")
+    assert source_out_of_scope(passport, "stripe-upgrades")
+    passport.technologies.append("Windows Server")
+    assert not dependency_mismatch(passport, "Windows OS vulnerability")
+    passport.services.append("Stripe API")
+    assert not source_out_of_scope(passport, "stripe-upgrades")

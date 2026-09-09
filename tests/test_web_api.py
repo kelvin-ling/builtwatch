@@ -55,3 +55,48 @@ def test_invalid_profile_does_not_write(store, monkeypatch):
     result = dispatch(event("/api/systems", "POST", {"id": "../../bad"}), store, Settings(), None)
     assert result["statusCode"] == 400
     assert not store.list_systems()
+
+
+def test_bulk_validates_before_writes_and_updates_by_id(store, passport, monkeypatch):
+    monkeypatch.setenv("BW_OWNER_TOKEN", "owner-test-key")
+    p = passport.model_dump(mode="json")
+    bad = {**p, "id": "../bad"}
+
+    def send(items):
+        def unexpected_model_call():
+            raise AssertionError("No model calls")
+
+        return dispatch(
+            event("/api/systems/bulk", "POST", {"systems": items}),
+            store,
+            Settings(),
+            unexpected_model_call,
+        )
+
+    assert send([p, bad])["statusCode"] == 400
+    assert not store.list_systems()
+    assert send([p, p])["statusCode"] == 400
+    batch = [{**p, "id": f"app-{i}"} for i in range(10)]
+    assert send(batch)["statusCode"] == 200
+    assert len(store.list_systems()) == 10
+    assert send([p])["statusCode"] == 409
+    batch[0]["name"] = "Updated app"
+    assert send([batch[0]])["statusCode"] == 200
+    assert store.get_system("app-0").name == "Updated app"
+
+
+def test_invalid_evidence_is_a_quality_notice_not_an_action_item(
+    store, passport, snapshot, monkeypatch
+):
+    from conftest import make_finding
+
+    monkeypatch.setenv("BW_OWNER_TOKEN", "owner-test-key")
+    store.upsert_system(passport)
+    finding = make_finding(passport, snapshot)
+    finding.unknowns = ["snap_0adee73e7511; quoted passage not found verbatim in snapshot"]
+    store.save_finding(finding)
+    result = dispatch(event("/api/workspace"), store, Settings(), None)
+    payload = json.loads(result["body"])
+    assert not payload["findings"]
+    assert payload["quality"][0]["system_id"] == passport.id
+    assert "snap_0adee73e7511" not in result["body"]

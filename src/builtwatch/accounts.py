@@ -6,6 +6,7 @@ import base64
 import hashlib
 import hmac
 import json
+import os
 import re
 import time
 import uuid
@@ -19,8 +20,9 @@ from .dynamo_store import DynamoStore
 from .web_api import dispatch, response
 
 SIGNATURE_AGE = 300
+COST_STATUS_MAX_AGE = 172800
 RESERVATION = Decimal("1.00")
-GLOBAL_MONTH_LIMIT = Decimal("10.00")
+GLOBAL_MONTH_LIMIT = Decimal("5.00")
 
 
 def verify(event: dict, secret: str, table: Any) -> str | None:
@@ -73,6 +75,18 @@ def verify(event: dict, secret: str, table: Any) -> str | None:
 
 
 def reserve_budget(table: Any, month: str) -> bool:
+    control = table.get_item(Key={"pk": "ADMIN", "sk": "snapshot"}).get("Item", {})
+    manual = table.get_item(Key={"pk": "ADMIN", "sk": "control"}).get("Item", {})
+    if (
+        manual.get("paused")
+        or (os.environ.get("BW_COST_GUARD_REQUIRED") == "true" and not control.get("checked_at"))
+        or control.get("paused")
+        or (
+            control.get("checked_at")
+            and time.time() - float(control["checked_at"]) > COST_STATUS_MAX_AGE
+        )
+    ):
+        return False
     try:
         table.update_item(
             Key={"pk": "BUDGET", "sk": month},
@@ -107,6 +121,14 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
         if path == "/api/workspace" and result["statusCode"] == HTTPStatus.OK:
             data = json.loads(result["body"])
             data["job"] = store.job()
+            if data["job"].get("status") == "failed":
+                data["job"]["message"] = (
+                    "The check could not finish reliably. Completed results are saved."
+                )
+            elif data["job"].get("status") == "aborted":
+                data["job"]["message"] = (
+                    "The check stopped early. See check history; the demo remains available."
+                )
             data["draft"] = store.get("intake-draft")
             data["account"] = {
                 "automatic_checks": (store.get("preferences") or {}).get("automatic_checks", True)

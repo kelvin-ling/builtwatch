@@ -186,3 +186,24 @@ Built with the assistance of AI coding tools (Claude Code and OpenAI Codex), as 
 ## License
 
 [MIT](LICENSE)
+
+## Current public pilot (September 2026)
+
+The account-based deployment supersedes the earlier single-owner deployment limits above.
+See [current cost controls](docs/COST_CONTROLS.md) for the CAD 25 monthly target, USD 5
+shared model reserve, daily billing guard and owner dashboard.
+
+**Import apps** copies a request for the agent that knows your projects. Paste its JSON
+or upload the file, review up to ten app profiles together, then confirm the import.
+Importing costs no model credits. Only the projects accessible to that agent can be
+included; BuiltWatch does not secretly discover or access other conversations.
+
+Evidence is selected from exact source passages. Unverifiable assessments are withheld
+as check-quality notices, not requests for more user information. Named vendor and
+product checks prevent generic monitoring purposes from implying unrelated dependencies.
+This reduces false positives; model judgments still require human review.
+
+The signed-in owner can open **Owner dashboard** to see cached costs, registrations,
+workspaces, request usage and warnings, and pause paid checks. Other accounts and agent
+connection tokens cannot access this dashboard. SNS email warnings require the recipient
+to confirm the AWS subscription email.

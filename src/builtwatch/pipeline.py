@@ -170,7 +170,7 @@ def run_scan(
                     ).encode()
                 ).hexdigest()
                 pair_key = (
-                    f"{passport.id}:{profile_hash}:{mode}:{source.id}:{snapshot.content_hash}"
+                    f"quality-v2:{passport.id}:{profile_hash}:{mode}:{source.id}:{snapshot.content_hash}"
                 )
                 if store.assessed(pair_key) and not force_reassess:
                     continue
@@ -197,7 +197,8 @@ def run_scan(
                     raise RuntimeError("Assessment incomplete: " + "; ".join(problems))
 
                 stored, is_new = store.save_finding(finding)
-                store.mark_assessed(pair_key)
+                if not problems:
+                    store.mark_assessed(pair_key)
                 if not is_new:
                     result.suppressed_duplicates.append(stored)
                 elif stored.relevance is Relevance.RELEVANT:
@@ -221,6 +222,7 @@ def run_scan(
         run.abort_reason = f"{type(exc).__name__}: {exc}"
         logger.exception("scan aborted on unexpected error")
 
+    run.validation_failures = len(result.grounding_problems)
     run.input_tokens = meter.input_tokens
     run.output_tokens = meter.output_tokens
     run.estimated_cost_usd = meter.run_cost

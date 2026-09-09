@@ -112,7 +112,7 @@ def test_api_readable_during_worker_lock_writes_blocked(table, passport):
 
 
 def test_shared_budget_is_bounded(table):
-    assert all(reserve_budget(table, "2026-09") for _ in range(10))
+    assert all(reserve_budget(table, "2026-09") for _ in range(5))
     assert not reserve_budget(table, "2026-09")
     settle_budget(table, "2026-09", 0.01)
     assert not reserve_budget(table, "2026-09")
@@ -379,3 +379,22 @@ def test_agent_sync_registers_one_profile_without_model_and_scopes_response(tabl
         calls.append,
     )
     assert bad["statusCode"] == 400
+
+
+def test_cost_guard_fails_closed(table, monkeypatch):
+    import time
+
+    monkeypatch.setenv("BW_COST_GUARD_REQUIRED", "true")
+    assert not reserve_budget(table, "2026-09")
+    for paused, checked in [(True, int(time.time())), (False, int(time.time()) - 172801)]:
+        table.put_item(
+            Item={"pk": "ADMIN", "sk": "snapshot", "paused": paused, "checked_at": checked}
+        )
+        assert not reserve_budget(table, "2026-09")
+    table.put_item(
+        Item={"pk": "ADMIN", "sk": "snapshot", "paused": False, "checked_at": int(time.time())}
+    )
+    table.put_item(Item={"pk": "ADMIN", "sk": "control", "paused": True})
+    assert not reserve_budget(table, "2026-09")
+    table.put_item(Item={"pk": "ADMIN", "sk": "control", "paused": False})
+    assert reserve_budget(table, "2026-09")

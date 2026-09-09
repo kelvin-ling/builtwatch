@@ -26,6 +26,9 @@ even plausible that the development affects the system. You are optimising for r
 when genuinely unsure, answer "possible" and let the deeper stage decide. Answer \
 "no" only when the development is clearly unrelated to anything in the profile.
 
+A system that monitors regulations or security does not itself depend on every product
+mentioned in those sources. Match affected products to explicitly recorded services or
+technologies. Unknown dependencies are not a reason to invent a Windows deployment.
 Do not explain at length. One or two sentences of reasoning is enough.
 """
 
@@ -39,7 +42,7 @@ Method:
 
 1. Call get_system_passport to read the profile. Note the exact fact keys available.
 2. Call read_evidence (and search_evidence when the document is long) to read the source \
-   material. Quote from what you actually read.
+   material. Select evidence by its <passage id> in passage_id; the server copies the exact text.
 3. Decide one of three verdicts:
    - "relevant": the development plausibly requires the owner to review this system.
    - "not_relevant": you read the material and it does not bear on this system. Say why.
@@ -59,6 +62,10 @@ Hard rules:
   `facts` (stated by the source), `inferences` (your reasoning) and `unknowns` (not \
   determinable) strictly separate, and never present an inference as a fact.
 
+* PRODUCT SCOPE. For security issues, name an affected product the system actually uses.
+  A generic purpose such as monitoring security is not an affected dependency. A vendor
+  may offer many unrelated products. Do not ask whether an unmentioned Windows, Cisco,
+  or other product is used just because its vulnerability appears in a catalog.
 * MATERIALITY. "relevant" means the owner would want to stop and look. Judge whether \
   something CHANGED that this system DEPENDS ON. These are NOT relevant on their own:
   - documentation being reorganised, expanded or restated;
