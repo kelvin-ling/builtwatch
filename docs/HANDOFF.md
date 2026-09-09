@@ -1,3 +1,23 @@
+# Verified clear-action interface release — 9 September 2026
+
+Public Sites version 11 deployed successfully at 19:46 UTC.
+Source: `bdc438f3cc4e5927cbab7ce1235ac265df7eb99b`.
+Version: `appgprj_6a9fa33453988191895d1c0403f10071~appgver_4e704206ae408191919f0b640a5553c4`.
+Deployment: `appgdep_6aa1b78a4218819191a820c5c8f3fea9`.
+
+Every finding now states what is wrong, who owns the next step and what to do. Evidence
+validation failures are explicitly a BuiltWatch problem with no app change requested;
+missing app facts direct the user to verify and update the profile. Internal grounding
+jargon is removed from the historical demo and hidden from details. Findings include a
+plain result key and direct status labels. The overview's three-stage purpose flow now has
+a restrained sequential animation with a reduced-motion fallback.
+
+101 Python and 20 Node/runtime tests passed. The public app and stylesheet were verified
+after deployment. The source also improves the wording stored by future assessments. The
+AWS backend was not redeployed for that storage-only copy change because SSO authorization
+was not completed; the deployed UI already translates both legacy and new forms, so the
+visible fix is complete and future old-form results remain clear.
+
 # Verified automation-map release — 9 September 2026
 
 Public Sites version 10 deployed successfully at 16:18 UTC.
