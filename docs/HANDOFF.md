@@ -1,3 +1,19 @@
+# Verified automation-map release — 9 September 2026
+
+Public Sites version 10 deployed successfully at 16:18 UTC.
+Source: `a25b3316e79999bafc84a6f0d50d76ac74e397ec`.
+Version: `appgprj_6a9fa33453988191895d1c0403f10071~appgver_8778c37bf5ac8191a79fc8af250922d2`.
+Deployment: `appgdep_6aa186c32f7c8191b293560ef6f22032`.
+
+Every app now has a responsive automation map showing its first recorded service or data
+input, automated work, human or system checkpoint, and real-world condition. When an open
+finding exists, the outside development is visibly linked to the exact recorded stage used
+by the assessment, with a path to its evidence and review question. Missing profile facts
+remain explicitly unrecorded rather than inferred. The app profile modal carries the same
+map. No schema, evidence, scan scope, scheduling, permissions, cost controls or AWS runtime
+changed. 101 Python and 19 Node/runtime tests passed; source and test lint passed. No paid
+model call or browser visual QA was performed.
+
 # Verified app-impact release — 9 September 2026
 
 Public Sites version 9 deployed successfully at 14:30 UTC.
