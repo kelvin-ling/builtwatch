@@ -21,7 +21,9 @@ test('Cognito authentication, bounded signup, secure sessions and scoped agent c
   await db.prepare("UPDATE request_quota SET used=100 WHERE key='registrations'").run();r=await call('/api/auth/signup',{email:'alice@example.com',password:'StrongPassword12'});assert.equal(r.status,429);assert.equal(calls.length,1);
   r=await call('/api/auth/signin',{email:'alice@example.com',password:'StrongPassword12'});assert.equal(r.status,200);const cookie=r.headers.get('Set-Cookie').split(';')[0];assert.match(r.headers.get('Set-Cookie'),/HttpOnly; Secure; SameSite=Lax/);
   r=await call('/api/session',{},cookie,'GET');assert.equal((await r.json()).signed_in,true);
-  r=await call('/api/connections',{},cookie);const c=await r.json();assert.equal(c.token.length,64);
+  r=await call('/api/connections',{},cookie);const first=await r.json();assert.equal(first.token.length,64);
+  r=await call('/api/connections',{},cookie);const c=await r.json();assert.equal(c.system_id,first.system_id);assert.notEqual(c.token,first.token);
+  r=await mf.dispatchFetch(origin+'/api/agent/sync',{method:'POST',headers:{Authorization:'Bearer '+first.token},body:'{}'});assert.equal(r.status,401);
   const sync=body=>mf.dispatchFetch(origin+'/api/agent/sync',{method:'POST',headers:{Authorization:'Bearer '+c.token},body:JSON.stringify(body)});
   r=await sync({profile:{id:'other-user-id',name:'My app'}});assert.equal(r.status,200);assert.equal((await r.json()).profile.id,c.system_id);
   r=await sync({});assert.equal(r.status,429);

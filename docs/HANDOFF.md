@@ -1,3 +1,11 @@
+## Independent registration deployed and verified — 9 September 2026
+
+Sites version 5 deployed successfully with environment revision 3: appgdep_6aa0d72faae081919791e0bb5de5adfe, source d29d0a5af4be4aefd5a007c4ef478fcc2edb624d. Public URL unchanged. Live HTTP tests verified anonymous access, independent Cognito sign-in with a secure cookie, isolated AWS workspace, scoped agent registration, revocation, logout and the standalone offline download. The synthetic Cognito/AWS account was deleted and its live D1 session/connection revoked; private data/auth-test.json removed. No test model calls or emails were sent.
+
+89 Python and 11 Node/runtime tests passed. The five inline offline scripts pass syntax checks. Python and production npm dependency audits found no known vulnerabilities. Existing BuiltWatch AWS budget remains $20/month; both current and retired URLs verified AWS_IAM. No independent penetration or visual/mobile browser audit is claimed. Email inbox delivery remains for the registering user to verify.
+
+Final small correction: renewing a still-existing agent connection preserves its app ID instead of creating a duplicate app. Its regression test also verifies the old token stops working. This correction requires the next saved release; all earlier readiness/approval-pending notes below are historical. User explicitly reauthorized continuing and automatic approvals. No extra deployment approval is needed.
+
 ## Independent email registration release — ready for deployment
 
 The user requested independent registration, interactive anonymous demo that survives live ceilings, revocable daily agent integration, security review, and public deployment. This supersedes the earlier ChatGPT sign-in decision. Cognito Lite pool and confidential app client are provisioned; credentials and verified-owner mapping are stored in Sites environment revision 3. Never print private data/* settings.

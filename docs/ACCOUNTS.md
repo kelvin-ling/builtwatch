@@ -25,7 +25,7 @@ The original owner's verified email maps to the previously migrated workspace. T
 2. Copy the private setup instructions into the agent conversation for this app. The agent uses the project context it already has to produce a small profile, avoiding manual form entry.
 3. If the agent supports scheduling, the instructions ask it to send the profile and retrieve findings once per UTC day. Otherwise it should sync on request and explain that limitation. BuiltWatch does not wake arbitrary agents itself.
 4. The first successful sync registers the app. Later syncs update only that connected app. Check connection status for the last successful sync.
-5. Revoke the connection from the account menu whenever needed. Creating a replacement invalidates the previous token. Tokens expire after 90 days.
+5. Revoke the connection from the account menu whenever needed. Creating a replacement invalidates the previous token while keeping the same connected app. Tokens expire after 90 days.
 
 One active connection per workspace. Its token can update one fixed profile and retrieve that profile's findings; it cannot read other profiles, alter account settings, delete apps or trigger model runs. Syncs use existing daily monitoring and budget limits. The token is shown once, kept only as a hash server-side, and must be stored privately by the agent—not in Git, logs, URLs or shared conversations. No public endpoint accepts arbitrary source URLs.
 

@@ -134,7 +134,8 @@ async function connectionRoute(request,env,user,url){
   if(request.method!=='POST')return json({error:'Method not allowed'},405);
   if(!await claimRequest(env.DB,'connect-'+user.account,new Date().toISOString().slice(0,10),10))return json({error:'Connection creation is limited to ten per day.'},429);
   // One active connection per workspace keeps pilot scope and data exposure small.
-  const systemId='agent-'+crypto.randomUUID().slice(0,12),token=randomToken();
+  const previous=await env.DB.prepare('SELECT system_id FROM agent_connection WHERE account=?').bind(user.account).first();
+  const systemId=previous?.system_id||'agent-'+crypto.randomUUID().slice(0,12),token=randomToken();
   await env.DB.batch([
     env.DB.prepare('DELETE FROM agent_connection WHERE account=?').bind(user.account),
     env.DB.prepare('INSERT INTO agent_connection(hash,account,system_id,expires,last_sync) VALUES(?,?,?,?,0)').bind(await digest(token),user.account,systemId,Date.now()+7776000000)
