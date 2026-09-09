@@ -1,3 +1,9 @@
+## Final independent-registration release complete
+
+Sites version 6 is live at https://builtwatch.kelvinlingac.chatgpt.site/ . Deployment appgdep_6aa0fe3e56208191b76c1649f00a96c8 succeeded with environment revision 3; deployed source b22ceb9f09041f71abe622b79b3509e83c6b758e. It includes the tested connection-renewal fix. No release work or approval remains pending from this request. Independent email sign-in replaces ChatGPT authentication; returning owner must register and verify their configured email to access preserved inventory.
+
+All prior live sign-in, isolation, registration/revocation/logout tests passed. Final session endpoint returned anonymous JSON 200; offline demo is served separately. 89 Python and 11 Node tests pass. Current temporary test accounts were cleaned up. Keep the scoped credentials private. There is no promise of a hard total AWS bill cap or immunity from hosting outages; local demo is independent of live ceilings and the downloadable standalone copy runs offline. Read ACCOUNTS.md for user instructions and controls, SECURITY.md for the bounded audit results. Earlier pending-release notes are historical.
+
 ## Independent registration deployed and verified — 9 September 2026
 
 Sites version 5 deployed successfully with environment revision 3: appgdep_6aa0d72faae081919791e0bb5de5adfe, source d29d0a5af4be4aefd5a007c4ef478fcc2edb624d. Public URL unchanged. Live HTTP tests verified anonymous access, independent Cognito sign-in with a secure cookie, isolated AWS workspace, scoped agent registration, revocation, logout and the standalone offline download. The synthetic Cognito/AWS account was deleted and its live D1 session/connection revoked; private data/auth-test.json removed. No test model calls or emails were sent.
