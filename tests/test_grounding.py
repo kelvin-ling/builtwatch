@@ -150,3 +150,41 @@ def test_security_monitoring_does_not_imply_windows_dependency(passport):
     assert not dependency_mismatch(passport, "Windows OS vulnerability")
     passport.services.append("Stripe API")
     assert not source_out_of_scope(passport, "stripe-upgrades")
+
+
+def test_screening_receives_business_conditions_without_a_technology_stack(
+    passport, snapshot, source, monkeypatch
+):
+    from types import SimpleNamespace
+
+    from builtwatch.agent import relevance
+    from builtwatch.config import CostMeter, Settings
+    from builtwatch.models import ConsequentialAction
+
+    passport.technologies = []
+    passport.services = []
+    passport.assumptions = ["Customer price lists are current"]
+    passport.constraints = ["A person approves each quote"]
+    passport.consequential_actions = [ConsequentialAction(description="Draft quotes for customers")]
+    prompts = []
+
+    class FakeAgent:
+        def __init__(self, **kwargs):
+            pass
+
+        def __call__(self, prompt):
+            prompts.append(prompt)
+            return SimpleNamespace(
+                structured_output=relevance.ScreenVerdict(
+                    plausible="possible", reason="Recorded pricing assumption may be affected"
+                )
+            )
+
+    monkeypatch.setattr(relevance, "Agent", FakeAgent)
+    monkeypatch.setattr(relevance, "_bedrock", lambda *args: None)
+    monkeypatch.setattr(relevance.BudgetGuard, "reconcile", lambda *args: None)
+    settings = Settings()
+    verdict = relevance.screen(passport, snapshot, source, settings, CostMeter(settings))
+    assert verdict.plausible == "possible"
+    for fact in [*passport.assumptions, *passport.constraints, "Draft quotes for customers"]:
+        assert fact in prompts[0]

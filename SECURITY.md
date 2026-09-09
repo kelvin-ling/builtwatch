@@ -11,3 +11,9 @@ Public source is intentional. Security must not depend on hidden URLs, AWS resou
 - `data/`, environment files, dependencies, caches, private keys and generated builds are ignored by Git. Do not commit connection setup prompts, user profiles, credentials, deployment access files or customer data. Rotate any exposed secret; deleting it from a later commit is insufficient.
 
 A release audit checked all reachable historical Git blobs for current deployment credentials, AWS access-key identifiers, private keys and GitHub token patterns. No matches were found. Python and production npm dependency advisory checks reported no known vulnerabilities at release time. This bounded audit and the automated tests do not replace an independent penetration test or guarantee absence of all vulnerabilities. Security issues should be reported privately to the repository owner; do not include exploit credentials or user data in public issues.
+
+Business, Operations and Technical are presentation views, not authorization roles.
+The server accepts only those preference values and preserves monitoring settings.
+An agent connection cannot set account preferences or obtain owner privileges.
+The additional business-news source is a fixed registry URL; no URL from an import,
+user profile, article or model response is followed.

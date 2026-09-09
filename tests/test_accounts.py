@@ -398,3 +398,26 @@ def test_cost_guard_fails_closed(table, monkeypatch):
     assert not reserve_budget(table, "2026-09")
     table.put_item(Item={"pk": "ADMIN", "sk": "control", "paused": False})
     assert reserve_budget(table, "2026-09")
+
+
+def test_view_preference_preserves_monitoring_and_cannot_grant_access(table):
+    store = DynamoStore(table, tenant_id("view-user"))
+    store.put("preferences", {"automatic_checks": False, "viewer_lens": "business"})
+    result = serve(
+        event("/api/preferences", "POST", '{"viewer_lens":"operations"}'), store, Settings(), None
+    )
+    assert result["statusCode"] == 200
+    assert store.get("preferences") == {"automatic_checks": False, "viewer_lens": "operations"}
+    data = json.loads(serve(event(), store, Settings(), None)["body"])
+    assert data["account"]["viewer_lens"] == "operations"
+    result = serve(
+        event("/api/preferences", "POST", '{"viewer_lens":"admin"}'), store, Settings(), None
+    )
+    assert result["statusCode"] == 400
+    assert store.get("preferences")["viewer_lens"] == "operations"
+    result = serve(
+        event("/api/preferences", "POST", '{"automatic_checks":true}'), store, Settings(), None
+    )
+    assert result["statusCode"] == 200
+    assert store.get("preferences")["viewer_lens"] == "operations"
+    assert store.get("preferences")["automatic_checks"] is True

@@ -114,12 +114,17 @@ def screen(
         structured_output_model=ScreenVerdict,
     )
     excerpt = snapshot.content[:3000]
+    actions = ", ".join(a.description for a in passport.consequential_actions)[:1200]
+    constraints = ", ".join(passport.constraints)[:1200]
     prompt = (
         f"SYSTEM PROFILE\n"
         f"  name: {passport.name}\n"
         f"  purpose: {passport.purpose}\n"
         f"  technologies: {', '.join(passport.technologies) or '(none recorded)'}\n"
         f"  external services: {', '.join(passport.services) or '(none recorded)'}\n"
+        f"  actions: {actions or '(not recorded)'}\n"
+        f"  assumptions: {', '.join(passport.assumptions)[:1200] or '(not recorded)'}\n"
+        f"  limits and human oversight: {constraints or '(not recorded)'}\n"
         f"  data categories: {', '.join(passport.data_categories) or '(none recorded)'}\n"
         f"  jurisdictions: {', '.join(passport.jurisdictions) or '(not recorded)'}\n\n"
         f"OBSERVATION CONTEXT (untrusted): {snapshot.change_context}\n\n"

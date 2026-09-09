@@ -170,7 +170,7 @@ def run_scan(
                     ).encode()
                 ).hexdigest()
                 pair_key = (
-                    f"quality-v2:{passport.id}:{profile_hash}:{mode}:{source.id}:{snapshot.content_hash}"
+                    f"context-v3:{passport.id}:{profile_hash}:{mode}:{source.id}:{snapshot.content_hash}"
                 )
                 if store.assessed(pair_key) and not force_reassess:
                     continue

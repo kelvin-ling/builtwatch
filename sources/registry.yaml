@@ -89,3 +89,15 @@ sources:
     category: standards
     url: https://www.nist.gov/itl/ai-risk-management-framework
     publisher: US National Institute of Standards and Technology
+
+  # Business developments: fixed primary source, no user URL crawling or article fan-out.
+  - id: ftc-business-blog
+    name: FTC Business Blog — Consumer and Business Developments
+    category: business_news
+    url: https://www.ftc.gov/business-guidance/blog
+    publisher: US Federal Trade Commission
+    notes: >
+      US consumer-protection and business-conduct news, including marketing claims,
+      reviews, subscriptions and enforcement developments. This checks the index's
+      published summaries only; linked articles are not automatically fetched.
+      An enforcement case or consultation is not a new law or proof of applicability.

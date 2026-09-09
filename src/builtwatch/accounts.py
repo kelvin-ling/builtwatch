@@ -131,7 +131,8 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                 )
             data["draft"] = store.get("intake-draft")
             data["account"] = {
-                "automatic_checks": (store.get("preferences") or {}).get("automatic_checks", True)
+                "automatic_checks": (store.get("preferences") or {}).get("automatic_checks", True),
+                "viewer_lens": (store.get("preferences") or {}).get("viewer_lens", "business"),
             }
             result = response(200, data)
         return result
@@ -206,10 +207,20 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
             store.delete("intake-draft")
             return response(200, {"deleted": True})
         if path == "/api/preferences" and method == "POST":
-            enabled = body.get("automatic_checks")
-            if not isinstance(enabled, bool):
-                return response(400, {"error": "Choose whether automatic checks are enabled."})
-            store.put("preferences", {"automatic_checks": enabled})
+            updates = {}
+            if "automatic_checks" in body:
+                if not isinstance(body["automatic_checks"], bool):
+                    return response(400, {"error": "Choose whether automatic checks are enabled."})
+                updates["automatic_checks"] = body["automatic_checks"]
+            if "viewer_lens" in body:
+                if body["viewer_lens"] not in ("business", "operations", "technical"):
+                    return response(
+                        400, {"error": "Choose Business, Operations or Technical view."}
+                    )
+                updates["viewer_lens"] = body["viewer_lens"]
+            if not updates:
+                return response(400, {"error": "No supported preference supplied."})
+            store.put("preferences", {**(store.get("preferences") or {}), **updates})
             return response(200, {"saved": True})
 
         def enqueue() -> None:

@@ -44,3 +44,21 @@ This is a bounded public pilot: curated sources, no independent security audit, 
 Setting the Sites secret/environment flag `BW_REGISTRATION_ENABLED=false` pauses new registrations. `BW_LIVE_ENABLED=false` pauses proxied AWS operations; static demo assets and local replay stay available. Apply an environment change by deploying the same saved version—no source change is necessary. Existing daily jobs can be paused through the EventBridge schedule without modifying code. Model allowances automatically pause/reopen at their configured periods.
 
 Deploy source using Sites with the included D1 migrations. Runtime secrets are `BW_PROXY_SECRET`, scoped `BW_AWS_ACCESS_KEY_ID` / `BW_AWS_SECRET_ACCESS_KEY`, `BW_COGNITO_CLIENT_ID` / `BW_COGNITO_CLIENT_SECRET`, and the private owner migration mapping. Never publish `data/`. Keep AWS function URLs on `AWS_IAM`; older pre-IAM releases cannot proxy safely. Preserve original S3 backup and keep the old daily schedule disabled.
+
+## Views for different kinds of work
+
+Business is the default view. Users can switch to Operations or Technical at the top of
+the workspace. The preference is saved in their existing tenant's preferences; it does
+not change automatic monitoring, permissions, source coverage or evidence. All review
+items remain available. Ordering emphasizes source topics, not severity. Demo view
+preferences are local to the browser; account preferences remain separate.
+
+Profiles use the existing purpose, actions, assumptions, constraints and jurisdictions
+fields. The Business context editor is optional and makes no model call. Plain-language
+intake and the copyable agent requests now ask for business conditions and human review
+boundaries, so users need not learn APIs or fill in a technical inventory. Technical
+profile details and original evidence remain expandable.
+
+The live source registry adds the US FTC Business Blog's published summaries. It does
+not crawl linked articles or general news. The historical demo keeps its original
+assessments; it does not pretend to have assessed the newly added source.

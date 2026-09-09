@@ -207,3 +207,21 @@ The signed-in owner can open **Owner dashboard** to see cached costs, registrati
 workspaces, request usage and warnings, and pause paid checks. Other accounts and agent
 connection tokens cannot access this dashboard. SNS email warnings require the recipient
 to confirm the AWS subscription email.
+
+### Business, Operations and Technical views
+
+BuiltWatch remembers business conditions as well as software dependencies. Use the
+view buttons to emphasize customer impact and responsibilities, operating limits and
+handoffs, or technical changes. Every view retains access to all findings and their
+source evidence. View changes make no model call and do not change access permissions.
+
+Describe the work your automation does and what must stay true: for example, a quote
+helper assumes its price list is current and a person approves the quote. Intake and
+agent exports preserve that context. The optional Business context editor uses the
+same saved profile, without a separate questionnaire or new mandatory fields.
+
+The screening agent now sees recorded actions, assumptions and constraints. Its review
+must connect a source development to a specific recorded fact; it may not invent
+commercial impact. Live coverage is 12 curated sources, now including the US FTC
+Business Blog summaries. This is bounded source monitoring, not an all-news service.
+The existing monthly spending controls remain unchanged.

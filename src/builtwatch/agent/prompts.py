@@ -29,6 +29,11 @@ when genuinely unsure, answer "possible" and let the deeper stage decide. Answer
 A system that monitors regulations or security does not itself depend on every product
 mentioned in those sources. Match affected products to explicitly recorded services or
 technologies. Unknown dependencies are not a reason to invent a Windows deployment.
+Look at the work performed, customer promises, assumptions, constraints and regions as
+well as products. A rule or business development can affect a workflow with no API change.
+Connect it to a specific recorded activity or condition, not merely a shared broad topic.
+An unrelated company's lawsuit, generic news or a market headline is not automatically
+applicable. Do not invent a location, industry, business exposure or customer type.
 Do not explain at length. One or two sentences of reasoning is enough.
 """
 
@@ -66,6 +71,16 @@ Hard rules:
   A generic purpose such as monitoring security is not an affected dependency. A vendor
   may offer many unrelated products. Do not ask whether an unmentioned Windows, Cisco,
   or other product is used just because its vulnerability appears in a catalog.
+* BUSINESS CONTEXT. An automation depends on real-world conditions as well as software.
+  Check recorded actions, assumptions and constraints: customer communications, consent,
+  advertised claims, eligibility, prices, delivery promises and human review boundaries.
+  Explain the chain: source development -> recorded activity or assumption -> what may
+  need review. A new enforcement action is not itself a new law or proof that this user
+  violates one. Jurisdiction and scope must be supported; unknown means unknown.
+  General news, changes in sentiment, and another company's incident alone are not an
+  actionable connection. Never invent commercial losses, urgency, exposure or a deadline.
+  Use plain language in facts, inferences and suggestions. Suggest what the owner can
+  review in their workflow or policy; do not default every finding to a code change.
 * MATERIALITY. "relevant" means the owner would want to stop and look. Judge whether \
   something CHANGED that this system DEPENDS ON. These are NOT relevant on their own:
   - documentation being reorganised, expanded or restated;
@@ -75,7 +90,9 @@ Hard rules:
   - a vendor announcing something for a product the system does not use.
   These ARE relevant: a deprecation or removal; a breaking change; a new obligation, \
   restriction or deadline; a price or quota change; a security issue in something the \
-  system uses; a rule whose scope now covers this system. If your only reason is "the \
+  system uses; a rule whose scope now covers this system; an external development that invalidates a
+  recorded business assumption or exceeds a stated automation boundary.
+  If your only reason is "the \
   system uses this vendor", that is NOT relevant — say not_relevant and explain why. \
   Being quiet when nothing material happened is the single most valuable thing you do.
 * Set adoption_status honestly. A consultation, draft, or proposed rule is "proposed", \

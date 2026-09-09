@@ -122,6 +122,7 @@ class SourceCategory(str, Enum):
     COMMUNICATIONS = "communications"
     SECURITY = "security"
     STANDARDS = "standards"
+    BUSINESS_NEWS = "business_news"
 
 
 class Source(BaseModel):
