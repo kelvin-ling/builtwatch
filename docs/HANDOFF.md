@@ -1,3 +1,25 @@
+# Verified app-impact release — 9 September 2026
+
+Public Sites version 9 deployed successfully at 14:30 UTC.
+Source: `8f2f2b579f073eb2f6f3b803f9a36131bcef9be2`.
+Version: `appgprj_6a9fa33453988191895d1c0403f10071~appgver_5e005d57542c8191a42f1919dc439c6b`.
+Deployment: `appgdep_6aa16d8174ec8191ae0493be1f96d3f6`.
+
+Findings now lead with the app, show a recorded fact -> development -> possible consequence
+-> review question, and group by app. Changed profile references are flagged. Existing
+findings use stored facts/reasoning without paid rewriting. New relevant model outputs
+require AppImpact anchored to a cited app fact; invalid/missing explanations are withheld.
+Stored legacy Finding objects remain compatible. Cost ceilings and cache policy unchanged.
+101 Python and 17 Node/runtime tests passed. New website assets and offline demo were
+verified over HTTP; anonymous workspace access remains denied. No browser visual QA or
+new paid model assessment was performed.
+
+Hosting remains AWS application services + Sites/Cloudflare frontend/gateway. Sites custom
+domain listing was empty. The custom-domain capability is available, but no hostname was
+provided or attached. See CUSTOM_DOMAIN.md for DNS/TLS checks, fresh sign-in and preserved
+account data. Do not claim the frontend has moved to AWS or that a domain purchase alone
+completes cutover.
+
 # Verified business-view release — 9 September 2026
 
 Public Sites version 8 deployed successfully at 13:16 UTC.
