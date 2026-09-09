@@ -71,7 +71,7 @@ def test_fabricated_quote_is_caught_by_pipeline_conversion(passport, snapshot):
     assert any("not found verbatim" in p for p in problems)
     # An ungrounded "relevant" claim is downgraded rather than published as fact.
     assert finding.relevance is Relevance.INSUFFICIENT_INFORMATION
-    assert any("Downgraded automatically" in u for u in finding.unknowns)
+    assert any("could not verify the suggested connection" in u for u in finding.unknowns)
 
 
 def test_real_quote_survives_conversion(passport, snapshot):

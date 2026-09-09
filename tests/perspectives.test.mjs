@@ -57,3 +57,16 @@ test('automation map keeps missing workflow details explicit',()=>{
  assert.match(flow.condition.value,/not.*recorded/i);
  assert.equal(flow.event,null);
 });
+
+test('diagnosis assigns a plain-language owner and action to every result type',()=>{
+ const app={id:'mail',name:'Mailer',purpose:'Sends mail',services:['Gmail']};
+ const blocked={system_id:'mail',relevance:'insufficient_information',title:'Possible rule',unknowns:['Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage).'],system_facts:[]};
+ const missing={system_id:'mail',relevance:'insufficient_information',title:'Possible rule',unknowns:['Whether recipients opted in'],system_facts:[]};
+ const clear={system_id:'mail',relevance:'not_relevant',title:'Other rule',unknowns:[],system_facts:[],inferences:['This rule does not cover the app.']};
+ assert.equal(p.diagnosis(blocked,app).owner,'BuiltWatch');
+ assert.match(p.diagnosis(blocked,app).action,/do not change the app/i);
+ assert.equal(p.diagnosis(missing,app).owner,'You and your agent');
+ assert.match(p.diagnosis(missing,app).problem,/does not know whether recipients opted in/i);
+ assert.equal(p.diagnosis(clear,app).owner,'No action');
+ assert.match(p.diagnosis(clear,app).action,/nothing needs fixing/i);
+});

@@ -42,7 +42,12 @@ def source_out_of_scope(passport: SystemPassport, source_id: str) -> bool:
 
 def unverified(finding: Finding) -> bool:
     return bool(finding.validation_issues) or any(
-        re.search(r"Downgraded automatically|not found verbatim|cited snapshot|snap_[a-f0-9]+", x)
+        re.search(
+            r"Downgraded automatically|could not verify the suggested connection|"
+            r"not found verbatim|cited snapshot|snap_[a-f0-9]+",
+            x,
+            re.IGNORECASE,
+        )
         for x in finding.unknowns
     )
 

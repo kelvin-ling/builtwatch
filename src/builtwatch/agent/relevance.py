@@ -305,8 +305,9 @@ def _to_finding(
         # attached so a reviewer can see the model over-reached.
         finding.relevance = Relevance.INSUFFICIENT_INFORMATION
         finding.unknowns.append(
-            "Downgraded automatically: the relevance claim was not grounded "
-            "and was withheld from action items."
+            "BuiltWatch could not verify the suggested connection because the assessment "
+            "did not include enough source evidence. No app change is requested; this item "
+            "must be checked again."
         )
 
     finding.revision_hash = finding.compute_revision_hash()

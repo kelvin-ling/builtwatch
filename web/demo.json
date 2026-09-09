@@ -288,7 +288,7 @@
         "The 'support-widget' system falls under the category of AI systems intended to interact directly with natural persons, as it is a chat widget that answers visitor questions using a language model."
       ],
       "unknowns": [
-        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
+        "BuiltWatch could not verify the suggested connection because the assessment did not include enough source evidence. No app change is requested; this item must be checked again."
       ],
       "review_suggestions": [
         "Review the transparency obligations outlined in the EU AI Act Article 50 and ensure that the 'support-widget' system complies with these requirements."
@@ -352,7 +352,7 @@
         "The updates to Amazon Bedrock, including the addition of new models and corrections to model guidance, could impact the 'support-widget' system since it uses Amazon Bedrock."
       ],
       "unknowns": [
-        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
+        "BuiltWatch could not verify the suggested connection because the assessment did not include enough source evidence. No app change is requested; this item must be checked again."
       ],
       "review_suggestions": [
         "Review the changes to Amazon Bedrock to ensure the 'support-widget' system remains compatible and up-to-date.",
@@ -809,7 +809,7 @@
         "The system must ensure it meets these new requirements to continue sending emails to Gmail accounts."
       ],
       "unknowns": [
-        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
+        "BuiltWatch could not verify the suggested connection because the assessment did not include enough source evidence. No app change is requested; this item must be checked again."
       ],
       "review_suggestions": [
         "Review the system's email sending configuration to ensure it complies with the new Gmail sender guidelines.",
@@ -918,7 +918,7 @@
         "The 'inbox-triage' system uses a large language model to draft replies, which could be considered an AI system under the Act."
       ],
       "unknowns": [
-        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
+        "BuiltWatch could not verify the suggested connection because the assessment did not include enough source evidence. No app change is requested; this item must be checked again."
       ],
       "review_suggestions": [
         "Review the system's compliance with the transparency obligations outlined in the EU AI Act Article 50."

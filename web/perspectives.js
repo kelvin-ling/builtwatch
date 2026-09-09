@@ -28,6 +28,21 @@
    review:stale?'Does the finding still apply to the app’s current behavior?':f.relevance==='not_relevant'?'No action requested for this assessment.':f.app_impact?.review_question||f.review_suggestions?.[0]||'Which recorded activity or condition would make this development apply?',
    stale,anchored:!!ref,structured:!!f.app_impact};
  }
+ function isEvidenceFailure(f){return !!f.validation_issues?.length||(f.unknowns||[]).some(x=>/downgraded automatically|could not verify the suggested connection|not grounded|not found verbatim|cited snapshot|snap_[a-f0-9]+/i.test(x));}
+ function readableGap(f){
+  const gap=(f.unknowns||[]).find(x=>!/downgraded automatically|could not verify the suggested connection|not grounded|not found verbatim|cited snapshot|snap_[a-f0-9]+/i.test(x));
+  if(!gap)return 'BuiltWatch is missing a fact needed to connect this development to the app.';
+  if(/^whether\b/i.test(gap))return `BuiltWatch does not know ${gap[0].toLowerCase()}${gap.slice(1)}.`.replace(/\.\.$/,'.');
+  return `BuiltWatch is missing this fact: ${gap}`;
+ }
+ function diagnosis(f,system){
+  const b=brief(f,system);
+  if(b.stale)return {status:'App details changed',problemLabel:"What's wrong",problem:'This result refers to an older version of the app profile.',actionLabel:'What to do next',action:'Update the app profile if needed, then run the check again before changing the app.',owner:'You'};
+  if(isEvidenceFailure(f))return {status:'BuiltWatch could not verify this',problemLabel:"What's wrong",problem:'The suggested connection is missing a source passage that proves it. BuiltWatch blocked it so it cannot be mistaken for a real alert.',actionLabel:'What to do next',action:'Do not change the app based on this item. BuiltWatch must check the source again; only act on a later result that includes quoted evidence.',owner:'BuiltWatch'};
+  if(f.relevance==='insufficient_information')return {status:'One fact is missing',problemLabel:"What's missing",problem:readableGap(f),actionLabel:'What to do next',action:'Choose “Review with my agent” to verify the missing fact. If it describes your app, add the answer to the app profile, then run the check again.',owner:'You and your agent'};
+  if(f.relevance==='not_relevant')return {status:'No app change needed',problemLabel:'Why it does not apply',problem:b.consequence,actionLabel:'What to do next',action:'Nothing needs fixing for this item. Revisit it only if the app or its dependencies change.',owner:'No action'};
+  return {status:'Review this app',problemLabel:'Possible problem',problem:b.consequence,actionLabel:'What to do next',action:b.review,owner:'You'};
+ }
  function automation(system,finding){
   const first=(items,fallback)=>items?.[0]||fallback;
   const map={
@@ -41,5 +56,5 @@
   return {...map,event:{change:b.change,connection:b.connection,review:b.review,stale:b.stale},anchor:anchors[b.connectionLabel]||'condition'};
  }
  function grouped(items,systems){const groups=new Map();for(const f of items){if(!groups.has(f.system_id))groups.set(f.system_id,{system:systems.find(x=>x.id===f.system_id)||{id:f.system_id,name:f.system_id,purpose:'App profile unavailable'},findings:[]});groups.get(f.system_id).findings.push(f);}return [...groups.values()];}
- root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context,brief,automation,grouped};
+ root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context,brief,diagnosis,automation,grouped};
 })(typeof window!=='undefined'?window:globalThis);
