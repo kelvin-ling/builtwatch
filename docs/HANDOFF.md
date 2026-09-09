@@ -1,3 +1,25 @@
+# Verified release — 9 September 2026
+
+Sites version 7 is public and succeeded at 2026-09-09 12:44 UTC.
+Source: `7453039094dc6f5036fe5a7d18d70474af4deb72`.
+Saved version: `appgprj_6a9fa33453988191895d1c0403f10071~appgver_1231b6d6762c81918cbea9fde53abf95`.
+Deployment: `appgdep_6aa154a4cd188191b8f435bc0dc7c645`.
+URL: https://builtwatch.kelvinlingac.chatgpt.site/
+
+AWS account API/worker and cost monitor deployed. 97 Python and 13 JavaScript/runtime
+tests pass. Live Lambda verification confirmed owner dashboard access, non-owner denial,
+bulk import, all-profile validation before writes, and no automatic model jobs on import.
+The temporary verification workspace was removed. Public HTTP checks verified updated
+HTML, scripts, CSS and offline demo (200), plus anonymous workspace/admin denial (401).
+Python urllib encountered an edge rejection; curl worked without authentication. No
+browser visual QA or new paid model assessment was performed for this release.
+
+SNS subscription confirmation remains **pending** as of deployment. The user explicitly
+approved the recipient and cost-monitor/budget setup. They must click AWS's subscription
+confirmation email before warnings can be delivered. Cost monitor's cached invocation
+can refresh confirmation without another Cost Explorer call. Do not create a duplicate
+subscription. The CAD 25 monthly target is not an exact provider invoice cap.
+
 ## Final independent-registration release complete
 
 Sites version 6 is live at https://builtwatch.kelvinlingac.chatgpt.site/ . Deployment appgdep_6aa0fe3e56208191b76c1649f00a96c8 succeeded with environment revision 3; deployed source b22ceb9f09041f71abe622b79b3509e83c6b758e. It includes the tested connection-renewal fix. No release work or approval remains pending from this request. Independent email sign-in replaces ChatGPT authentication; returning owner must register and verify their configured email to access preserved inventory.
