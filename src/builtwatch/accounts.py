@@ -126,7 +126,7 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
         )
     try:
         body = {}
-        if path in {"/api/intake", "/api/preferences"} and method == "POST":
+        if path in {"/api/intake", "/api/preferences", "/api/agent/sync"} and method == "POST":
             try:
                 raw = event.get("body") or "{}"
                 if event.get("isBase64Encoded"):
@@ -136,6 +136,46 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                     raise ValueError("Expected an object")
             except (ValueError, TypeError, UnicodeDecodeError):
                 return response(400, {"error": "Please send a valid JSON object."})
+        if path == "/api/agent/sync" and method == "POST":
+            from .models import SystemPassport
+            from .web_api import MAX_WEB_SYSTEMS, workspace
+
+            system_id = body.get("system_id", "")
+            if not re.fullmatch(r"agent-[a-f0-9-]{12}", system_id):
+                return response(400, {"error": "Invalid connection system"})
+            if "profile" in body:
+                try:
+                    profile = SystemPassport.model_validate(body["profile"])
+                    if (
+                        profile.id != system_id
+                        or not profile.name.strip()
+                        or not profile.purpose.strip()
+                    ):
+                        raise ValueError("Profile must match the connected system")
+                    existing = store.get_system(system_id)
+                    if not existing and len(store.list_systems()) >= MAX_WEB_SYSTEMS:
+                        return response(409, {"error": "Your workspace supports ten systems"})
+                    if existing:
+                        profile.created_at = existing.created_at
+                    store.upsert_system(profile)
+                except (ValueError, TypeError):
+                    return response(400, {"error": "Send a valid system profile"})
+            result = workspace(store, settings)
+            return response(
+                200,
+                {
+                    "system": next((x for x in result["systems"] if x["id"] == system_id), None),
+                    "findings": [x for x in result["findings"] if x["system_id"] == system_id],
+                    "sources": result["sources"],
+                    "latest_check": (
+                        {k: result["runs"][0][k] for k in ("started_at", "status", "source_health")}
+                        if result["runs"]
+                        else None
+                    ),
+                    "next_sync": "After midnight UTC tomorrow",
+                    "instructions": "Verify finding evidence before changes.",
+                },
+            )
         if path == "/api/intake" and method == "POST":
             from .web_intake import queue_intake
 

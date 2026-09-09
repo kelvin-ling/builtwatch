@@ -1,4 +1,4 @@
-> **Public pilot:** Separate private workspaces with ChatGPT sign-in, agent-prepared app profiles, and copyable builder-agent review requests. See [the user guide](docs/ACCOUNTS.md) and [pilot architecture and limits](docs/PUBLIC_LAUNCH.md).
+> **Public pilot:** Independent email registration, private workspaces, an interactive no-account demo, agent-prepared profiles, and revocable daily builder-agent connections. See [the user guide](docs/ACCOUNTS.md) and [pilot architecture and limits](docs/PUBLIC_LAUNCH.md).
 
 # BuiltWatch
 

@@ -23,3 +23,10 @@ data/
 node_modules/
 
 .wrangler/
+
+# Private credentials and agent connection exports
+*.pem
+*.key
+*.p12
+.builtwatch/
+private-setup*.txt

@@ -4,7 +4,7 @@ import {createHmac,createHash} from 'node:crypto';
 import {createWorker} from '../server/worker.mjs';
 const worker=createWorker({'/index.html':{content:'BuiltWatch',type:'text/html'}});
 const origin='https://builtwatch.example';
-const env={BW_API_URL:'https://backend.example/',BW_PROXY_SECRET:'secret-for-tests',BW_AWS_ACCESS_KEY_ID:'TEST',BW_AWS_SECRET_ACCESS_KEY:'test',DB:{prepare:()=>({bind:()=>({first:async()=>({used:1})})})}};
+const env={BW_API_URL:'https://backend.example/',BW_PROXY_SECRET:'secret-for-tests',BW_AWS_ACCESS_KEY_ID:'TEST',BW_AWS_SECRET_ACCESS_KEY:'test',DB:{prepare:(sql)=>({bind:()=>({first:async()=>sql.startsWith('SELECT account,email')?{account:createHash('sha256').update('alice').digest('hex'),email:'alice@example.com'}:{used:1}})})}};
 test('anonymous visitors see sample but cannot read or mutate workspaces',async()=>{
   assert.equal((await worker.fetch(new Request(origin),env)).status,200);
   assert.equal((await worker.fetch(new Request(origin+'/api/workspace'),env)).status,401);
@@ -12,7 +12,7 @@ test('anonymous visitors see sample but cannot read or mutate workspaces',async(
   assert.equal(session.signed_in,false);
 });
 test('cross-origin writes are rejected even for a signed-in user',async()=>{
-  const r=await worker.fetch(new Request(origin+'/api/systems',{method:'POST',headers:{'oai-authenticated-user-id':'alice','Origin':'https://evil.example','X-BuiltWatch-Request':'1'},body:'{}'}),env);
+  const r=await worker.fetch(new Request(origin+'/api/systems',{method:'POST',headers:{Cookie:'__Host-bw_session='+('a'.repeat(64)),'Origin':'https://evil.example','X-BuiltWatch-Request':'1'},body:'{}'}),env);
   assert.equal(r.status,403);
 });
 test('proxy signs server-derived identity and ignores client account and authorization headers',async()=>{
@@ -26,7 +26,7 @@ test('proxy signs server-derived identity and ignores client account and authori
       assert.equal(h['x-bw-signature'],createHmac('sha256',env.BW_PROXY_SECRET).update(message).digest('hex'));
       return new Response('{"saved":true}');
     };
-    const r=await worker.fetch(new Request(origin+'/api/systems',{method:'POST',headers:{'oai-authenticated-user-id':'alice','x-bw-account':'bob','Authorization':'Bearer client','Origin':origin,'X-BuiltWatch-Request':'1'},body:'{}'}),env);
+    const r=await worker.fetch(new Request(origin+'/api/systems',{method:'POST',headers:{Cookie:'__Host-bw_session='+('a'.repeat(64)),'oai-authenticated-user-id':'forged','x-bw-account':'bob','Authorization':'Bearer client','Origin':origin,'X-BuiltWatch-Request':'1'},body:'{}'}),env);
     assert.equal(r.status,200);
     assert.equal(r.headers.get('Cache-Control'),'no-store');
   } finally {globalThis.fetch=original;}
@@ -35,7 +35,7 @@ test('backend failure is visible and secrets are never returned',async()=>{
   const original=globalThis.fetch;
   try{
     globalThis.fetch=async()=>{throw Error('secret upstream failure');};
-    const r=await worker.fetch(new Request(origin+'/api/workspace',{headers:{'oai-authenticated-user-id':'alice'}}),env);
+    const r=await worker.fetch(new Request(origin+'/api/workspace',{headers:{Cookie:'__Host-bw_session='+('a'.repeat(64))}}),env);
     assert.equal(r.status,503);
     assert.ok(!(await r.text()).includes('secret'));
   }finally{globalThis.fetch=original;}
@@ -44,4 +44,11 @@ test('AWS signing agrees with the AWS SDK reference vector',async()=>{
  const {awsHeaders}=await import('../server/worker.mjs');
  const headers=await awsHeaders(new URL('https://example.lambda-url.us-east-1.on.aws/api/intake'),'POST','{}',{BW_AWS_ACCESS_KEY_ID:'TESTKEY',BW_AWS_SECRET_ACCESS_KEY:'test-secret'},new Date('2026-09-08T12:00:00Z'));
  assert.ok(headers.Authorization.endsWith('Signature=93483cb65117fc5c286ef46d003e882e6d8b038db350ceb89e0ceb79de0cbffd'));
+});
+
+test('ChatGPT and forged identity headers no longer grant access',async()=>{
+ const r=await worker.fetch(new Request(origin+'/api/workspace',{headers:{'oai-authenticated-user-id':'alice'}}),env);assert.equal(r.status,401);
+});
+test('static demo survives a missing or exhausted database',async()=>{
+ const r=await worker.fetch(new Request(origin),{});assert.equal(r.status,200);
 });

@@ -8,6 +8,13 @@
       "when": 1788898086534,
       "tag": "0000_nappy_power_pack",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1788924907217,
+      "tag": "0001_lonely_mister_fear",
+      "breakpoints": true
     }
   ]
 }

@@ -1,3 +1,13 @@
+# Independent registration and durable demo
+
+The current release replaces ChatGPT sign-in with AWS Cognito email/password registration. The frontend remains a thin Sites/Cloudflare gateway; AWS owns identity, agent execution and inventory/findings storage. See [ACCOUNTS.md](ACCOUNTS.md) for the authoritative current workflow, limits, agent connection contract and operator pause controls. Earlier architecture decisions below are historical and superseded where they mention ChatGPT sign-in or read-only demos.
+
+The public demo performs local edits and historical replay only. It is independent of live allowances and includes a downloadable offline copy. Anonymous users cannot cause a model call. The daily agent integration is a pull/sync mechanism initiated by a user-authorized builder; it never claims to wake an unsupported agent.
+
+Current registration adds a 100 lifetime-attempt ceiling, 200 global authentication attempts/day, 20 verification/recovery requests/day, and a confidential Cognito client. Existing 25-workspace admission and shared model reservations remain. Email verification is required. Owner migration is restricted to the configured verified email and previously verified tenant.
+
+---
+
 # Public pilot design
 
 User authorization: the user explicitly approved public deployment once ready. Earlier handoff notes saying public approval is pending are superseded. Deployment still requires a valid AWS operator session and successful live checks.

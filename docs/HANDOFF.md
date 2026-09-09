@@ -1,3 +1,13 @@
+## Independent email registration release — ready for deployment
+
+The user requested independent registration, interactive anonymous demo that survives live ceilings, revocable daily agent integration, security review, and public deployment. This supersedes the earlier ChatGPT sign-in decision. Cognito Lite pool and confidential app client are provisioned; credentials and verified-owner mapping are stored in Sites environment revision 3. Never print private data/* settings.
+
+Implemented email/password signup, verification/resend/recovery, hashed seven-day sessions, one revocable 90-day single-app agent connection with one sync per UTC day, local interactive demo and offline download. Static demo precedes every API/identity/allowance path. Owner email verification maps to the preserved tenant. AWS sync backend is deployed; IAM-only URLs remain protected. See ACCOUNTS.md and SECURITY.md for authoritative current design.
+
+89 Python and 11 Node/runtime tests passed, including mocked Cognito lifecycle, quota, cookie, revocation and no-network demo tests. A real synthetic Cognito account successfully signed in through the actual Worker runtime, accessed an empty isolated AWS workspace, registered one app through agent sync, revoked its token and signed out without model calls. No verification email was sent during that synthetic test; actual inbox delivery requires the registering user's verification. Temporary test account remains in data/auth-test.json pending live-site verification and cleanup. Audit inspected 155 historical Git blobs and current source; no deployment credential/key matches. Production npm dependency audit has no advisories.
+
+Next: save/deploy this exact source publicly with D1 migration, verify actual cookie sign-in on live site and anonymous demo assets, delete synthetic Cognito/AWS/D1 records, record deployment completion. Public access and AWS registration provisioning are already authorized. Do not ask again.
+
 ## Public pilot live — 9 September 2026
 
 Release completed at https://builtwatch.kelvinlingac.chatgpt.site/ . Sites version 4, source cc5928c4106f5a16739575cf1b098f24fc5546ed; deployment appgdep_6aa0b602c5748191ac1f416cd9c33b48 succeeded with environment revision 2. Public access revision 2 applied with explicit user authorization.

@@ -5,3 +5,12 @@ export const requestQuota = sqliteTable('request_quota', {
   period: text('period').notNull(),
   used: integer('used').notNull(),
 });
+export const authSession = sqliteTable('auth_session', {
+  hash: text('hash').primaryKey(), account: text('account').notNull(),
+  email: text('email').notNull(), expires: integer('expires').notNull(),
+});
+export const agentConnection = sqliteTable('agent_connection', {
+  hash: text('hash').primaryKey(), account: text('account').notNull(),
+  systemId: text('system_id').notNull(), expires: integer('expires').notNull(),
+  lastSync: integer('last_sync').notNull(),
+});

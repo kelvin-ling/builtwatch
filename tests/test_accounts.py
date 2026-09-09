@@ -332,3 +332,50 @@ def test_account_routes_accept_encoded_json_and_reject_nonobjects(table):
     assert serve(request, store, Settings(), None)["statusCode"] == 200
     assert store.get("preferences")["automatic_checks"] is False
     assert serve(event("/api/intake", "POST", "[]"), store, Settings(), None)["statusCode"] == 400
+
+
+def test_agent_sync_registers_one_profile_without_model_and_scopes_response(table):
+    from builtwatch.models import SystemPassport
+
+    store = DynamoStore(table, tenant_id("agent-owner"))
+    other = SystemPassport(id="other-app", name="Other", purpose="Unrelated private app")
+    store.upsert_system(other)
+    profile = SystemPassport(id="agent-12345678-123", name="Connected", purpose="Draft replies")
+    calls = []
+    result = serve(
+        event(
+            "/api/agent/sync",
+            "POST",
+            json.dumps(
+                {
+                    "system_id": profile.id,
+                    "profile": profile.model_dump(mode="json"),
+                }
+            ),
+        ),
+        store,
+        Settings(),
+        calls.append,
+    )
+    assert result["statusCode"] == 200
+    payload = json.loads(result["body"])
+    assert payload["system"]["id"] == profile.id
+    assert "Other" not in result["body"]
+    assert not calls
+    assert store.get_system(other.id) is not None
+    bad = serve(
+        event(
+            "/api/agent/sync",
+            "POST",
+            json.dumps(
+                {
+                    "system_id": profile.id,
+                    "profile": other.model_dump(mode="json"),
+                }
+            ),
+        ),
+        store,
+        Settings(),
+        calls.append,
+    )
+    assert bad["statusCode"] == 400

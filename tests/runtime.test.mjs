@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {Miniflare} from 'miniflare';
 import {readFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
 
 test('hosting runtime can proxy signed requests and does not follow redirects',async()=>{
   let redirect=false;
@@ -17,7 +18,9 @@ test('hosting runtime can proxy signed requests and does not follow redirects',a
     bindings:{BW_API_URL:`http://127.0.0.1:${server.address().port}`,BW_PROXY_SECRET:'offline-test-secret',BW_AWS_ACCESS_KEY_ID:'TEST',BW_AWS_SECRET_ACCESS_KEY:'test'}});
   try{
     const db=await mf.getD1Database("DB");await db.exec("CREATE TABLE request_quota (key TEXT PRIMARY KEY, period TEXT NOT NULL, used INTEGER NOT NULL)");
-    const call=()=>mf.dispatchFetch('https://builtwatch.example/api/workspace',{headers:{'oai-authenticated-user-id':'test-user'}});
+    await db.exec("CREATE TABLE auth_session(hash TEXT PRIMARY KEY,account TEXT,email TEXT,expires INTEGER)");
+    await db.prepare("INSERT INTO auth_session VALUES(?,?,?,?)").bind(createHash('sha256').update('a'.repeat(64)).digest('hex'),'test-account','test@example.com',Date.now()+60000).run();
+    const call=()=>mf.dispatchFetch('https://builtwatch.example/api/workspace',{headers:{Cookie:'__Host-bw_session='+('a'.repeat(64))}});
     let r=await call();assert.equal(r.status,200);assert.deepEqual(await r.json(),{systems:[]});
     redirect=true;r=await call();assert.equal(r.status,502);
     await db.prepare("UPDATE request_quota SET used=180 WHERE key='global-minute'").run();
