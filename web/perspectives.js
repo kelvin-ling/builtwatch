@@ -28,6 +28,18 @@
    review:stale?'Does the finding still apply to the app’s current behavior?':f.relevance==='not_relevant'?'No action requested for this assessment.':f.app_impact?.review_question||f.review_suggestions?.[0]||'Which recorded activity or condition would make this development apply?',
    stale,anchored:!!ref,structured:!!f.app_impact};
  }
+ function automation(system,finding){
+  const first=(items,fallback)=>items?.[0]||fallback;
+  const map={
+   input:{label:system?.services?.length?'Connected service':system?.data_categories?.length?'Information used':'Starting point',value:first(system?.services,first(system?.data_categories,'Not recorded yet'))},
+   work:{label:'Automated work',value:first((system?.consequential_actions||[]).map(x=>x.description),system?.purpose||'Purpose not recorded')},
+   checkpoint:{label:'Human or system checkpoint',value:first(system?.constraints,'Checkpoint not recorded yet')},
+   condition:{label:'Real-world condition',value:first(system?.assumptions,first(system?.jurisdictions,'Outside condition not recorded yet'))}
+  };
+  if(!finding)return {...map,event:null,anchor:'condition'};
+  const b=brief(finding,system),anchors={Service:'input',Data:'input',Technology:'input',Action:'work',Purpose:'work',Boundary:'checkpoint',Assumption:'condition',Region:'condition'};
+  return {...map,event:{change:b.change,connection:b.connection,review:b.review,stale:b.stale},anchor:anchors[b.connectionLabel]||'condition'};
+ }
  function grouped(items,systems){const groups=new Map();for(const f of items){if(!groups.has(f.system_id))groups.set(f.system_id,{system:systems.find(x=>x.id===f.system_id)||{id:f.system_id,name:f.system_id,purpose:'App profile unavailable'},findings:[]});groups.get(f.system_id).findings.push(f);}return [...groups.values()];}
- root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context,brief,grouped};
+ root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context,brief,automation,grouped};
 })(typeof window!=='undefined'?window:globalThis);

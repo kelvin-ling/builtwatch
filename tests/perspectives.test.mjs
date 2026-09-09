@@ -35,3 +35,25 @@ test('grouping keeps findings attached to their own apps',()=>{
  const groups=p.grouped([{id:'one',system_id:'a'},{id:'two',system_id:'b'},{id:'three',system_id:'a'}],[{id:'a',name:'App A'},{id:'b',name:'App B'}]);
  assert.deepEqual(groups.map(g=>[g.system.name,g.findings.map(x=>x.id)]),[['App A',['one','three']],['App B',['two']]]);
 });
+
+test('automation map uses recorded profile facts and anchors an outside event to the matching step',()=>{
+ const app={id:'mailer',name:'Mailer',purpose:'Drafts replies',services:['Gmail'],data_categories:['email'],consequential_actions:[{description:'Sends an approved reply'}],constraints:['A person approves every draft'],assumptions:['Recipients expect a reply'],jurisdictions:['Canada']};
+ const finding={system_id:'mailer',title:'Email rule changed',facts:['A sender rule changed'],system_facts:[{key:'constraints[0]',value:'A person approves every draft'}],app_impact:{fact_key:'constraints[0]',consequence:'Approval may need another check.',review_question:'Is approval still enough?'},relevance:'relevant'};
+ const flow=p.automation(app,finding);
+ assert.equal(flow.input.value,'Gmail');
+ assert.equal(flow.work.value,'Sends an approved reply');
+ assert.equal(flow.checkpoint.value,'A person approves every draft');
+ assert.equal(flow.condition.value,'Recipients expect a reply');
+ assert.equal(flow.anchor,'checkpoint');
+ assert.equal(flow.event.change,'A sender rule changed');
+ assert.match(flow.event.review,/approval still enough/i);
+});
+
+test('automation map keeps missing workflow details explicit',()=>{
+ const flow=p.automation({purpose:'Shows public information',services:[],data_categories:[],consequential_actions:[],constraints:[],assumptions:[],jurisdictions:[]});
+ assert.equal(flow.input.value,'Not recorded yet');
+ assert.equal(flow.work.value,'Shows public information');
+ assert.match(flow.checkpoint.value,/not recorded/i);
+ assert.match(flow.condition.value,/not.*recorded/i);
+ assert.equal(flow.event,null);
+});
