@@ -1,3 +1,13 @@
+## Public pilot live — 9 September 2026
+
+Release completed at https://builtwatch.kelvinlingac.chatgpt.site/ . Sites version 4, source cc5928c4106f5a16739575cf1b098f24fc5546ed; deployment appgdep_6aa0b602c5748191ac1f416cd9c33b48 succeeded with environment revision 2. Public access revision 2 applied with explicit user authorization.
+
+Both current and retired Lambda URLs now require AWS IAM. Anonymous direct requests returned 403; the production gateway code running in the actual Worker runtime returned 200 with its invoke-only credentials after protection. Public page and updated assets returned 200; forged client identity remained signed_in=false and workspace API returned 401. The D1 migration was included in the successful release. A second real-user sign-in and visual/mobile acceptance remain unverified; no independent security audit is claimed.
+
+The live corrected Nova Lite intake test captured Gmail, left jurisdiction unknown, kept the draft unsaved until confirmation, and saved successfully after confirmation. Estimated cost $0.00010908. Temporary intake and gateway test workspaces were removed; shared model charges retained. 88 Python and seven Node/runtime tests passed. IAM credentials remain only in private operator settings and Sites secrets. The owner inventory and new daily schedule remain; legacy daily schedule stays disabled.
+
+All older approval-pending and release-pending text below is historical and superseded by this entry. No further public or IAM identity approval is needed for this completed release. Avoid rolling back to version 3 without adapting its gateway: that version cannot sign AWS IAM requests.
+
 ## Agent-led intake and protected public pilot — release verification
 
 The user approved public deployment, the scoped IAM gateway identity, and continuing without repeated permission questions. Older pending-approval notes below are historical and superseded.
