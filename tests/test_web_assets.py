@@ -34,6 +34,15 @@ def test_frontend_copy_does_not_reference_chat_accounts_or_model_brands():
     assert "Claude" not in demo
 
 
+def test_completed_checks_do_not_create_a_global_status_banner():
+    app = (ROOT / "web/app.js").read_text()
+    notice = app[app.index("function jobNotice()") : app.index("function render()")]
+
+    assert "state.job.status!=='idle'" not in app
+    assert "function jobNotice()" in app
+    assert "complete:'" not in notice
+
+
 def test_every_registry_category_has_a_display_name_and_blurb():
     """A source in an unnamed category would render under a blank heading.
 
