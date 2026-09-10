@@ -53,6 +53,8 @@ def test_dialog_focus_and_actions_are_safe_on_small_screens():
     assert "margin:24px -28px -26px" not in css
     assert ".modal-actions:not(.modal-footer){display:grid!important" in css
     assert ".modal-body{flex:1 1 auto;overflow-y:auto" in css
+    assert "content.classList.toggle('has-footer',Boolean(actions))" in app
+    assert "#modal-content.has-footer{height:90dvh}" in css
     assert "env(safe-area-inset-bottom)" in css
     assert ".modal-actions:not(.modal-footer){grid-template-columns:1fr}" in css
 
