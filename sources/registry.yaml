@@ -16,7 +16,7 @@ sources:
     category: vendor_policy
     url: https://www.anthropic.com/legal/aup
     publisher: Anthropic
-    notes: Governs permitted uses of Claude models, including via Amazon Bedrock.
+    notes: Governs permitted uses of supported models, including through Amazon Bedrock.
 
   # -- API changes and deprecations --------------------------------------------------
   - id: stripe-upgrades

@@ -4,7 +4,7 @@
   "name": "Client Inbox Triage Bot",
   "purpose": "Reads the owner's shared client inbox each morning, drafts replies with a large language model, and sends the approved drafts to clients as email from the business domain.",
   "technologies": ["Python 3.12", "AWS Lambda", "EventBridge Scheduler"],
-  "services": ["Gmail API", "Anthropic Claude via Amazon Bedrock", "SendGrid"],
+  "services": ["Gmail API", "Amazon Bedrock", "SendGrid"],
   "consequential_actions": [
     {
       "description": "Sends email to external clients from the business domain",

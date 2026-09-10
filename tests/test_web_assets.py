@@ -26,6 +26,14 @@ def test_frontend_does_not_embed_owner_secret():
     assert 'aria-labelledby="modal-title"' in (ROOT / "web/index.html").read_text()
 
 
+def test_frontend_copy_does_not_reference_chat_accounts_or_model_brands():
+    app = (ROOT / "web/app.js").read_text()
+    demo = (ROOT / "web/demo.json").read_text()
+
+    assert "No ChatGPT account" not in app
+    assert "Claude" not in demo
+
+
 def test_every_registry_category_has_a_display_name_and_blurb():
     """A source in an unnamed category would render under a blank heading.
 

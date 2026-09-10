@@ -12,7 +12,7 @@
       ],
       "services": [
         "Gmail API",
-        "Anthropic Claude via Amazon Bedrock",
+        "Amazon Bedrock",
         "SendGrid"
       ],
       "consequential_actions": [
@@ -343,9 +343,9 @@
         }
       ],
       "facts": [
-        "Added Claude Fable 5.1 and Claude Mythos 5.1",
-        "Corrected Claude Sonnet 5 thinking guidance",
-        "Fixed Anthropic Messages API code samples",
+        "Added new foundation models",
+        "Corrected model thinking guidance",
+        "Fixed model API code samples",
         "Updated endpoint guidance to recommend the bedrock-runtime endpoint"
       ],
       "inferences": [
@@ -718,7 +718,7 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "Anthropic Claude via Amazon Bedrock"
+          "value": "Amazon Bedrock"
         }
       ],
       "facts": [
@@ -764,7 +764,7 @@
         },
         {
           "key": "services[1]",
-          "value": "Anthropic Claude via Amazon Bedrock"
+          "value": "Amazon Bedrock"
         },
         {
           "key": "services[2]",
@@ -843,7 +843,7 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "Anthropic Claude via Amazon Bedrock"
+          "value": "Amazon Bedrock"
         }
       ],
       "facts": [
@@ -875,7 +875,7 @@
         },
         {
           "key": "services[1]",
-          "value": "Anthropic Claude via Amazon Bedrock"
+          "value": "Amazon Bedrock"
         },
         {
           "key": "services[2]",
@@ -908,7 +908,7 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "Anthropic Claude via Amazon Bedrock"
+          "value": "Amazon Bedrock"
         }
       ],
       "facts": [
@@ -970,7 +970,7 @@
         {
           "snapshot_id": "snap_710e684a3090",
           "source_id": "aws-bedrock-history",
-          "passage": "Added Claude Fable 5.1 and Claude Mythos 5.1\nAdded model cards for\nClaude Fable 5.1\nand\nClaude Mythos 5.1\n. Updated the Adaptive thinking, Extended thinking, Tool use, and Prompt caching pages. Added a new\nThinking block binding (beta)\ntopic.",
+          "passage": "Amazon Bedrock Guardrails now supports Automated Reasoning checks to validate the accuracy of foundation model responses.",
           "published_at": null,
           "effective_at": null
         }
@@ -978,21 +978,18 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "Anthropic Claude via Amazon Bedrock"
+          "value": "Amazon Bedrock"
         }
       ],
       "facts": [
-        "Added Claude Fable 5.1 and Claude Mythos 5.1",
-        "Added model cards for Claude Fable 5.1 and Claude Mythos 5.1",
-        "Updated the Adaptive thinking, Extended thinking, Tool use, and Prompt caching pages",
-        "Added a new Thinking block binding (beta) topic"
+        "Amazon Bedrock Guardrails added Automated Reasoning checks for foundation model responses"
       ],
       "inferences": [
-        "The system uses the Anthropic Claude model via Amazon Bedrock, and there have been updates to the model cards and thinking guidance."
+        "The system uses a foundation model through Amazon Bedrock, so the new Guardrails check may help verify response accuracy."
       ],
       "unknowns": [],
       "review_suggestions": [
-        "Review the updated model cards and thinking guidance to ensure the system is using the latest features and configurations."
+        "Decide whether Automated Reasoning checks should be added to this system's response review."
       ],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:42:11.349884Z",
@@ -1041,7 +1038,7 @@
         },
         {
           "key": "services[1]",
-          "value": "Anthropic Claude via Amazon Bedrock"
+          "value": "Amazon Bedrock"
         },
         {
           "key": "services[2]",
@@ -1082,14 +1079,14 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "Anthropic Claude via Amazon Bedrock"
+          "value": "Amazon Bedrock"
         }
       ],
       "facts": [
         "The Anthropic Usage Policy applies to all users and use cases of Anthropic's products and services."
       ],
       "inferences": [
-        "The inbox-triage system uses the Anthropic Claude model via Amazon Bedrock, which is subject to the Anthropic Usage Policy."
+        "The inbox-triage system uses a foundation model through Amazon Bedrock that is subject to the Anthropic Usage Policy."
       ],
       "unknowns": [],
       "review_suggestions": [
@@ -1109,7 +1106,7 @@
       "url": "https://www.anthropic.com/legal/aup",
       "publisher": "Anthropic",
       "enabled": true,
-      "notes": "Governs permitted uses of Claude models, including via Amazon Bedrock."
+      "notes": "Governs permitted uses of supported models, including through Amazon Bedrock."
     },
     {
       "id": "stripe-upgrades",
