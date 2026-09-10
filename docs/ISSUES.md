@@ -3,7 +3,8 @@
 Machine-readable issue register for whoever continues this work. Generated 10 September
 2026 from a full review, and updated the same day as items were closed of the working tree, the test suite, and live AWS state.
 
-**Read [HANDOFF.md](HANDOFF.md) first** for environment setup and AWS access. This file
+**Read [HANDOFF.md](HANDOFF.md) first** for environment setup and AWS access, and
+[DEPLOY.md](DEPLOY.md) for the deploy + re-scan runbook. This file
 lists only what is *wrong*, not how the system works.
 
 Deadline context: hackathon submission closes **14 September 2026, 17:00 PT**.
@@ -136,21 +137,44 @@ Cognito, EventBridge Scheduler, S3 — but the front door does not communicate i
 
 ---
 
-## BW-6 · Cost alerting is dead
-**Severity:** HIGH · **Owner:** HUMAN · **Status:** open
+## BW-6 · Operational cost warnings are not being delivered
+**Severity:** MED · **Owner:** HUMAN · **Status:** open — confirmation re-sent 10 Sep 2026
 
-Live admin snapshot reports `email_confirmed: False`. The SNS subscription to
-`arn:aws:sns:us-east-1:[aws-account-redacted]:builtwatch-owner-cost-alerts` was never confirmed, so
-every warning the cost monitor generates is discarded. The system self-reports this as a
-warning and has done so since deployment.
+*Corrected 10 Sep: an earlier revision of this file called cost alerting "dead". That was
+wrong and overstated the risk. Budget alerts work. Only the SNS channel is unconfirmed.*
 
-**Action.** Find the AWS SNS confirmation email and click the link. Only the mailbox owner
-can do this.
+Two independent alerting paths exist. One works, one does not:
 
-**Note.** Spend controls themselves are healthy and fail closed: month-to-date Cost
-Explorer `$0.00`, internal ledger `allocated $0.5399`, `GLOBAL_MONTH_LIMIT $5.00`,
-`RESERVATION $1.00` per scan reserved then settled atomically, monitor pauses paid checks
-at `$10` or on any billing-query failure. Only the *notification* path is broken.
+| Path | Destination | Needs opt-in? | Status |
+|---|---|---|---|
+| **AWS Budgets** — 50% / 80% / 100% of `builtwatch-monthly-20usd` | `[owner-email-redacted]` | No | ✅ **Working** |
+| **SNS** `builtwatch-owner-cost-alerts` — operational warnings from the daily monitor | `[owner-email-redacted]` | Yes | ❌ `PendingConfirmation` |
+
+So spend threshold alerts are being delivered. What is *not* delivered is the daily
+monitor's richer operational warnings — unusual-spend detection, "approaching allowance",
+"paid checks paused", "shared reserve nearly used".
+
+**Action.** The confirmation email was re-sent on 10 Sep 2026 to `[owner-email-redacted]`
+(subject: *AWS Notification - Subscription Confirmation*). Click the link in it. Only the
+mailbox owner can do this. Verify with:
+
+```bash
+aws sns list-subscriptions-by-topic --topic-arn \
+  arn:aws:sns:us-east-1:[aws-account-redacted]:builtwatch-owner-cost-alerts
+```
+
+`SubscriptionArn` will change from `PendingConfirmation` to a real ARN, and the monitor's
+`email_confirmed` flag flips true on its next daily run.
+
+**Note two budget facts worth knowing.** The budget is now **$12**, not the $20 originally
+set — `deploy_cost_monitor.py` lowered it. And a separate `Monthly EC2 Budget`, also $12,
+exists in the account and is unrelated to BuiltWatch; do not read its alerts as this
+project's spend.
+
+**Spend controls themselves are healthy and fail closed**: month-to-date Cost Explorer
+`$0.00`, internal ledger `allocated $0.5399`, `GLOBAL_MONTH_LIMIT $5.00`, `RESERVATION
+$1.00` reserved then settled atomically, paid checks pause at `$10` reported cost or on any
+billing-query failure.
 
 ---
 
@@ -202,21 +226,33 @@ architecture story. Confirm the data is migrated, then delete.
 but at this rate it reads as evasion rather than rigour, and it costs a full assessment
 each time.
 
-Worth sampling the 11 to distinguish genuinely undeterminable applicability from prompt or
+Worth sampling to distinguish genuinely undeterminable applicability from prompt or
 passport weakness before changing anything.
+
+**Do this after the deploy and re-scan, not before.** All 43 stored findings are from
+assessment generation 0 and will be regenerated under the BW-1 rules. Sampling now would
+analyse a population that is about to be replaced — and since BW-1 converts some
+over-confident `relevant` verdicts into honest `insufficient_information`, the rate may
+legitimately *rise* before it falls. Measure against the new generation.
 
 ---
 
 ## BW-11 · `is_disposed()` is dead code
-**Severity:** LOW · **Owner:** AGENT · **Status:** open
+**Severity:** LOW · **Owner:** AGENT · **Status:** ✅ RESOLVED 10 Sep 2026 — as a decision, not a code change
 
-Defined in both `store.py:333` and `dynamo_store.py:176`; called from neither pipeline.
-Suppression of already-dismissed developments now happens solely via `revision_hash`
-equality in `save_finding()`.
+The question was whether to wire it back into the pipeline or delete it. **Neither: it
+stays, unused, and that is correct.**
 
-`AGENTS.md` invariant 3 currently describes the `revision_hash` mechanism, so docs and code
-agree — but a dismissed finding whose source is *materially* edited will re-notify. Decide
-whether that is intended, then either wire the check back in or delete the method.
+Suppression is keyed on `revision_hash`, not on disposition, and that is the behaviour you
+want. A development you dismissed stays quiet while its substance is unchanged, but if the
+source is *materially* revised — a proposal becomes law, a deadline moves, scope widens —
+you are told again. Keying suppression on disposition would silence that permanently, so a
+single dismissal would hide every future change to the same rule.
+
+`is_disposed()` remains as a reporting helper. Both implementations now carry a docstring
+saying it must not be used for suppression, and
+`test_disposition_does_not_permanently_silence_a_development` pins the behaviour so nobody
+"fixes" it by wiring it in.
 
 ---
 
@@ -255,12 +291,17 @@ When the underlying session expires, only a human can run
 
 ---
 
-## Suggested order
+## Remaining work, in order
 
-1. **BW-3** — one click, unblocks the submission entirely (HUMAN)
-2. **BW-6** — one click, restores cost visibility (HUMAN)
-3. **BW-1 + BW-2** — together; fixing the validator without invalidating stale findings
-   leaves the bad ones on screen
-4. **BW-4** — cheap, and being wrong here is costly
-5. **BW-5** — decision needed before any domain work
-6. **BW-7**, **BW-10**, **BW-11**, **BW-8**, **BW-9** — as time allows
+**Fixed but not yet live.** BW-1, BW-2, BW-4, BW-7, BW-8 and BW-11 are done in the
+repository. None of them affect the running system until it is redeployed — follow
+[DEPLOY.md](DEPLOY.md), and note that step 4's re-scan is required, not optional, because
+the deploy withholds all 43 existing findings the moment it lands.
+
+1. **BW-3** — one click, and the submission is invalid without it (HUMAN)
+2. **BW-6** — one click; confirmation email re-sent 10 Sep (HUMAN)
+3. **Deploy + re-scan** — makes every fix above actually take effect (AGENT)
+4. **BW-5** — decision needed before any domain work (HUMAN, then AGENT)
+5. **BW-10** — sample only after the re-scan; see the note in that section (AGENT)
+6. **BW-9** — orphaned stack; destructive, so confirm before deleting (AGENT)
+7. **Demo video** — the only remaining submission artefact (HUMAN)

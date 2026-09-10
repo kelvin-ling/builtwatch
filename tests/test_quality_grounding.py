@@ -154,3 +154,45 @@ def test_admission_lock_release_cannot_mask_the_return_value():
             )
 
     assert admit(LockStolenTable(), "tenant-a") is True
+
+
+def test_disposition_does_not_permanently_silence_a_development(store, passport, snapshot):
+    """BW-11: dismissing a finding must not hide the *next* material change to that rule.
+
+    Suppression is keyed on revision_hash, never on disposition. A dismissed development
+    stays quiet while its substance is unchanged, but a material revision — a proposal
+    becoming law, a deadline moving — must reach the user again. Wiring is_disposed() into
+    the pipeline would break that, so this pins the intended behaviour.
+    """
+    from builtwatch.models import Disposition, DispositionAction
+    from builtwatch.store import new_id
+    from tests.conftest import make_finding
+
+    original = make_finding(passport, snapshot, finding_id="find_bw11a")
+    stored, is_new = store.save_finding(original)
+    assert is_new
+
+    store.add_disposition(
+        Disposition(
+            id=new_id("disp"),
+            finding_id=stored.id,
+            action=DispositionAction.DISMISSED,
+            reason="not applicable to us",
+        )
+    )
+    assert store.is_disposed(stored.dedup_key()) is True
+
+    # Same substance again -> correctly suppressed as a duplicate.
+    repeat = make_finding(passport, snapshot, finding_id="find_bw11b")
+    _, is_new = store.save_finding(repeat)
+    assert is_new is False, "an unchanged development must stay quiet after dismissal"
+
+    # Materially revised -> must surface again despite the earlier dismissal.
+    revised = make_finding(
+        passport,
+        snapshot,
+        finding_id="find_bw11c",
+        facts=["Bulk senders must publish a DMARC policy from 1 June 2027."],
+    )
+    _, is_new = store.save_finding(revised)
+    assert is_new is True, "a material revision must re-notify even after a dismissal"

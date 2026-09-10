@@ -178,6 +178,7 @@ class DynamoStore:
         )
 
     def is_disposed(self, dedup_key: str) -> bool:
+        """Reporting helper. Not used for suppression — see store.Store.is_disposed."""
         return any(
             d.action.value in {"acknowledged", "dismissed"}
             for f in self.find_by_dedup(dedup_key)

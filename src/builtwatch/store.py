@@ -337,7 +337,19 @@ class Store:
         return [Disposition.model_validate_json(r["payload"]) for r in rows]
 
     def is_disposed(self, dedup_key: str) -> bool:
-        """True if any revision of this development was acknowledged or dismissed."""
+        """Whether any revision of this development was acknowledged or dismissed.
+
+        Reporting helper only. **The pipeline deliberately does not consult this to
+        suppress findings**, and wiring it in would be a regression.
+
+        Suppression is by `revision_hash` instead, which is the behaviour you want: a
+        development you dismissed stays quiet while its substance is unchanged, but if the
+        source is *materially* revised — a proposal becomes law, a deadline moves, scope
+        widens — you are told again. Keying suppression on disposition would silence that
+        permanently, so one dismissal would hide every future change to the same rule.
+
+        See AGENTS.md invariant 3.
+        """
         rows = self.conn.execute(
             "SELECT d.action FROM dispositions d JOIN findings f ON f.id = d.finding_id "
             "WHERE f.dedup_key=? AND d.action IN ('acknowledged','dismissed')",

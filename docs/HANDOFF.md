@@ -238,6 +238,8 @@ person or another coding agent.
 | [PRECISION.md](PRECISION.md) | Measured quality, including where it fails |
 | [COST_CONTROLS.md](COST_CONTROLS.md) | Spend ceilings and abuse resistance |
 | [SUBMISSION_CHECKLIST.md](SUBMISSION_CHECKLIST.md) | Hackathon requirements and open blockers |
+| [ISSUES.md](ISSUES.md) | **Open defects.** Read before changing anything. |
+| [DEPLOY.md](DEPLOY.md) | Deploy + re-scan runbook, verified end to end |
 
 If you read only one, read `AGENTS.md`. The invariants *are* the product.
 
