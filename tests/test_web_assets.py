@@ -54,6 +54,8 @@ def test_dialog_focus_and_actions_are_safe_on_small_screens():
     assert ".modal-actions:not(.modal-footer){display:grid!important" in css
     assert ".modal-body{flex:1 1 auto;overflow-y:auto" in css
     assert "content.classList.toggle('has-footer',Boolean(actions))" in app
+    assert "const actions=$('.modal-body .modal-actions')" in app
+    assert "button.setAttribute('form',actionForm.id)" in app
     assert "#modal-content.has-footer{height:90dvh}" in css
     assert "#modal-content.has-footer{height:calc(90dvh - 2px)}" in css
     assert "env(safe-area-inset-bottom)" in css
