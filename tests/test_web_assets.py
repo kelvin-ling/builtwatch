@@ -80,7 +80,7 @@ def test_unsigned_demo_can_complete_the_review_flow_in_place():
     assert "!state.demo&&f.disposition==='open'" not in app
     assert 'class="group-title"' in app
     assert 'class="system-mini-copy"' in app
-    assert ".app-finding-group>summary .group-title{display:grid" in css
+    assert ".app-finding-group>summary span.group-title:first-child{display:grid" in css
 
 
 def test_every_registry_category_has_a_display_name_and_blurb():
