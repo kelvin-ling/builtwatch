@@ -1,3 +1,30 @@
+# Verified actionable-only and automatic-check release — 9 September 2026
+
+Public Sites version 14 deployed successfully at 00:07 UTC on 10 September.
+Source: `dea4d7321825af6977d463d5523c8636a492f50e`.
+Version: `appgprj_6a9fa33453988191895d1c0403f10071~appgver_8966b527bc80819188a1dc5b09ffc0b4`.
+Deployment: `appgdep_6aa1f4be51b08191bc64151e13b5f565`.
+
+Needs attention now contains only open findings that require user action: grounded relevant
+items or a missing app fact the user can supply. Not-relevant results, acknowledged items,
+and evidence-validation failures are excluded. Source outages and incomplete runs remain
+visible in Watched sources and Check history because they affect confidence, but no longer
+clutter the action list. The guide and result key describe only the two visible action types.
+
+The live AWS schedule was read back as ENABLED at 7:00 a.m. America/Toronto, targeting the
+account API with `{"task":"daily"}`. A controlled production event exposed unreliable
+assessment tool use, so the final assessment now receives bounded exact source passages and
+the trusted app fact index directly. It has no model-controlled tools; every cited passage
+and app fact is still validated against storage before a relevant result can surface.
+
+After deploying that change, the same production daily event completed for both active
+workspaces. The saved results were `complete`: one reported zero new findings; the other
+reported zero new findings and one item needing more information. This was a real live-source
+and Bedrock run, not replay or demo data. The production worker package matched the validated
+source. 102 Python and 21 Node/runtime tests passed; Python lint, JavaScript syntax, build and
+archive validation passed. The public page and final JavaScript copy were verified over HTTP.
+No browser visual QA was performed.
+
 # Verified clear-action interface release — 9 September 2026
 
 Public Sites version 11 deployed successfully at 19:46 UTC.
