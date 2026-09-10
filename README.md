@@ -2,7 +2,7 @@
 
 # BuiltWatch
 
-**You keep building. BuiltWatch remembers what you built and tells you when the world changes in a way that matters.**
+**BuiltWatch watches external changes that could affect the AI agents, automations, APIs, and apps you already run, then tells you what deserves attention and why.**
 
 Built for the [Agents for Humans hackathon](https://agentsforhumans.devpost.com/) — *Professional Agents* track. Powered by [Strands Agents](https://github.com/strands-agents/sdk-python) on Amazon Bedrock.
 
@@ -12,7 +12,7 @@ Built for the [Agents for Humans hackathon](https://agentsforhumans.devpost.com/
 
 AI coding tools made it cheap to build things. They did not make it cheap to *remember* them.
 
-An independent professional now runs a dozen small systems: an intake form that emails clients, a scraper that feeds a spreadsheet, an agent that drafts replies, an automation that charges a card. Each one quietly depends on a vendor policy, an API version, a data-handling assumption, and a regulation that was true on the day it was written.
+Developers, technical makers, consultants, and small teams now run several small systems: agents, API integrations, automations, and web apps. Each one quietly depends on service policies, API versions, software dependencies, security assumptions, and regulations that can change after launch.
 
 Then the world moves. An API version is deprecated. A bulk-sender rule changes. A transparency obligation takes effect. The thing you shipped eight months ago is now wrong, and nothing tells you — because the system that broke it doesn't know you exist.
 
@@ -208,12 +208,11 @@ workspaces, request usage and warnings, and pause paid checks. Other accounts an
 connection tokens cannot access this dashboard. SNS email warnings require the recipient
 to confirm the AWS subscription email.
 
-### Business, Operations and Technical views
+### System context
 
-BuiltWatch remembers business conditions as well as software dependencies. Use the
-view buttons to emphasize customer impact and responsibilities, operating limits and
-handoffs, or technical changes. Every view retains access to all findings and their
-source evidence. View changes make no model call and do not change access permissions.
+BuiltWatch records software dependencies alongside operating conditions and human
+checks. The current experience is intentionally focused on developers and technical
+operators running agents, automations, API integrations and small applications.
 
 Describe the work your automation does and what must stay true: for example, a quote
 helper assumes its price list is current and a person approves the quote. Intake and

@@ -5,7 +5,7 @@
   operations:{name:'Operations',description:'Continuity, handoffs, service limits and work that needs a person.',order:['vendor_policy','communications','api_change','business_news','standards','privacy_ai','regulation','security']},
   technical:{name:'Technical',description:'Integrations, platform changes, security and the underlying evidence.',order:['api_change','security','vendor_policy','standards','privacy_ai','regulation','communications','business_news']}
  };
- const topics={business_news:'Business developments',communications:'Reaching customers',regulation:'Rules & responsibilities',privacy_ai:'Data, consent & AI',vendor_policy:'Service rules & limits',api_change:'Connected services',security:'Security & continuity',standards:'Good practice & oversight'};
+ const topics={business_news:'Software business updates',communications:'Platform policies',regulation:'Software & AI regulation',privacy_ai:'Privacy & AI rules',vendor_policy:'AI service policies',api_change:'API & platform changes',security:'Security advisories',standards:'Engineering guidance'};
  const normalize=value=>Object.hasOwn(views,value)?value:'business';
  function ordered(items,sources,lens){const order=views[normalize(lens)].order;const categories=new Map(sources.map(x=>[x.id,x.category]));return [...items].sort((a,b)=>{const rank=x=>{const index=order.indexOf(categories.get(x.source_id));return index<0?99:index;};return rank(a)-rank(b);});}
  function topic(f,sources){return topics[sources.find(x=>x.id===f.source_id)?.category]||'Other developments';}
@@ -50,7 +50,7 @@
   if(isEvidenceFailure(f))return {status:'BuiltWatch could not verify this',problemLabel:"What's wrong",problem:'The suggested connection is missing a source passage that proves it. BuiltWatch blocked it so it cannot be mistaken for a real alert.',actionLabel:'What to do next',action:'Do not change the app based on this item. BuiltWatch must check the source again; only act on a later result that includes quoted evidence.',owner:'BuiltWatch'};
   if(f.relevance==='insufficient_information')return {status:'Your input is needed',problemLabel:'Question to answer',problem:readableGap(f),actionLabel:'Next step',action:'Verify this detail, update the app profile, then run the check again.',owner:'You'};
   if(f.relevance==='not_relevant')return {status:'No app change needed',problemLabel:'Why it does not apply',problem:b.consequence,actionLabel:'What to do next',action:'Nothing needs fixing for this item. Revisit it only if the app or its dependencies change.',owner:'No action'};
-  return {status:'Review this app',problemLabel:'Possible problem',problem:b.consequence,actionLabel:'What to do next',action:b.review,owner:'You'};
+  return {status:'Review needed',problemLabel:'Why it may matter',problem:b.consequence,actionLabel:'Next step',action:b.review,owner:'You'};
  }
  function requiresAttention(f,system){
   if((f.disposition||'open')!=='open')return false;
