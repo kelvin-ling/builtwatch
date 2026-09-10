@@ -70,6 +70,19 @@ def test_bulk_import_note_stays_above_its_submit_button():
     assert bulk.index('class="section-note"') < bulk.index('class="modal-actions"')
 
 
+def test_unsigned_demo_can_complete_the_review_flow_in_place():
+    app = (ROOT / "web/app.js").read_text()
+    css = (ROOT / "web/style.css").read_text()
+
+    assert "state.demo?'Review here':'Review with my agent'" in app
+    assert "Review this example in BuiltWatch" in app
+    assert "no sign-in, model use, or charge" in app
+    assert "!state.demo&&f.disposition==='open'" not in app
+    assert 'class="group-title"' in app
+    assert 'class="system-mini-copy"' in app
+    assert ".app-finding-group>summary .group-title{display:grid" in css
+
+
 def test_every_registry_category_has_a_display_name_and_blurb():
     """A source in an unnamed category would render under a blank heading.
 
