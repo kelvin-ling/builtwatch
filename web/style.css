@@ -33,6 +33,12 @@
 
 .system-flow .automation-track{grid-template-columns:1fr}.system-flow .automation-arrow{display:block;justify-self:center;height:12px;line-height:12px;transform:rotate(90deg)}
 
+/* Dialog content scrolls independently from persistent actions. */
+.modal-actions{position:static!important;bottom:auto!important;margin-top:24px!important;padding:0!important;border-top:0!important;box-shadow:none!important}
+.modal-footer{position:relative;flex:none;margin:0!important;padding:16px 28px calc(18px + env(safe-area-inset-bottom))!important;background:#fff;border-top:1px solid var(--line)!important;box-shadow:0 -8px 18px #17332e0a!important}
+.modal-body{scroll-padding-bottom:24px}
+@media(max-width:600px){.modal-footer{grid-template-columns:1fr;margin:0!important;padding:12px 20px calc(16px + env(safe-area-inset-bottom))!important}.modal-body{scroll-padding-bottom:18px}}
+
 /* Clear result states and a restrained, product-explaining motion sequence. */
 .modal-body{overflow-y:auto;min-height:0;overscroll-behavior:contain}dialog{overflow:hidden}#modal-content{display:flex;flex-direction:column;max-height:90dvh}.modal-head{position:relative;flex:none}.modal-actions{bottom:0;z-index:4;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:24px -28px -26px;padding:14px 28px calc(18px + env(safe-area-inset-bottom));border-top:1px solid var(--line);box-shadow:0 -8px 18px #17332e0a}.modal-actions>.button,.modal-actions>.text-button{width:100%;min-width:0;white-space:normal;text-align:center;justify-content:center}.modal-more{margin-top:18px;border-top:1px solid var(--line);font-size:13px}.modal-more>summary{font-weight:650}.modal-more .button-group{padding:8px 0}.coverage-scope details{margin-top:8px;border-top:1px solid var(--line)}.coverage-scope details summary{font-weight:650;font-size:14px}.coverage-scope details p{margin-bottom:0}
 @media(max-width:600px){#modal-content{max-height:92dvh}.modal-actions{grid-template-columns:1fr;margin:22px -20px -20px;padding:12px 20px calc(14px + env(safe-area-inset-bottom))}.modal-actions>.button,.modal-actions>.text-button{min-height:46px}.modal-more .button-group{display:grid;grid-template-columns:1fr}.modal-more .button{width:100%}}
