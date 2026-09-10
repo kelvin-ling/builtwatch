@@ -24,3 +24,43 @@ def test_frontend_does_not_embed_owner_secret():
             assert "workspace-access.json" not in text
     assert "prefers-reduced-motion" in (ROOT / "web/style.css").read_text()
     assert 'aria-labelledby="modal-title"' in (ROOT / "web/index.html").read_text()
+
+
+def test_every_registry_category_has_a_display_name_and_blurb():
+    """A source in an unnamed category would render under a blank heading.
+
+    The sources view groups by category, so adding one to sources/registry.yaml without a
+    matching label in perspectives.js and a blurb in app.js silently produces an empty
+    group header. Cheap to prevent, annoying to notice.
+    """
+    import yaml
+
+    registry = yaml.safe_load((ROOT / "sources/registry.yaml").read_text())
+    categories = {s["category"] for s in registry["sources"]}
+
+    topics = (ROOT / "web/perspectives.js").read_text()
+    app = (ROOT / "web/app.js").read_text()
+    order_line = app[app.index("const CATEGORY_ORDER=") : app.index("const BLURBS=")]
+
+    for category in sorted(categories):
+        assert f"{category}:'" in topics, f"{category} has no display name in perspectives.js"
+        assert f"{category}:'" in app, f"{category} has no blurb in app.js"
+        assert f"'{category}'" in order_line, f"{category} is missing from CATEGORY_ORDER"
+
+
+def test_sources_view_groups_by_category_and_surfaces_coverage_failures():
+    """Invariant 1 must survive the grouped layout.
+
+    A failed fetch has to remain visible. In the grouped view that means a per-group
+    amber count, not only the per-row pill — otherwise a collapsed or skimmed group
+    could read as an all-clear.
+    """
+    app = (ROOT / "web/app.js").read_text()
+    start = app.index("function sourcesView(){")
+    view = app[start : app.index("\nfunction ", start + 10)]
+
+    assert "CATEGORY_ORDER" in view and "source-group" in view, "sources view is not grouped"
+    assert "could not be checked" in view, "group header does not report fetch failures"
+    assert "pill amber" in view, "fetch failures are not visually distinguished"
+    # The whole-registry count must stay honest about what is and is not watched.
+    assert "Nothing outside this list is checked" in view
