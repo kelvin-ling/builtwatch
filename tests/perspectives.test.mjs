@@ -65,10 +65,20 @@ test('diagnosis assigns a plain-language owner and action to every result type',
  const clear={system_id:'mail',relevance:'not_relevant',title:'Other rule',unknowns:[],system_facts:[],inferences:['This rule does not cover the app.']};
  assert.equal(p.diagnosis(blocked,app).owner,'BuiltWatch');
  assert.match(p.diagnosis(blocked,app).action,/do not change the app/i);
- assert.equal(p.diagnosis(missing,app).owner,'You and your agent');
- assert.match(p.diagnosis(missing,app).problem,/does not know whether recipients opted in/i);
+ assert.equal(p.diagnosis(missing,app).owner,'You');
+ assert.match(p.diagnosis(missing,app).problem,/confirm recipients opted in/i);
+ assert.match(p.diagnosis(missing,app).action,/update the app profile/i);
  assert.equal(p.diagnosis(clear,app).owner,'No action');
  assert.match(p.diagnosis(clear,app).action,/nothing needs fixing/i);
+});
+
+test('presentation removes model-like assessment wording and app ids',()=>{
+ const app={id:'support-widget',name:'Support widget',purpose:'Answers questions'};
+ const finding={system_id:'support-widget',relevance:'insufficient_information',title:"Assessing relevance of Anthropic Usage Policy to 'support-widget'",unknowns:["Whether the 'support-widget' system accepts public input."],system_facts:[]};
+ const brief=p.brief(finding,app),diagnosis=p.diagnosis(finding,app);
+ assert.equal(brief.change,'Anthropic Usage Policy');
+ assert.equal(diagnosis.problem,'Confirm this app accepts public input.');
+ assert.equal(diagnosis.status,'Your input is needed');
 });
 
 test('only results that need user action enter the attention list',()=>{

@@ -10,6 +10,9 @@
  function ordered(items,sources,lens){const order=views[normalize(lens)].order;const categories=new Map(sources.map(x=>[x.id,x.category]));return [...items].sort((a,b)=>{const rank=x=>{const index=order.indexOf(categories.get(x.source_id));return index<0?99:index;};return rank(a)-rank(b);});}
  function topic(f,sources){return topics[sources.find(x=>x.id===f.source_id)?.category]||'Other developments';}
  function context(system){return {actions:(system.consequential_actions||[]).map(x=>x.description),assumptions:system.assumptions||[],limits:system.constraints||[],regions:system.jurisdictions||[]};}
+ const shorten=(value,max=112)=>{const text=String(value||'').trim().replace(/\s+/g,' ');if(text.length<=max)return text;const cut=text.slice(0,max-1),word=cut.slice(0,cut.lastIndexOf(' '));return (word||cut)+'…';};
+ const plainChange=value=>String(value||'').replace(/^Assessing relevance of (.+?) to ['"][^'"]+['"]$/i,'$1').replace(/^Assessment of ['"][^'"]+['"] against /i,'').trim();
+ const plainGap=value=>String(value||'').replace(/(?:the\s+)?['"][^'"]+['"]\s+system/gi,'this app').replace(/\bthe this app\b/gi,'this app').trim();
 
  function factIndex(system){const out={purpose:system?.purpose};for(const key of ['technologies','services','data_categories','assumptions','constraints','jurisdictions'])for(const [i,value] of (system?.[key]||[]).entries())out[`${key}[${i}]`]=value;for(const [i,value] of (system?.consequential_actions||[]).entries())out[`consequential_actions[${i}]`]=value.description;return out;}
  function brief(f,system){
@@ -23,7 +26,7 @@
   return {app:system?.name||f.system_id,purpose:system?.purpose||'Purpose not recorded',
    connection:ref?ref.value:'No matching recorded detail establishes the connection yet.',
    connectionLabel:ref?fieldLabels[ref.key.split('[')[0]]||'Recorded detail':'Connection not established',
-   change:f.facts?.[0]||f.title,
+   change:shorten(f.facts?.[0]||plainChange(f.title),150),
    consequence:stale?'The app profile changed after this assessment. Recheck the connection before acting.':f.relevance==='not_relevant'?(f.inferences?.[0]||'No applicable connection was established.'):f.relevance==='insufficient_information'?(f.unknowns?.[0]||'The effect on this app is not established.'):(f.app_impact?.consequence||f.inferences?.[0]||'A specific consequence was not established in this assessment.'),
    review:stale?'Does the finding still apply to the app’s current behavior?':f.relevance==='not_relevant'?'No action requested for this assessment.':f.app_impact?.review_question||f.review_suggestions?.[0]||'Which recorded activity or condition would make this development apply?',
    stale,anchored:!!ref,structured:!!f.app_impact};
@@ -32,14 +35,15 @@
  function readableGap(f){
   const gap=(f.unknowns||[]).find(x=>!/downgraded automatically|could not verify the suggested connection|not grounded|not found verbatim|cited snapshot|snap_[a-f0-9]+/i.test(x));
   if(!gap)return 'BuiltWatch is missing a fact needed to connect this development to the app.';
-  if(/^whether\b/i.test(gap))return `BuiltWatch does not know ${gap[0].toLowerCase()}${gap.slice(1)}.`.replace(/\.\.$/,'.');
-  return `BuiltWatch is missing this fact: ${gap}`;
+  const readable=plainGap(gap);
+  if(/^whether\b/i.test(readable))return `Confirm ${readable.slice(8).replace(/[.]$/, '')}.`;
+  return `Confirm this detail: ${readable.replace(/[.]$/, '')}.`;
  }
  function diagnosis(f,system){
   const b=brief(f,system);
   if(b.stale)return {status:'App details changed',problemLabel:"What's wrong",problem:'This result refers to an older version of the app profile.',actionLabel:'What to do next',action:'Update the app profile if needed, then run the check again before changing the app.',owner:'You'};
   if(isEvidenceFailure(f))return {status:'BuiltWatch could not verify this',problemLabel:"What's wrong",problem:'The suggested connection is missing a source passage that proves it. BuiltWatch blocked it so it cannot be mistaken for a real alert.',actionLabel:'What to do next',action:'Do not change the app based on this item. BuiltWatch must check the source again; only act on a later result that includes quoted evidence.',owner:'BuiltWatch'};
-  if(f.relevance==='insufficient_information')return {status:'One fact is missing',problemLabel:"What's missing",problem:readableGap(f),actionLabel:'What to do next',action:'Choose “Review with my agent” to verify the missing fact. If it describes your app, add the answer to the app profile, then run the check again.',owner:'You and your agent'};
+  if(f.relevance==='insufficient_information')return {status:'Your input is needed',problemLabel:'Question to answer',problem:readableGap(f),actionLabel:'Next step',action:'Verify this detail, update the app profile, then run the check again.',owner:'You'};
   if(f.relevance==='not_relevant')return {status:'No app change needed',problemLabel:'Why it does not apply',problem:b.consequence,actionLabel:'What to do next',action:'Nothing needs fixing for this item. Revisit it only if the app or its dependencies change.',owner:'No action'};
   return {status:'Review this app',problemLabel:'Possible problem',problem:b.consequence,actionLabel:'What to do next',action:b.review,owner:'You'};
  }
@@ -52,9 +56,9 @@
   const first=(items,fallback)=>items?.[0]||fallback;
   const map={
    input:{label:system?.services?.length?'Connected service':system?.data_categories?.length?'Information used':'Starting point',value:first(system?.services,first(system?.data_categories,'Not recorded yet'))},
-   work:{label:'Automated work',value:first((system?.consequential_actions||[]).map(x=>x.description),system?.purpose||'Purpose not recorded')},
-   checkpoint:{label:'Human or system checkpoint',value:first(system?.constraints,'Checkpoint not recorded yet')},
-   condition:{label:'Real-world condition',value:first(system?.assumptions,first(system?.jurisdictions,'Outside condition not recorded yet'))}
+   work:{label:'What it does',value:shorten(first((system?.consequential_actions||[]).map(x=>x.description),system?.purpose||'Purpose not recorded'))},
+   checkpoint:{label:'Human check or limit',value:shorten(first(system?.constraints,'Not recorded yet'))},
+   condition:{label:'What must stay true',value:shorten(first(system?.assumptions,first(system?.jurisdictions,'Not recorded yet')))}
   };
   if(!finding)return {...map,event:null,anchor:'condition'};
   const b=brief(finding,system),anchors={Service:'input',Data:'input',Technology:'input',Action:'work',Purpose:'work',Boundary:'checkpoint',Assumption:'condition',Region:'condition'};
