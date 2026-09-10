@@ -51,7 +51,8 @@ def test_dialog_focus_and_actions_are_safe_on_small_screens():
     assert "$('#modal-title').focus({preventScroll:true})" in app
     assert ".modal-head h2:focus{outline:none}" in css
     assert "margin:24px -28px -26px" not in css
-    assert "margin:24px 0 0!important" in css
+    assert ".modal-actions:not(.modal-footer){display:grid!important" in css
+    assert ".modal-body{flex:1 1 auto;overflow-y:auto" in css
     assert "env(safe-area-inset-bottom)" in css
     assert ".modal-actions:not(.modal-footer){grid-template-columns:1fr}" in css
 
