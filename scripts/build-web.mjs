@@ -10,8 +10,8 @@ const source = await readFile('server/worker.mjs','utf8');
 await writeFile('dist/server/index.js',source+'\nexport default createWorker('+JSON.stringify(assets)+');\n');
 console.log('BuiltWatch server and web assets built.');
 // A downloadable, standalone demonstration survives API/model allowances and can run offline.
-let offline=assets['/index.html'].content.replace(/<link rel="stylesheet" href="\/style.css">/,'<style>'+assets['/style.css'].content+'</style>');
-offline=offline.replace(/<script[^>]*src="\/(.*?)"><\/script>/g,(_,file)=>'<script>'+assets['/'+file].content.replaceAll('</script','<\\/script')+'</script>');
+let offline=assets['/index.html'].content.replace(/<link rel="stylesheet" href="\/style.css(?:\?[^\"]*)?">/,'<style>'+assets['/style.css'].content+'</style>');
+offline=offline.replace(/<script[^>]*src="\/(.*?)"><\/script>/g,(_,file)=>'<script>'+assets['/'+file.split('?')[0]].content.replaceAll('</script','<\\/script')+'</script>');
 offline=offline.replace('<script>'+assets['/config.js'].content,'<script>window.BUILTWATCH_OFFLINE=true;window.BUILTWATCH_DEMO_DATA='+JSON.stringify(JSON.parse(assets['/demo.json'].content)).replaceAll('<','\\u003c')+';'+assets['/config.js'].content);
 // Preserve deferred execution after the DOM exists when scripts become inline.
 const scripts=[...offline.matchAll(/<script>[\s\S]*?<\/script>/g)].map(x=>x[0]).join('');
