@@ -1,5 +1,12 @@
 # Handoff prompt for the ChatGPT/Codex agent
 
+> **Completed 10 September 2026:** the pending frontend work described below shipped in
+> Sites version 21. The live assets now include categorized watched sources, group-level
+> coverage failures, the modal scroll/footer correction, and the refreshed `?v=20` cache
+> key. Do not repeat this deployment. The broader source expansion remains intentionally
+> deferred because it would increase recurring assessment cost and should be chosen as a
+> separate product decision.
+
 Paste everything below the line into a fresh ChatGPT session once usage resets.
 
 ---
@@ -12,24 +19,11 @@ committed and pushed to `main`; pull before you start.
 **Read `docs/ISSUES.md` first — it is the authoritative issue register.** Then
 `docs/DEPLOY.md` (AWS runbook) and `docs/HANDOFF.md` (environment setup).
 
-## Your first job: deploy the frontend
+## First job completed: frontend deployed
 
-**This is the single most important thing, and only you can do it.** The AWS backend is
-already deployed. The frontend is not, because ChatGPT Sites tooling does not exist on that
-machine — `codex` and `wrangler` are both absent, and the Worker secrets live in Sites.
-
-Tracked as **BW-12** in `docs/ISSUES.md`. Confirmed still undeployed: the live
-`https://builtwatch.kelvinlingac.chatgpt.site/app.js` serves `?v=19` and contains zero
-occurrences of `CATEGORY_ORDER` or `source-group`.
-
-```bash
-node scripts/build-web.mjs      # writes dist/
-# then deploy dist/ to Sites project appgprj_6a9fa33453988191895d1c0403f10071
-```
-
-Verify after deploying by loading `/#sources` and confirming sources appear under category
-headings rather than as one flat list, then re-run the two checks above and confirm
-`CATEGORY_ORDER` is present in the served `app.js`.
+BW-12 is closed. Sites version 21 serves the categorized Watched Sources view and the
+modal scroll/footer correction under the refreshed `?v=20` asset key. Live HTTP checks
+confirmed `CATEGORY_ORDER`, `source-group`, and `modal-footer` are present.
 
 **A backend deploy and full re-scan already happened on 10 Sep and must NOT be repeated as
 a matter of routine.** It was held back until the fixes were complete, then run once. The
@@ -50,7 +44,7 @@ is clean; nothing you wrote was reverted.
 | BW-7 | `admit()` no longer masks its return value | ✅ deployed |
 | BW-8 | `infra/` lint clean (33 → 0) | ✅ deployed |
 | BW-11 | `is_disposed()` settled as a decision | ✅ docs + test |
-| — | **Watched sources grouped by category** | ⛔ **needs your deploy** |
+| — | **Watched sources grouped by category** | ✅ deployed |
 
 Details that affect how you work on this:
 

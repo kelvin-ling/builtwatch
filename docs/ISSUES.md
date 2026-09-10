@@ -262,25 +262,24 @@ saying it must not be used for suppression, and
 
 ---
 
-## BW-12 · Frontend changes are committed but not deployed
-**Severity:** MED · **Owner:** AGENT (with Sites access) · **Status:** open
+## BW-12 · Frontend deployment gap
+**Severity:** MED · **Owner:** AGENT (with Sites access) · **Status:** ✅ FIXED AND LIVE 10 Sep 2026 — categorized sources and the modal scroll/footer correction shipped in Sites version 21
 
-The categorised **Watched sources** view is in the repository and fully tested, but is
-**not live**. The AWS backend and the frontend deploy through different paths:
+The categorized **Watched sources** view and modal footer fix are now live. The AWS
+backend and frontend still deploy through different paths:
 
 | Layer | Deploys via | Available here? |
 |---|---|---|
 | Lambda / DynamoDB / EventBridge | `infra/deploy_accounts.py` | ✅ yes |
-| Static site + Cloudflare Worker + D1 | ChatGPT Sites (`.openai/hosting.json`, project `appgprj_6a9fa334…`) | ❌ no |
+| Static site + Cloudflare Worker + D1 | ChatGPT Sites (`.openai/hosting.json`, project `appgprj_6a9fa334…`) | ✅ through an agent with Sites access |
 
-`codex` and `wrangler` are both absent from this machine, and the Worker's runtime secrets
-(`BW_PROXY_SECRET`, the scoped AWS keys, the Cognito client secret, and the private owner
-migration mapping) live in Sites, not in this repository.
+The Worker's runtime secrets (`BW_PROXY_SECRET`, the scoped AWS keys, the Cognito client
+secret, and the private owner migration mapping) remain in Sites, not in this repository.
 
-So any agent working from this machine can build and test the frontend — `node
-scripts/build-web.mjs` produces `dist/`, and `dist/offline-demo.html` is a complete
-standalone copy for verification — but cannot publish it. Whoever holds Sites access must
-deploy `dist/`.
+Sites version 21 deployed source `0fce94466a0756fe7e5114933c263a79be5f4d01` and uses
+the refreshed `?v=20` browser asset key. Live HTTP verification found the categorized
+source groups, category-level failure counts, and separated modal action footer in the
+served assets.
 
 ---
 
@@ -321,16 +320,12 @@ When the underlying session expires, only a human can run
 
 ## Remaining work, in order
 
-**Fixed but not yet live.** BW-1, BW-2, BW-4, BW-7, BW-8 and BW-11 are done in the
-repository. None of them affect the running system until it is redeployed — follow
-[DEPLOY.md](DEPLOY.md), and note that step 4's re-scan is required, not optional, because
-the deploy withholds all 43 existing findings the moment it lands.
+The backend corrections and the pending frontend work are now live. Use
+[DEPLOY.md](DEPLOY.md) only when future backend code changes require another release.
 
 1. **BW-3** — one click, and the submission is invalid without it (HUMAN)
 2. **BW-6** — one click; confirmation email re-sent 10 Sep (HUMAN)
-3. ~~Deploy + re-scan~~ — ✅ done 10 Sep. **The AWS backend only.** The frontend is
-   hosted on ChatGPT Sites with a Cloudflare Worker and D1; that tooling is not available
-   here, so UI changes ship separately — see BW-12.
+3. ~~Deploy + re-scan~~ — ✅ backend and frontend releases completed 10 Sep.
 4. **BW-5** — decision needed before any domain work (HUMAN, then AGENT)
 5. **BW-10** — sample only after the re-scan; see the note in that section (AGENT)
 6. **BW-9** — orphaned stack; destructive, so confirm before deleting (AGENT)

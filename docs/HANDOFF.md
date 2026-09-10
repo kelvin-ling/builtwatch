@@ -1,3 +1,12 @@
+# Verified categorized-sources and modal-layout release — 10 September 2026
+
+Public Sites version 21 deployed successfully from
+`0fce94466a0756fe7e5114933c263a79be5f4d01`. Watched sources are grouped by category,
+with source counts and category-level fetch failures. Review-dialog actions now occupy a
+separate footer, so expanded evidence scrolls without passing underneath the buttons.
+The live HTML uses the `?v=20` asset key and the served application and stylesheet were
+verified against the repository. The AWS backend and paid scans were not repeated.
+
 # Verified actionable-only and automatic-check release — 9 September 2026
 
 Public Sites version 14 deployed successfully at 00:07 UTC on 10 September.
