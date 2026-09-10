@@ -1,7 +1,7 @@
 # BuiltWatch open issues
 
 Machine-readable issue register for whoever continues this work. Generated 10 September
-2026 from a full review of the working tree, the test suite, and live AWS state.
+2026 from a full review, and updated the same day as items were closed of the working tree, the test suite, and live AWS state.
 
 **Read [HANDOFF.md](HANDOFF.md) first** for environment setup and AWS access. This file
 lists only what is *wrong*, not how the system works.
@@ -17,7 +17,7 @@ no agent has.
 ---
 
 ## BW-1 · Grounding validator does not check that a cited fact *supports* the claim
-**Severity:** HIGH · **Owner:** AGENT · **Status:** partially mitigated, root cause open
+**Severity:** HIGH · **Owner:** AGENT · **Status:** ✅ FIXED 10 Sep 2026 — allowlist-free evidence-driven test + undeclared-usage rejection; whole-token matching; 18 regression tests
 
 **Evidence.** A finding published 2026-09-09T06:51Z against the `BuiltWatch` passport
 (`technologies: ['Strands Agents','AWS SDK','Cloudflare Workers']`):
@@ -72,7 +72,7 @@ passage yields `insufficient_information`, plus the five probes above.
 ---
 
 ## BW-2 · A retracted finding is never withdrawn
-**Severity:** HIGH · **Owner:** AGENT · **Status:** open
+**Severity:** HIGH · **Owner:** AGENT · **Status:** ✅ FIXED 10 Sep 2026 — QUALITY_VERSION in the cache key and stamped on findings; both stores refuse superseded generations. **Live tenants still need a re-scan to regenerate.**
 
 The BW-1 finding is still stored as `relevance: relevant` in DynamoDB and still appears in
 "Needs attention", even though current code would suppress it. Fixing the code did not
@@ -106,7 +106,7 @@ agent has GitHub API access here (SSH push works; the REST API does not).
 ---
 
 ## BW-4 · `docs/SUBMISSION_CHECKLIST.md` states facts that are false
-**Severity:** HIGH · **Owner:** AGENT · **Status:** open
+**Severity:** HIGH · **Owner:** AGENT · **Status:** ✅ FIXED 10 Sep 2026 — every row re-verified against live state; Bedrock section and video beat sheet rewritten
 
 This document is intended to drive the Devpost submission form, so its errors propagate
 into the actual entry.
@@ -155,7 +155,7 @@ at `$10` or on any billing-query failure. Only the *notification* path is broken
 ---
 
 ## BW-7 · `admit()` can raise from its `finally` block
-**Severity:** MED · **Owner:** AGENT · **Status:** open
+**Severity:** MED · **Owner:** AGENT · **Status:** ✅ FIXED 10 Sep 2026 — lock release suppressed, regression test added
 
 `src/builtwatch/admission.py::admit()` releases its enrollment lock inside `finally` with
 `ConditionExpression="nonce = :n"`. The lock's TTL is 10 seconds. If the DynamoDB query
@@ -169,7 +169,7 @@ suppress only `ConditionalCheckFailedException`.
 ---
 
 ## BW-8 · Lint gate not run on new infra code
-**Severity:** LOW · **Owner:** AGENT · **Status:** open
+**Severity:** LOW · **Owner:** AGENT · **Status:** ✅ FIXED 10 Sep 2026 — infra lint clean; equivalence of reflowed deploy scripts verified by AST + literal diff
 
 `ruff check src tests infra` reports **33 errors**, all confined to five files added in the
 account/cost work: `infra/cost_monitor.py`, `infra/deploy_accounts.py`,
