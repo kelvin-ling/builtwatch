@@ -18,7 +18,7 @@ no agent has.
 ---
 
 ## BW-1 · Grounding validator does not check that a cited fact *supports* the claim
-**Severity:** HIGH · **Owner:** AGENT · **Status:** ✅ FIXED 10 Sep 2026 — allowlist-free evidence-driven test + undeclared-usage rejection; whole-token matching; 18 regression tests
+**Severity:** HIGH · **Owner:** AGENT · **Status:** ✅ FIXED AND LIVE 10 Sep 2026 — deployed and verified by re-scan; `CVE-2026-85880` absent from both tenants, no relevant finding carries a fabricated dependency
 
 **Evidence.** A finding published 2026-09-09T06:51Z against the `BuiltWatch` passport
 (`technologies: ['Strands Agents','AWS SDK','Cloudflare Workers']`):
@@ -73,7 +73,7 @@ passage yields `insufficient_information`, plus the five probes above.
 ---
 
 ## BW-2 · A retracted finding is never withdrawn
-**Severity:** HIGH · **Owner:** AGENT · **Status:** ✅ FIXED 10 Sep 2026 — QUALITY_VERSION in the cache key and stamped on findings; both stores refuse superseded generations. **Live tenants still need a re-scan to regenerate.**
+**Severity:** HIGH · **Owner:** AGENT · **Status:** ✅ FIXED AND LIVE 10 Sep 2026 — deployed; all 43 generation-0 findings withheld and regenerated (8 and 7 current-generation findings per tenant)
 
 The BW-1 finding is still stored as `relevance: relevant` in DynamoDB and still appears in
 "Needs attention", even though current code would suppress it. Fixing the code did not
@@ -229,6 +229,12 @@ each time.
 Worth sampling to distinguish genuinely undeterminable applicability from prompt or
 passport weakness before changing anything.
 
+**Measured after the 10 Sep re-scan: 2 of 15, or 13%** — down from 27%, and the earlier
+prediction that BW-1 might push it up was wrong. One tenant returned none at all. The
+remaining two are on a single tenant and worth reading before any further change.
+
+Original note follows.
+
 **Do this after the deploy and re-scan, not before.** All 43 stored findings are from
 assessment generation 0 and will be regenerated under the BW-1 rules. Sampling now would
 analyse a population that is about to be replaced — and since BW-1 converts some
@@ -253,6 +259,28 @@ single dismissal would hide every future change to the same rule.
 saying it must not be used for suppression, and
 `test_disposition_does_not_permanently_silence_a_development` pins the behaviour so nobody
 "fixes" it by wiring it in.
+
+---
+
+## BW-12 · Frontend changes are committed but not deployed
+**Severity:** MED · **Owner:** AGENT (with Sites access) · **Status:** open
+
+The categorised **Watched sources** view is in the repository and fully tested, but is
+**not live**. The AWS backend and the frontend deploy through different paths:
+
+| Layer | Deploys via | Available here? |
+|---|---|---|
+| Lambda / DynamoDB / EventBridge | `infra/deploy_accounts.py` | ✅ yes |
+| Static site + Cloudflare Worker + D1 | ChatGPT Sites (`.openai/hosting.json`, project `appgprj_6a9fa334…`) | ❌ no |
+
+`codex` and `wrangler` are both absent from this machine, and the Worker's runtime secrets
+(`BW_PROXY_SECRET`, the scoped AWS keys, the Cognito client secret, and the private owner
+migration mapping) live in Sites, not in this repository.
+
+So any agent working from this machine can build and test the frontend — `node
+scripts/build-web.mjs` produces `dist/`, and `dist/offline-demo.html` is a complete
+standalone copy for verification — but cannot publish it. Whoever holds Sites access must
+deploy `dist/`.
 
 ---
 
@@ -300,7 +328,9 @@ the deploy withholds all 43 existing findings the moment it lands.
 
 1. **BW-3** — one click, and the submission is invalid without it (HUMAN)
 2. **BW-6** — one click; confirmation email re-sent 10 Sep (HUMAN)
-3. **Deploy + re-scan** — makes every fix above actually take effect (AGENT)
+3. ~~Deploy + re-scan~~ — ✅ done 10 Sep. **The AWS backend only.** The frontend is
+   hosted on ChatGPT Sites with a Cloudflare Worker and D1; that tooling is not available
+   here, so UI changes ship separately — see BW-12.
 4. **BW-5** — decision needed before any domain work (HUMAN, then AGENT)
 5. **BW-10** — sample only after the re-scan; see the note in that section (AGENT)
 6. **BW-9** — orphaned stack; destructive, so confirm before deleting (AGENT)
