@@ -31,6 +31,7 @@ from .models import (
     SourceHealth,
     SourceSnapshot,
 )
+from .quality import QUALITY_VERSION
 from .registry import enabled_sources, load_registry
 from .store import Store, new_id
 
@@ -170,7 +171,8 @@ def run_scan(
                     ).encode()
                 ).hexdigest()
                 pair_key = (
-                    f"context-v3:{passport.id}:{profile_hash}:{mode}:{source.id}:{snapshot.content_hash}"
+                    f"quality-v{QUALITY_VERSION}:{passport.id}:{profile_hash}"
+                    f":{mode}:{source.id}:{snapshot.content_hash}"
                 )
                 if store.assessed(pair_key) and not force_reassess:
                     continue
@@ -196,6 +198,7 @@ def run_scan(
                 if finding is None:
                     raise RuntimeError("Assessment incomplete: " + "; ".join(problems))
 
+                finding.quality_version = QUALITY_VERSION
                 stored, is_new = store.save_finding(finding)
                 if not problems:
                     store.mark_assessed(pair_key)

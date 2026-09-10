@@ -20,6 +20,7 @@ from builtwatch.models import (
     SystemFactRef,
     SystemPassport,
 )
+from builtwatch.quality import QUALITY_VERSION
 from builtwatch.store import Store
 
 SNAPSHOT_TEXT = (
@@ -111,6 +112,7 @@ def make_finding(
     finding_id: str = "find_test01",
 ) -> Finding:
     f = Finding(
+        quality_version=QUALITY_VERSION,
         id=finding_id,
         scan_run_id="run_test01",
         system_id=passport.id,

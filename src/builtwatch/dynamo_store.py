@@ -16,6 +16,7 @@ from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 
 from .models import Disposition, Finding, ScanRun, SourceSnapshot, SystemPassport, utcnow
+from .quality import QUALITY_VERSION
 
 MAX_IDENTITY_LENGTH = 256
 TENANT_HASH_LENGTH = 64
@@ -153,6 +154,9 @@ class DynamoStore:
         seen = set()
         result = []
         for finding in records:
+            # Superseded assessment rules mean a superseded verdict; see store.py.
+            if current_only and finding.quality_version < QUALITY_VERSION:
+                continue
             if current_only and finding.dedup_key() in seen:
                 continue
             seen.add(finding.dedup_key())

@@ -304,6 +304,10 @@ class Finding(BaseModel):
     adoption_status: AdoptionStatus = AdoptionStatus.UNKNOWN
     created_at: datetime = Field(default_factory=utcnow)
     revision_hash: str = ""
+    quality_version: int = Field(
+        default=0,
+        description="Assessment-rule generation that produced this. 0 means pre-versioning.",
+    )
 
     def compute_revision_hash(self) -> str:
         """Material revision: changes only when the substance changes."""

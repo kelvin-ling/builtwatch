@@ -30,6 +30,7 @@ from ..models import (
     Finding,
     Relevance,
     Source,
+    SourceCategory,
     SourceSnapshot,
     SystemFactRef,
     SystemPassport,
@@ -307,16 +308,33 @@ def _to_finding(
     if draft.relevance == "relevant" and draft.app_impact is None:
         problems.append("relevant assessment did not explain its app-specific impact")
 
-    from ..quality import dependency_mismatch
+    from ..quality import (
+        affected_product_undeclared,
+        dependency_mismatch,
+        unsupported_usage_claims,
+    )
 
-    if primary_source == "cisa-kev" and dependency_mismatch(
+    # 1. A security advisory that never names anything this system declares cannot be
+    #    relevant to it. Evidence-driven, so it holds for products no allowlist anticipates.
+    primary = ctx.sources.get(primary_source)
+    evidence_text = " ".join(item.passage for item in evidence)
+    if (
+        primary is not None
+        and primary.category is SourceCategory.SECURITY
+        and evidence
+        and affected_product_undeclared(passport, evidence_text)
+    ) or dependency_mismatch(
         passport, " ".join([finding.title, *finding.facts, *finding.inferences])
     ):
-        finding.relevance = Relevance.NOT_RELEVANT
-        finding.inferences = ["The affected product is not a recorded dependency of this system."]
-        finding.unknowns = []
-        finding.app_impact = None
-        finding.review_suggestions = []
+        _mark_undeclared_dependency(finding)
+
+    # 3. Any assertion that this system *uses* something absent from its passport is
+    #    fabrication regardless of source category, and must not survive as a fact.
+    fabricated = unsupported_usage_claims(passport, [*finding.facts, *finding.inferences])
+    if fabricated:
+        problems.append(
+            "assessment asserted an undeclared dependency: " + "; ".join(fabricated[:3])
+        )
     finding.validation_issues = problems
     if problems and finding.relevance is Relevance.RELEVANT:
         # An ungrounded "relevant" claim is downgraded, not published. The reason is
@@ -330,6 +348,15 @@ def _to_finding(
 
     finding.revision_hash = finding.compute_revision_hash()
     return finding, problems
+
+
+def _mark_undeclared_dependency(finding: Finding) -> None:
+    """Downgrade a finding whose affected product this system does not declare."""
+    finding.relevance = Relevance.NOT_RELEVANT
+    finding.inferences = ["The affected product is not a recorded dependency of this system."]
+    finding.unknowns = []
+    finding.app_impact = None
+    finding.review_suggestions = []
 
 
 def _norm_space(text: str) -> str:

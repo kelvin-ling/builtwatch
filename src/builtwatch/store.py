@@ -25,6 +25,7 @@ from .models import (
     SourceSnapshot,
     SystemPassport,
 )
+from .quality import QUALITY_VERSION
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS assessments (
@@ -295,6 +296,11 @@ class Store:
         params: list[Any] = []
         if current_only:
             sql += " AND superseded=0"
+            # A finding made under superseded assessment rules is not current. Serving it
+            # would let a fixed rule keep publishing the verdict it no longer reaches.
+            # The cache key carries QUALITY_VERSION too, so the next scan replaces these.
+            sql += " AND json_extract(payload, '$.quality_version') >= ?"
+            params.append(QUALITY_VERSION)
         if system_id:
             sql += " AND system_id=?"
             params.append(system_id)
