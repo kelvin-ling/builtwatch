@@ -43,6 +43,27 @@ def test_completed_checks_do_not_create_a_global_status_banner():
     assert "complete:'" not in notice
 
 
+def test_dialog_focus_and_actions_are_safe_on_small_screens():
+    app = (ROOT / "web/app.js").read_text()
+    css = (ROOT / "web/style.css").read_text()
+
+    assert '<h2 id="modal-title" tabindex="-1">' in app
+    assert "$('#modal-title').focus({preventScroll:true})" in app
+    assert ".modal-head h2:focus{outline:none}" in css
+    assert "margin:24px -28px -26px" not in css
+    assert "margin:24px 0 0!important" in css
+    assert "env(safe-area-inset-bottom)" in css
+    assert ".modal-actions:not(.modal-footer){grid-template-columns:1fr}" in css
+
+
+def test_bulk_import_note_stays_above_its_submit_button():
+    app = (ROOT / "web/app.js").read_text()
+    start = app.index("function bulkImport(){")
+    bulk = app[start : app.index("\nfunction ", start + 10)]
+
+    assert bulk.index('class="section-note"') < bulk.index('class="modal-actions"')
+
+
 def test_every_registry_category_has_a_display_name_and_blurb():
     """A source in an unnamed category would render under a blank heading.
 
