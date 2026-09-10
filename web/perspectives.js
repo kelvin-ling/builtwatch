@@ -11,7 +11,12 @@
  function topic(f,sources){return topics[sources.find(x=>x.id===f.source_id)?.category]||'Other developments';}
  function context(system){return {actions:(system.consequential_actions||[]).map(x=>x.description),assumptions:system.assumptions||[],limits:system.constraints||[],regions:system.jurisdictions||[]};}
  const shorten=(value,max=112)=>{const text=String(value||'').trim().replace(/\s+/g,' ');if(text.length<=max)return text;const cut=text.slice(0,max-1),word=cut.slice(0,cut.lastIndexOf(' '));return (word||cut)+'…';};
- const plainChange=value=>String(value||'').replace(/^Assessing relevance of (.+?) to ['"][^'"]+['"]$/i,'$1').replace(/^Assessment of ['"][^'"]+['"] against /i,'').trim();
+ const plainChange=value=>String(value||'')
+  .replace(/^Assessing relevance of (.+?) to ['"][^'"]+['"]$/i,'$1')
+  .replace(/^Insufficient information to determine relevance of (.+?) to .+$/i,'$1')
+  .replace(/^Assessment of ['"][^'"]+['"] against /i,'')
+  .replace(/\s+Relevance Assessment$/i,'')
+  .trim();
  const plainGap=value=>String(value||'').replace(/(?:the\s+)?['"][^'"]+['"]\s+system/gi,'this app').replace(/\bthe this app\b/gi,'this app').trim();
 
  function factIndex(system){const out={purpose:system?.purpose};for(const key of ['technologies','services','data_categories','assumptions','constraints','jurisdictions'])for(const [i,value] of (system?.[key]||[]).entries())out[`${key}[${i}]`]=value;for(const [i,value] of (system?.consequential_actions||[]).entries())out[`consequential_actions[${i}]`]=value.description;return out;}
@@ -31,7 +36,7 @@
    review:stale?'Does the finding still apply to the app’s current behavior?':f.relevance==='not_relevant'?'No action requested for this assessment.':f.app_impact?.review_question||f.review_suggestions?.[0]||'Which recorded activity or condition would make this development apply?',
    stale,anchored:!!ref,structured:!!f.app_impact};
  }
- function isEvidenceFailure(f){return !!f.validation_issues?.length||(f.unknowns||[]).some(x=>/downgraded automatically|could not verify the suggested connection|not grounded|not found verbatim|cited snapshot|snap_[a-f0-9]+/i.test(x));}
+ function isEvidenceFailure(f){return (f.relevance!=='not_relevant'&&Array.isArray(f.evidence)&&f.evidence.length===0)||!!f.validation_issues?.length||(f.unknowns||[]).some(x=>/downgraded automatically|could not verify the suggested connection|not grounded|not found verbatim|cited snapshot|snap_[a-f0-9]+/i.test(x));}
  function readableGap(f){
   const gap=(f.unknowns||[]).find(x=>!/downgraded automatically|could not verify the suggested connection|not grounded|not found verbatim|cited snapshot|snap_[a-f0-9]+/i.test(x));
   if(!gap)return 'BuiltWatch is missing a fact needed to connect this development to the app.';
@@ -57,8 +62,8 @@
   const map={
    input:{label:system?.services?.length?'Connected service':system?.data_categories?.length?'Information used':'Starting point',value:first(system?.services,first(system?.data_categories,'Not recorded yet'))},
    work:{label:'What it does',value:shorten(first((system?.consequential_actions||[]).map(x=>x.description),system?.purpose||'Purpose not recorded'))},
-   checkpoint:{label:'Human check or limit',value:shorten(first(system?.constraints,'Not recorded yet'))},
-   condition:{label:'What must stay true',value:shorten(first(system?.assumptions,first(system?.jurisdictions,'Not recorded yet')))}
+   checkpoint:{label:'Human approval or limit',value:shorten(first(system?.constraints,'None recorded'))},
+   condition:{label:'Important condition',value:shorten(first(system?.assumptions,first(system?.jurisdictions,'None recorded')))}
   };
   if(!finding)return {...map,event:null,anchor:'condition'};
   const b=brief(finding,system),anchors={Service:'input',Data:'input',Technology:'input',Action:'work',Purpose:'work',Boundary:'checkpoint',Assumption:'condition',Region:'condition'};

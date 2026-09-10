@@ -53,8 +53,8 @@ test('automation map keeps missing workflow details explicit',()=>{
  const flow=p.automation({purpose:'Shows public information',services:[],data_categories:[],consequential_actions:[],constraints:[],assumptions:[],jurisdictions:[]});
  assert.equal(flow.input.value,'Not recorded yet');
  assert.equal(flow.work.value,'Shows public information');
- assert.match(flow.checkpoint.value,/not recorded/i);
- assert.match(flow.condition.value,/not.*recorded/i);
+ assert.match(flow.checkpoint.value,/none recorded/i);
+ assert.match(flow.condition.value,/none recorded/i);
  assert.equal(flow.event,null);
 });
 
@@ -79,6 +79,14 @@ test('presentation removes model-like assessment wording and app ids',()=>{
  assert.equal(brief.change,'Anthropic Usage Policy');
  assert.equal(diagnosis.problem,'Confirm this app accepts public input.');
  assert.equal(diagnosis.status,'Your input is needed');
+});
+
+test('unverified results without source evidence never ask the user to act',()=>{
+ const app={id:'mailer',name:'Mailer',purpose:'Sends email'};
+ const finding={system_id:'mailer',relevance:'insufficient_information',title:'Gmail Email Sender Guidelines Relevance Assessment',unknowns:['Whether the system sends email'],system_facts:[],evidence:[]};
+ assert.equal(p.brief(finding,app).change,'Gmail Email Sender Guidelines');
+ assert.equal(p.diagnosis(finding,app).owner,'BuiltWatch');
+ assert.equal(p.requiresAttention(finding,app),false);
 });
 
 test('only results that need user action enter the attention list',()=>{
