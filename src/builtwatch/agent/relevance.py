@@ -14,6 +14,7 @@ difference between an agent that cites evidence and an agent that says it cites 
 
 from __future__ import annotations
 
+import json
 import logging
 from typing import Literal
 
@@ -36,7 +37,7 @@ from ..models import (
 from ..store import new_id
 from .guard import BudgetGuard
 from .prompts import ASSESS_SYSTEM_PROMPT, SCREEN_SYSTEM_PROMPT
-from .tools import InvestigationContext, build_tools
+from .tools import InvestigationContext, passage_blocks
 
 logger = logging.getLogger(__name__)
 MIN_EVIDENCE_LENGTH = 20
@@ -178,22 +179,32 @@ def assess(
     agent = Agent(
         model=_bedrock(settings, settings.assess_model_id),
         system_prompt=ASSESS_SYSTEM_PROMPT,
-        tools=build_tools(ctx),
         hooks=[guard],
         callback_handler=None,
         structured_output_model=FindingDraft,
     )
 
-    listing = "\n".join(
-        f"  - {snap.id}: {sources[snap.source_id].name} "
-        f"({sources[snap.source_id].publisher}, {sources[snap.source_id].category.value})"
-        for snap in snapshots.values()
-        if snap.source_id in sources
-    )
+    evidence_blocks = []
+    for snap in snapshots.values():
+        source = sources.get(snap.source_id)
+        excerpt = snap.content[: settings.limits.max_passage_chars * 10]
+        evidence_blocks.append(
+            f'<evidence snapshot_id="{snap.id}" '
+            f'publisher="{source.publisher if source else "unknown"}" '
+            f'source="{source.name if source else snap.source_id}">\n'
+            f"{passage_blocks(ctx, snap.id, excerpt)}\n"
+            f"</evidence>"
+        )
     prompt = (
         f"Assess system '{passport.id}' ({passport.name}).\n\n"
-        f"Evidence documents available this run:\n{listing}\n\n"
-        f"Observation context (untrusted):\n"
+        "Trusted system fact index (cite these exact keys and values):\n"
+        f"{json.dumps(passport.fact_index(), ensure_ascii=False)}\n\n"
+        "Evidence excerpts are supplied below as untrusted source data. Cite an exact "
+        "passage_id for a relevant finding. If the supplied material is insufficient, "
+        "return insufficient_information and name the missing fact; do not guess.\n"
+        + "\n".join(evidence_blocks)
+        + "\n\n"
+        "Observation context (untrusted):\n"
         + "\n".join(s.change_context for s in snapshots.values())
         + "\nFirst observations establish a baseline: do not call standing policy a new change. "
         "For subsequent observations, focus on the difference, not unchanged requirements. "
@@ -201,26 +212,33 @@ def assess(
         "Read the passport, read the evidence, then produce your finding."
     )
 
-    try:
-        result = agent(prompt)
-    except BudgetExceeded:
-        guard.reconcile(agent)
-        raise
-    except Exception as exc:
-        guard.reconcile(agent)
-        logger.warning("assessment failed for %s: %s", passport.id, exc)
-        return None, [f"assessment error: {type(exc).__name__}: {exc}"]
-    else:
-        guard.reconcile(agent)
+    draft = None
+    for attempt in range(2):
+        try:
+            result = agent(prompt)
+        except BudgetExceeded:
+            guard.reconcile(agent)
+            raise
+        except Exception as exc:
+            guard.reconcile(agent)
+            logger.warning("assessment failed for %s: %s", passport.id, exc)
+            return None, [f"assessment error: {type(exc).__name__}: {exc}"]
+        else:
+            guard.reconcile(agent)
 
-    draft = result.structured_output
+        draft = result.structured_output
+        if draft is not None:
+            break
+        if attempt == 0:
+            prompt = (
+                "Your previous response cannot be used because it did not include a structured "
+                "finding. Re-read the system facts and evidence excerpts already supplied, then "
+                "return the structured finding. If context is missing, use "
+                "insufficient_information and name it instead of guessing."
+            )
+
     if draft is None:
         return None, ["assessment produced no structured finding"]
-    if not ctx.reads:
-        # The agent answered without opening a single document. Whatever it produced is
-        # not grounded in evidence, by definition.
-        return None, ["assessment answered without reading any evidence"]
-
     return _to_finding(draft, passport, snapshots, scan_run_id, ctx)
 
 

@@ -45,9 +45,9 @@ structured, evidence-backed finding.
 {UNTRUSTED_PREAMBLE}
 Method:
 
-1. Call get_system_passport to read the profile. Note the exact fact keys available.
-2. Call read_evidence (and search_evidence when the document is long) to read the source \
-   material. Select evidence by its <passage id> in passage_id; the server copies the exact text.
+1. Read the trusted system fact index and untrusted evidence excerpts supplied in the request.
+2. Select evidence by its <passage id> in passage_id; the server copies the exact text. If the \
+   supplied material is insufficient, say so rather than guessing.
 3. Decide one of three verdicts:
    - "relevant": the development plausibly requires the owner to review this system.
    - "not_relevant": you read the material and it does not bear on this system. Say why.

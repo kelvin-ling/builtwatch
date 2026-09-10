@@ -200,6 +200,53 @@ def test_screening_receives_business_conditions_without_a_technology_stack(
         assert fact in prompts[0]
 
 
+def test_assessment_supplies_validated_evidence_without_requiring_tool_use(
+    passport, snapshot, source, monkeypatch
+):
+    from types import SimpleNamespace
+
+    from builtwatch.agent import relevance
+    from builtwatch.config import CostMeter, Settings
+
+    calls = []
+    agent_options = []
+    class FakeAgent:
+        def __init__(self, **kwargs):
+            agent_options.append(kwargs)
+
+        def __call__(self, prompt):
+            calls.append(prompt)
+            return SimpleNamespace(
+                structured_output=relevance.FindingDraft(
+                    relevance="not_relevant",
+                    title="No applicable change",
+                    development_key="source-review",
+                )
+            )
+
+    monkeypatch.setattr(relevance, "Agent", FakeAgent)
+    monkeypatch.setattr(relevance, "_bedrock", lambda *args: None)
+    monkeypatch.setattr(relevance.BudgetGuard, "reconcile", lambda *args: None)
+
+    settings = Settings()
+    finding, problems = relevance.assess(
+        passport,
+        {snapshot.id: snapshot},
+        {source.id: source},
+        "run_retry",
+        settings,
+        CostMeter(settings),
+    )
+
+    assert finding is not None
+    assert problems == []
+    assert len(calls) == 1
+    assert "tools" not in agent_options[0]
+    assert SNAPSHOT_TEXT[:120] in calls[0]
+    assert '"services[0]": "Gmail API"' in calls[0]
+    assert '<passage id="p_' in calls[0]
+
+
 def test_impact_must_reference_a_cited_app_fact(passport, snapshot):
     from builtwatch.models import AppImpact
 
