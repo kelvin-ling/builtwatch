@@ -6,11 +6,19 @@ import json
 import os
 import time
 from datetime import datetime, timedelta, timezone
+
 import boto3
 from boto3.dynamodb.conditions import Key
 
-
 CONFIRM_WARNING = "Confirm the AWS email subscription to receive operational warnings."
+
+
+# Reported account cost at which paid checks stop entirely.
+PAUSE_AT_USD = 10
+# Reported account cost at which the owner is warned but checks continue.
+WARN_AT_USD = 7
+# Shared monthly model reserve, in USD, at which the allowance is called nearly used.
+RESERVE_WARN_USD = 4
 
 
 def email_confirmed(session):
@@ -22,7 +30,7 @@ def email_confirmed(session):
             x["Protocol"] == "email" and x["SubscriptionArn"] != "PendingConfirmation"
             for x in subscriptions
         )
-    except Exception:
+    except Exception:  # noqa: BLE001 - any failure must pause checks, not crash the monitor
         return False
 
 
@@ -70,7 +78,7 @@ def lambda_handler(event, context):
             for x in result["ResultsByTime"]
         ]
         total = sum(x["usd"] for x in daily)
-    except Exception:
+    except Exception:  # noqa: BLE001 - any failure must pause checks, not crash the monitor
         error = (
             "Billing data could not be refreshed. Paid checks are paused until monitoring recovers."
         )
@@ -80,7 +88,7 @@ def lambda_handler(event, context):
         count = s.client("cognito-idp").describe_user_pool(UserPoolId=os.environ["BW_USER_POOL"])[
             "UserPool"
         ]["EstimatedNumberOfUsers"]
-    except Exception:
+    except Exception:  # noqa: BLE001 - any failure must pause checks, not crash the monitor
         warnings.append("Registration count is temporarily unavailable.")
     accounts = t.query(KeyConditionExpression=Key("pk").eq("SEATS")).get("Items", [])
     systems = jobs = failures = 0
@@ -99,23 +107,25 @@ def lambda_handler(event, context):
     allocated = float(
         t.get_item(Key={"pk": "BUDGET", "sk": month}).get("Item", {}).get("allocated", 0)
     )
-    paused = total is None or total >= 10
+    paused = total is None or total >= PAUSE_AT_USD
     completed = daily[:-1]
     if completed:
         baseline = sum(x["usd"] for x in completed[-4:-1]) / max(1, len(completed[-4:-1]))
         if completed[-1]["usd"] >= 1 and completed[-1]["usd"] > max(1, baseline * 3):
             warnings.append(
-                "Unusual spend: the last completed day exceeded USD 1 and three times its recent baseline."
+                "Unusual spend: the last completed day exceeded USD 1 "
+                "and three times its recent baseline."
             )
-    if total is not None and total >= 7:
+    if total is not None and total >= WARN_AT_USD:
         warnings.append(
             "Approaching the operating allowance. Review the service breakdown in AWS Billing."
         )
     if paused:
         warnings.append(
-            "Paid checks are paused conservatively. Saved workspaces and the local demo remain available."
+            "Paid checks are paused conservatively. "
+            "Saved workspaces and the local demo remain available."
         )
-    if allocated >= 4:
+    if allocated >= RESERVE_WARN_USD:
         warnings.append("The shared USD 5 monthly model reserve is nearly used.")
     confirmed = email_confirmed(s)
     if not confirmed:
@@ -141,7 +151,10 @@ def lambda_handler(event, context):
         "model_limit_usd": 5,
         "warnings": warnings,
         "email_confirmed": confirmed,
-        "scope": "Whole AWS account before credits/refunds; may include other projects. Billing is delayed. CAD uses a conservative planning rate, not a live FX quote.",
+        "scope": (
+            "Whole AWS account before credits/refunds; may include other projects. "
+            "Billing is delayed. CAD uses a conservative planning rate, not a live FX quote."
+        ),
     }
     t.put_item(
         Item={
@@ -161,7 +174,12 @@ def lambda_handler(event, context):
                 TopicArn=os.environ["BW_ALERT_TOPIC"],
                 Subject="BuiltWatch cost and service warning",
                 Message="\n".join(warnings)
-                + "\n\nMonthly target: CAD 25. Paid checks pause at USD 10 reported account cost, with USD 5 shared model reservations. Billing can lag; this is not an exact invoice cap.\nhttps://builtwatch.kelvinlingac.chatgpt.site/#admin",
+                + (
+                    "\n\nMonthly target: CAD 25. Paid checks pause at USD 10 reported "
+                    "account cost, with USD 5 shared model reservations. Billing can lag; "
+                    "this is not an exact invoice cap."
+                    "\nhttps://builtwatch.kelvinlingac.chatgpt.site/#admin"
+                ),
             )
             t.put_item(Item={**key, "expires": int(time.time()) + 2678400})
     return {"updated": True, "paused": paused, "email_confirmed": confirmed}

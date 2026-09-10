@@ -9,8 +9,8 @@ import time
 import boto3
 from boto3.dynamodb.conditions import Key
 
-from builtwatch.admission import admit, allow_request
 from builtwatch.accounts import serve, verify, work
+from builtwatch.admission import admit, allow_request
 from builtwatch.config import Settings
 from builtwatch.dynamo_store import DynamoStore
 from builtwatch.pipeline import run_scan
@@ -59,7 +59,8 @@ def lambda_handler(event, context):
             )
             if not data.get("checked_at"):
                 data["warnings"] = [
-                    "Cost monitoring is being configured. Paid checks remain paused until a fresh status is available."
+                    "Cost monitoring is being configured. Paid checks remain "
+                    "paused until a fresh status is available."
                 ]
             return response(200, data)
         if not allow_request(table, tenant):
@@ -71,12 +72,13 @@ def lambda_handler(event, context):
                 403,
                 {
                     "code": "pilot_full",
-                    "error": "All 25 pilot workspaces are currently in use. You can still explore the sample. Please try again later.",
+                    "error": "All 25 pilot workspaces are currently in use. "
+                    "You can still explore the sample. Please try again later.",
                 },
             )
         try:
             return serve(event, DynamoStore(table, tenant), settings, invoke)
-        except Exception:
+        except Exception:  # noqa: BLE001 - a runner must return an error, never a stack trace
             # No profile or upstream exception details leak into public error responses.
             return response(
                 503, {"error": "The workspace service is temporarily unavailable. Please retry."}

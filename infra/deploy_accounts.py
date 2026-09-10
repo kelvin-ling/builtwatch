@@ -48,11 +48,16 @@ def main():
         ddb.get_waiter('table_exists').wait(TableName=TABLE)
     except ddb.exceptions.ResourceInUseException:
         pass
-    if ddb.describe_time_to_live(TableName=TABLE)['TimeToLiveDescription']['TimeToLiveStatus'] == 'DISABLED':
+    ttl = ddb.describe_time_to_live(TableName=TABLE)['TimeToLiveDescription']
+    if ttl['TimeToLiveStatus'] == 'DISABLED':
         ddb.update_time_to_live(TableName=TABLE,TimeToLiveSpecification={'Enabled':True,'AttributeName':'expires'})
     ddb.update_continuous_backups(TableName=TABLE,PointInTimeRecoverySpecification={'PointInTimeRecoveryEnabled':True,'RecoveryPeriodInDays':7})
     access_path = ROOT/'data/accounts-access.json'
-    saved = json.loads(access_path.read_text()) if access_path.exists() else {'secret':secrets.token_urlsafe(48)}
+    saved = (
+        json.loads(access_path.read_text())
+        if access_path.exists()
+        else {'secret': secrets.token_urlsafe(48)}
+    )
     # Persist before deployment so an interrupted setup does not rotate the signing key.
     access_path.write_text(json.dumps(saved))
     os.chmod(access_path,0o600)
@@ -71,13 +76,27 @@ def main():
             statements.append({'Effect':'Allow','Action':'lambda:InvokeFunction','Resource':worker_arn})
         else:
             statements.append({'Effect':'Allow','Action':['bedrock:InvokeModel','bedrock:InvokeModelWithResponseStream'],
-                'Resource':[f'arn:aws:bedrock:{REGION}:{account}:inference-profile/us.amazon.nova-{m}-v1:0' for m in ['lite','pro']]
-                +[f'arn:aws:bedrock:*::foundation-model/amazon.nova-{m}-v1:0' for m in ['lite','pro']]})
+                'Resource': [
+                    f'arn:aws:bedrock:{REGION}:{account}:inference-profile/'
+                    f'us.amazon.nova-{m}-v1:0'
+                    for m in ['lite', 'pro']
+                ]
+                + [
+                    f'arn:aws:bedrock:*::foundation-model/amazon.nova-{m}-v1:0'
+                    for m in ['lite', 'pro']
+                ]})
         arn=role(iam,name+'-role','lambda.amazonaws.com',{'Version':'2012-10-17','Statement':statements})
         with contextlib.suppress(logs.exceptions.ResourceAlreadyExistsException):
             logs.create_log_group(logGroupName='/aws/lambda/'+name)
         logs.put_retention_policy(logGroupName='/aws/lambda/'+name,retentionInDays=7)
-        config=dict(FunctionName=name,Handler='accounts_runner.lambda_handler',Environment={'Variables':{**env,**({'BW_PROXY_SECRET':saved['secret']} if name==API else {})}},Timeout=600 if name==WORKER else 60,MemorySize=512)
+        proxy_secret = {'BW_PROXY_SECRET': saved['secret']} if name == API else {}
+        config = dict(
+            FunctionName=name,
+            Handler='accounts_runner.lambda_handler',
+            Environment={'Variables': {**env, **proxy_secret}},
+            Timeout=600 if name == WORKER else 60,
+            MemorySize=512,
+        )
         try:
             lam.create_function(**config,Runtime='python3.12',Role=arn,Architectures=['arm64'],Code={'ZipFile':archive.read_bytes()})
             lam.get_waiter('function_active_v2').wait(FunctionName=name)
@@ -86,7 +105,10 @@ def main():
             lam.get_waiter('function_updated_v2').wait(FunctionName=name)
             lam.update_function_configuration(**config)
             lam.get_waiter('function_updated_v2').wait(FunctionName=name)
-        lam.put_function_concurrency(FunctionName=name,ReservedConcurrentExecutions=2 if name==WORKER else 4)
+        lam.put_function_concurrency(
+            FunctionName=name,
+            ReservedConcurrentExecutions=2 if name == WORKER else 4,
+        )
         lam.put_function_event_invoke_config(FunctionName=name,MaximumRetryAttempts=2,MaximumEventAgeInSeconds=900)
         print('Deployed',name,flush=True)
     try:
@@ -95,13 +117,23 @@ def main():
         url=lam.get_function_url_config(FunctionName=API)['FunctionUrl']
     # Preserve protected URLs on later deployments; bootstrap permissions only before migration.
     if lam.get_function_url_config(FunctionName=API)['AuthType']=='NONE':
-        for sid,action,extra in [('signed-proxy-url','lambda:InvokeFunctionUrl',{'FunctionUrlAuthType':'NONE'}),('signed-proxy-invoke','lambda:InvokeFunction',{'InvokedViaFunctionUrl':True})]:
+        statements = [
+            ('signed-proxy-url', 'lambda:InvokeFunctionUrl',
+             {'FunctionUrlAuthType': 'NONE'}),
+            ('signed-proxy-invoke', 'lambda:InvokeFunction',
+             {'InvokedViaFunctionUrl': True}),
+        ]
+        for sid, action, extra in statements:
             with contextlib.suppress(lam.exceptions.ResourceConflictException):
                 lam.add_permission(FunctionName=API,StatementId=sid,Action=action,Principal='*',**extra)
     api_arn=f'arn:aws:lambda:{REGION}:{account}:function:{API}'
     schedule_role=role(iam,API+'-scheduler','scheduler.amazonaws.com',{'Version':'2012-10-17','Statement':[{'Effect':'Allow','Action':'lambda:InvokeFunction','Resource':api_arn}]})
     sch=session.client('scheduler')
-    config={'Name':'builtwatch-accounts-daily','ScheduleExpression':'cron(0 7 * * ? *)','ScheduleExpressionTimezone':'America/Toronto','State':'ENABLED','FlexibleTimeWindow':{'Mode':'OFF'},
+    config={'Name': 'builtwatch-accounts-daily',
+            'ScheduleExpression': 'cron(0 7 * * ? *)',
+            'ScheduleExpressionTimezone': 'America/Toronto',
+            'State': 'ENABLED',
+            'FlexibleTimeWindow': {'Mode': 'OFF'},
             'Target':{'Arn':api_arn,'RoleArn':schedule_role,'Input':'{"task":"daily"}','RetryPolicy':{'MaximumRetryAttempts':0,'MaximumEventAgeInSeconds':900}}}
     try:
         sch.create_schedule(**config)

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import time
 import uuid
 from typing import Any
@@ -48,11 +49,16 @@ def admit(table: Any, tenant: str) -> bool:
         table.put_item(Item={"pk": "SEATS", "sk": tenant})
         return True
     finally:
-        table.delete_item(
-            Key={"pk": "CONTROL", "sk": "enrollment-lock"},
-            ConditionExpression="nonce = :n",
-            ExpressionAttributeValues={":n": nonce},
-        )
+        # If the 10s lock expired and another invocation claimed it, our nonce no longer
+        # matches and the delete fails its condition. Raising here would replace this
+        # function's return value with an exception, turning a correct admission decision
+        # into a 500 in the signup path. The lock is self-expiring, so letting it go is safe.
+        with contextlib.suppress(ClientError):
+            table.delete_item(
+                Key={"pk": "CONTROL", "sk": "enrollment-lock"},
+                ConditionExpression="nonce = :n",
+                ExpressionAttributeValues={":n": nonce},
+            )
 
 
 def allow_request(

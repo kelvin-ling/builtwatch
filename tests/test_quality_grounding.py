@@ -124,3 +124,33 @@ def test_vague_claims_are_not_treated_as_fabrication(builtwatch_passport):
 def test_quality_version_is_positive():
     """Bumped whenever assessment rules change; drives cache invalidation and retraction."""
     assert QUALITY_VERSION >= 4
+
+
+def test_admission_lock_release_cannot_mask_the_return_value():
+    """BW-7: a failed conditional delete in `finally` must not replace the return value.
+
+    The enrollment lock self-expires after 10s. If a slow DynamoDB query lets another
+    invocation claim it, the release fails its ConditionExpression — which, raised from a
+    `finally`, would surface as a 500 rather than the admission decision just computed.
+    """
+    from botocore.exceptions import ClientError
+
+    from builtwatch.admission import admit
+
+    class LockStolenTable:
+        def get_item(self, **kwargs):
+            return {}
+
+        def put_item(self, **kwargs):
+            return {}
+
+        def query(self, **kwargs):
+            return {"Items": []}
+
+        def delete_item(self, **kwargs):
+            raise ClientError(
+                {"Error": {"Code": "ConditionalCheckFailedException", "Message": "stolen"}},
+                "DeleteItem",
+            )
+
+    assert admit(LockStolenTable(), "tenant-a") is True

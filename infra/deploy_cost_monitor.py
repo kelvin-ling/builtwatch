@@ -1,7 +1,11 @@
 """Provision the owner-approved daily cost guard and email channel."""
 
-import json, io, zipfile, contextlib
+import contextlib
+import io
+import json
+import zipfile
 from pathlib import Path
+
 import boto3
 from deploy_web import role
 
@@ -122,7 +126,8 @@ new = {k: v for k, v in old.items() if k in allowed}
 new["BudgetLimit"] = {"Amount": "12", "Unit": "USD"}
 bud.update_budget(AccountId=account, NewBudget=new)
 print(
-    "Daily monitor configured; BuiltWatch budget lowered to USD 12. Email confirmation may be required."
+    "Daily monitor configured; BuiltWatch budget lowered to USD 12. "
+    "Email confirmation may be required."
 )
 r = lam.invoke(FunctionName=name, Payload=b"{}")
 print("Initial monitor result:", r["Payload"].read().decode())
