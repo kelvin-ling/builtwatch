@@ -125,7 +125,7 @@ into the actual entry.
 ## BW-5 · Public demo is served from a ChatGPT-branded domain
 **Severity:** HIGH · **Owner:** HUMAN (decision) + AGENT (implementation) · **Status:** open
 
-Live URL is `https://builtwatch.kelvinlingac.chatgpt.site` (verified 200). This is the demo
+Live URL is `https://builtwatch.org` (verified 200). This is the demo
 link an AWS-competition judge would open. `.openai/hosting.json` also binds a Cloudflare
 D1 database.
 

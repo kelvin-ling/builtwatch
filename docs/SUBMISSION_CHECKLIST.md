@@ -16,7 +16,7 @@ Judging: 15 September – 8 October 2026. Winners: 14 October 2026.
 | AWS account | ✅ | `[aws-account-redacted]`, AdministratorAccess via IAM Identity Center (SSO profile `[aws-profile-redacted]`). *Superseded `561217459367`; nothing runs there.* |
 | AWS Builder ID | ✅ | Kelvin Ling / `[owner-email-redacted]` |
 | $50 AWS credits requested | ✅ | Submitted before the 11 Sep 12:00 PT cutoff |
-| Public code repository | ⛔ **BLOCKER** | Verified private (`api.github.com` → 404) on 10 Sep 2026. Rules require public with an OSI licence. **Flip before 14 Sep 17:00 PT.** |
+| Public code repository | ⛔ **BLOCKER** | Still private — re-verified `api.github.com` → 404 on **11 Sep 2026**. Rules require public with an OSI licence. **3 days left. Flip before 14 Sep 17:00 PT or the submission is invalid.** |
 | MIT or Apache license | ✅ | [MIT](../LICENSE) + [NOTICE](../NOTICE) |
 | README | ✅ | [README.md](../README.md) |
 | Architecture diagram | ✅ | [ARCHITECTURE.md](ARCHITECTURE.md) — Mermaid, renders on GitHub |
@@ -25,7 +25,7 @@ Judging: 15 September – 8 October 2026. Winners: 14 October 2026.
 | Functioning end-to-end agent | ✅ | Running in production on Amazon Nova (`nova-lite` screen / `nova-pro` assess). Two tenants have completed scans end to end. *Anthropic models are not entitled on this account; the model ladder fell back automatically.* |
 | AI assistance disclosed | ✅ | [NOTICE](../NOTICE) and README |
 | Newly created in submission period | ✅ | First commit 8 Sep 2026; no prior code incorporated |
-| Live demo link *(bonus)* | ⚠️ | Live and returning 200: `https://builtwatch.kelvinlingac.chatgpt.site`. **A ChatGPT-branded domain for an AWS competition — see BW-5.** `builtwatch.org`/`.com` unregistered. |
+| Live demo link *(bonus)* | ✅ | `https://builtwatch.org` — registered, deployed and returning 200 (verified 11 Sep 2026). BW-5 closed. **`www.builtwatch.org` does not resolve** — see BW-13. |
 | builder.aws blog post *(bonus)* | ⬜ | Up to +0.6 (0.2 × 3 posts) |
 
 ## Open blockers

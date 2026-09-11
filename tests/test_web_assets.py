@@ -102,7 +102,8 @@ def test_agent_import_is_primary_and_profiles_show_their_source():
 
 def test_profiles_expose_remove_action_without_hiding_it_in_more_options():
     app = (ROOT / "web/app.js").read_text()
-    profile = app[app.index("function profile(") : app.index("\nfunction editContext", app.index("function profile("))]
+    start = app.index("function profile(")
+    profile = app[start : app.index("\nfunction editContext", start)]
 
     assert 'data-delete="${esc(id)}">Remove app' in profile
     assert profile.index('data-delete="${esc(id)}"') < profile.index('<details class="modal-more">')
@@ -253,3 +254,29 @@ def test_sources_view_groups_by_category_and_surfaces_coverage_failures():
     assert "pill amber" in view, "fetch failures are not visually distinguished"
     # The whole-registry count must stay honest about what is and is not watched.
     assert "Nothing outside this list is checked" in view
+
+
+def test_demo_lists_every_registry_source():
+    """The demo must advertise the same coverage the system actually watches.
+
+    `web/demo.json` is generated from a local replay database, so adding a source to the
+    registry does not update it. That drift is invisible in every other test, and it lands
+    on the one page whose entire claim is that coverage is explicit and listed in full:
+    an unauthenticated visitor was shown "11 sources across 7 categories" while the
+    registry held 12 across 8, silently dropping the only business_news source.
+    """
+    import sys
+
+    sys.path.insert(0, str(ROOT / "src"))
+    from builtwatch.registry import load_registry
+
+    demo = json.loads((ROOT / "web/demo.json").read_text())
+    demo_ids = {s["id"] for s in demo["sources"]}
+    registry_ids = {s.id for s in load_registry(ROOT / "sources/registry.yaml")}
+
+    missing = registry_ids - demo_ids
+    assert not missing, (
+        f"sources in the registry but absent from the demo: {sorted(missing)}. "
+        "Regenerate with scripts/export_demo.py, or the demo understates coverage."
+    )
+    assert not demo_ids - registry_ids, "demo lists a source the registry does not contain"

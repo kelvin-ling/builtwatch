@@ -119,7 +119,7 @@ Sites version 7 is public and succeeded at 2026-09-09 12:44 UTC.
 Source: `7453039094dc6f5036fe5a7d18d70474af4deb72`.
 Saved version: `appgprj_6a9fa33453988191895d1c0403f10071~appgver_1231b6d6762c81918cbea9fde53abf95`.
 Deployment: `appgdep_6aa154a4cd188191b8f435bc0dc7c645`.
-URL: https://builtwatch.kelvinlingac.chatgpt.site/
+URL: https://builtwatch.org/
 
 AWS account API/worker and cost monitor deployed. 97 Python and 13 JavaScript/runtime
 tests pass. Live Lambda verification confirmed owner dashboard access, non-owner denial,
@@ -137,7 +137,7 @@ subscription. The CAD 25 monthly target is not an exact provider invoice cap.
 
 ## Final independent-registration release complete
 
-Sites version 6 is live at https://builtwatch.kelvinlingac.chatgpt.site/ . Deployment appgdep_6aa0fe3e56208191b76c1649f00a96c8 succeeded with environment revision 3; deployed source b22ceb9f09041f71abe622b79b3509e83c6b758e. It includes the tested connection-renewal fix. No release work or approval remains pending from this request. Independent email sign-in replaces ChatGPT authentication; returning owner must register and verify their configured email to access preserved inventory.
+Sites version 6 is live at https://builtwatch.org/ . Deployment appgdep_6aa0fe3e56208191b76c1649f00a96c8 succeeded with environment revision 3; deployed source b22ceb9f09041f71abe622b79b3509e83c6b758e. It includes the tested connection-renewal fix. No release work or approval remains pending from this request. Independent email sign-in replaces ChatGPT authentication; returning owner must register and verify their configured email to access preserved inventory.
 
 All prior live sign-in, isolation, registration/revocation/logout tests passed. Final session endpoint returned anonymous JSON 200; offline demo is served separately. 89 Python and 11 Node tests pass. Current temporary test accounts were cleaned up. Keep the scoped credentials private. There is no promise of a hard total AWS bill cap or immunity from hosting outages; local demo is independent of live ceilings and the downloadable standalone copy runs offline. Read ACCOUNTS.md for user instructions and controls, SECURITY.md for the bounded audit results. Earlier pending-release notes are historical.
 
@@ -161,7 +161,7 @@ Next: save/deploy this exact source publicly with D1 migration, verify actual co
 
 ## Public pilot live — 9 September 2026
 
-Release completed at https://builtwatch.kelvinlingac.chatgpt.site/ . Sites version 4, source cc5928c4106f5a16739575cf1b098f24fc5546ed; deployment appgdep_6aa0b602c5748191ac1f416cd9c33b48 succeeded with environment revision 2. Public access revision 2 applied with explicit user authorization.
+Release completed at https://builtwatch.org/ . Sites version 4, source cc5928c4106f5a16739575cf1b098f24fc5546ed; deployment appgdep_6aa0b602c5748191ac1f416cd9c33b48 succeeded with environment revision 2. Public access revision 2 applied with explicit user authorization.
 
 Both current and retired Lambda URLs now require AWS IAM. Anonymous direct requests returned 403; the production gateway code running in the actual Worker runtime returned 200 with its invoke-only credentials after protection. Public page and updated assets returned 200; forged client identity remained signed_in=false and workspace API returned 401. The D1 migration was included in the successful release. A second real-user sign-in and visual/mobile acceptance remain unverified; no independent security audit is claimed.
 

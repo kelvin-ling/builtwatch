@@ -133,7 +133,7 @@ Current position: `GLOBAL_MONTH_LIMIT` is **$5.00/month** shared, `$0.6392` used
   the data is migrated, then ask the owner before deleting anything.
 - **BW-10** — 2 of 15 assessments still return `insufficient_information`, both on one
   tenant. Worth reading before further prompt changes.
-- **BW-5** — the demo runs on `builtwatch.kelvinlingac.chatgpt.site`, a ChatGPT-branded
+- **BW-5** — the demo runs on `builtwatch.org`, a ChatGPT-branded
   domain, for an AWS competition. `builtwatch.org`, `.com`, `.io` and `.dev` were all
   unregistered on 8 Sep. Owner decision; `docs/CUSTOM_DOMAIN.md` exists.
 - **BW-3** — the repository is still private. Contest rules require it public with an OSI
