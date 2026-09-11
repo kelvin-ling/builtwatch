@@ -81,6 +81,21 @@ def test_bulk_import_note_stays_above_its_submit_button():
     assert bulk.index('class="section-note"') < bulk.index('class="modal-actions"')
 
 
+def test_agent_import_is_primary_and_profiles_show_their_source():
+    app = (ROOT / "web/app.js").read_text()
+    css = (ROOT / "web/style.css").read_text()
+
+    assert "Import from agent" in app
+    assert "Import apps from your agent" in app
+    assert "Describe the agent, automation, API integration, or app" not in app
+    assert "source_agent" in app
+    assert "Imported from ${esc(s.source_agent)}" in app
+    assert "Agent or workspace name" in app
+    assert "visual-import" in app
+    assert ".source-badge" in css
+    assert "@keyframes agent-import-row" in css
+
+
 def test_unsigned_demo_can_complete_the_review_flow_in_place():
     app = (ROOT / "web/app.js").read_text()
     css = (ROOT / "web/style.css").read_text()

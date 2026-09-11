@@ -14,9 +14,9 @@ User authorization: the user explicitly approved public deployment once ready. E
 
 ## Minimal onboarding
 
-1. Open the site and sign in with ChatGPT. Each account receives its own private workspace, subject to pilot capacity.
-2. Select **Add a system**. Describe it in one sentence, paste a builder's summary, or load a short README/text file.
-3. **Prepare my profile** runs a bounded Strands intake agent using Nova Lite. The agent extracts only supported details; missing facts remain unknown. It has no repository credentials, URL-fetch tools, or ability to change the app.
+1. Open the site and sign in. Each account receives its own private workspace, subject to pilot capacity.
+2. Select **Import from agent**. Copy the provided request into the agent that already knows the project, then paste or upload the profiles it prepares.
+3. Review the imported names, purpose, dependencies and source-agent label. Missing facts remain unknown. Manual entry is available as a fallback.
 4. **Review profile → Save and start watching** confirms the draft, saves it in AWS, and queues the first check. The optional detailed editor and JSON import remain available.
 5. For a finding, **Review with my agent → Copy for my agent** produces a review request with evidence and source dates. Paste it into the existing project conversation. Markdown download remains available. No data is automatically sent to another agent.
 

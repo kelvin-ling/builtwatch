@@ -13,7 +13,7 @@ The demo uses simple local text matching for drafts and saved real assessments f
 1. Select **Sign in / Register → Create an account**.
 2. Enter your email and a password of at least 12 characters with uppercase, lowercase and a number. No name, company, payment details, AWS account or repository permission is requested.
 3. Enter the verification code sent to your email, then sign in. Use **Verify email → Resend code** if needed, or **Forgot password?** to recover access.
-4. Look for **Private workspace**. Choose **Add a system**, paste a short description/README/builder summary, and choose **Prepare my profile**. The Strands intake agent prepares a draft; review before **Save and start watching**. Unknown facts stay unknown.
+4. Look for **Private workspace**. Choose **Import from agent**, copy the provided request into the agent that knows your projects, then paste or upload its export. Review before **Save and start watching**. BuiltWatch shows the source agent on imported profiles, and unknown facts stay unknown.
 5. Open **Needs attention**, inspect evidence and dates, then **Review with my agent → Copy for my agent**. Paste it into the existing project conversation. Use **Update from a summary** to bring back changes.
 6. The account menu controls daily monitoring, agent connections and sign-out. Sign-in lasts seven days; signing in again replaces the previous session. Password recovery invalidates existing web sessions.
 

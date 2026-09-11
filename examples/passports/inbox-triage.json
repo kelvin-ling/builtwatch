@@ -3,6 +3,7 @@
   "id": "inbox-triage",
   "name": "Client Inbox Triage Bot",
   "purpose": "Reads the owner's shared client inbox each morning, drafts replies with a large language model, and sends the approved drafts to clients as email from the business domain.",
+  "source_agent": "Client operations workspace",
   "technologies": ["Python 3.12", "AWS Lambda", "EventBridge Scheduler"],
   "services": ["Gmail API", "Amazon Bedrock", "SendGrid"],
   "consequential_actions": [

@@ -115,14 +115,16 @@ assessments, not announcements of newly detected changes today.
 Choose **Open your workspace** and enter the private access key supplied with the
 deployment. The key stays in browser session storage. The owner workspace supports:
 
-- Add and edit system profiles with a plain-language form, or import neutral JSON.
+- Import profiles prepared by a project agent, with the source agent shown on each app.
+- Review and edit imported details, with manual entry available as a fallback.
 - Review findings, source passages, applicability facts, unknowns, and suggested actions.
 - Acknowledge or dismiss findings; download a Markdown builder handoff or JSON profile.
 - Inspect source coverage and check history, including incomplete checks and model cost.
 - Request a live check; automatic checks run daily at 7 a.m. America/Toronto.
 
-No repository provider is required. Profile entry is manual and free of model charges;
-the CLI additionally supports model-assisted plain-text extraction.
+No repository connection is required. The recommended flow is to copy BuiltWatch's
+request into an agent that already knows the project, then import its export for review.
+Importing the returned JSON is local to the request and does not invoke a model.
 
 This deployment is a **single-owner workspace**, protected by a high-entropy access key.
 It does not offer public account registration or multiple independent tenants.

@@ -31,6 +31,10 @@ def queue_intake(store: Any, settings: Any, body: dict, invoke: Any) -> dict:
             {"error": "Use a sentence or summary with 20 to 12,000 characters."},
         )
     system_id = body.get("system_id")
+    source_agent = body.get("source_agent")
+    if source_agent is not None and not isinstance(source_agent, str):
+        return response(400, {"error": "Agent name must be text."})
+    source_agent = source_agent.strip()[:120] if source_agent else None
     previous = store.get_system(system_id) if isinstance(system_id, str) else None
     if system_id is not None and previous is None:
         return response(404, {"error": "That system is not in your workspace."})
@@ -39,7 +43,7 @@ def queue_intake(store: Any, settings: Any, body: dict, invoke: Any) -> dict:
             409, {"error": "Your workspace has 10 systems. Remove one before adding another."}
         )
     description_hash = hashlib.sha256(
-        (str(system_id or "") + description.strip()).encode()
+        (str(system_id or "") + str(source_agent or "") + description.strip()).encode()
     ).hexdigest()
     existing = store.get("intake-draft") or {}
     if existing.get("description_hash") == description_hash:
@@ -72,6 +76,7 @@ def queue_intake(store: Any, settings: Any, body: dict, invoke: Any) -> dict:
             "description": description.strip(),
             "description_hash": description_hash,
             "system_id": system_id,
+            "source_agent": source_agent,
             "job_id": job["id"],
         },
     )
@@ -146,6 +151,10 @@ def draft_profile(event: dict, store: Any, settings: Any, extract: Any = from_te
                 meter,
                 system_id=previous.id if previous else "app-" + uuid.uuid4().hex[:12],
             )
+            if pending.get("source_agent"):
+                profile.source_agent = pending["source_agent"]
+            elif previous:
+                profile.source_agent = previous.source_agent
             if previous:
                 profile.created_at = previous.created_at
             # Drafts never silently become facts in the watched inventory.

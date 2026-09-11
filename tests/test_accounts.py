@@ -215,7 +215,10 @@ def test_intake_is_reviewable_and_does_not_silently_save(table, passport):
             "/api/intake",
             "POST",
             json.dumps(
-                {"description": "A workflow that drafts Gmail replies for a person to approve."}
+                {
+                    "description": "A workflow that drafts Gmail replies for a person to approve.",
+                    "source_agent": "Project coding agent",
+                }
             ),
         ),
         store,
@@ -231,6 +234,7 @@ def test_intake_is_reviewable_and_does_not_silently_save(table, passport):
 
     assert draft_profile(jobs[0], store, Settings(), extract)["status"] == "complete"
     assert store.get("intake-draft")["profile"]["name"] == passport.name
+    assert store.get("intake-draft")["profile"]["source_agent"] == "Project coding agent"
     assert not store.list_systems()
     assert store.get("intake-input") is None
     assert store.spent_today() > 0
@@ -360,6 +364,7 @@ def test_agent_sync_registers_one_profile_without_model_and_scopes_response(tabl
     assert result["statusCode"] == 200
     payload = json.loads(result["body"])
     assert payload["system"]["id"] == profile.id
+    assert payload["system"]["source_agent"] == "Connected project agent"
     assert "Other" not in result["body"]
     assert not calls
     assert store.get_system(other.id) is not None

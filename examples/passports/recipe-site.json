@@ -3,6 +3,7 @@
   "id": "recipe-site",
   "name": "Static Recipe Archive",
   "purpose": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code.",
+  "source_agent": "Personal site workspace",
   "technologies": ["Hugo", "HTML", "CSS", "GitHub Pages"],
   "services": [],
   "consequential_actions": [],

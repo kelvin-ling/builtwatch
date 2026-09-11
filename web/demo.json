@@ -5,6 +5,7 @@
       "id": "inbox-triage",
       "name": "Client Inbox Triage Bot",
       "purpose": "Reads the owner's shared client inbox each morning, drafts replies with a large language model, and sends the approved drafts to clients as email from the business domain.",
+      "source_agent": "Client operations workspace",
       "technologies": [
         "Python 3.12",
         "AWS Lambda",
@@ -59,6 +60,7 @@
       "id": "recipe-site",
       "name": "Static Recipe Archive",
       "purpose": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code.",
+      "source_agent": "Personal site workspace",
       "technologies": [
         "Hugo",
         "HTML",
@@ -92,6 +94,7 @@
       "id": "support-widget",
       "name": "Website Support Chat Widget",
       "purpose": "A chat widget embedded on the company marketing site that answers visitor questions using a language model.",
+      "source_agent": "Support product workspace",
       "technologies": [
         "TypeScript",
         "Cloudflare Workers"

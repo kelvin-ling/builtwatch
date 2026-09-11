@@ -3,6 +3,7 @@
   "id": "support-widget",
   "name": "Website Support Chat Widget",
   "purpose": "A chat widget embedded on the company marketing site that answers visitor questions using a language model.",
+  "source_agent": "Support product workspace",
   "technologies": ["TypeScript", "Cloudflare Workers"],
   "services": ["Amazon Bedrock"],
   "consequential_actions": [

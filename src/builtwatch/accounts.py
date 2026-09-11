@@ -180,6 +180,8 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                         return response(409, {"error": "Your workspace supports ten systems"})
                     if existing:
                         profile.created_at = existing.created_at
+                    if not profile.source_agent:
+                        profile.source_agent = "Connected project agent"
                     store.upsert_system(profile)
                 except (ValueError, TypeError):
                     return response(400, {"error": "Send a valid system profile"})

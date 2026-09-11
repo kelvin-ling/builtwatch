@@ -78,6 +78,11 @@ class SystemPassport(BaseModel):
         description="Applicability facts that were not determinable. Preserved, never filled in.",
     )
     provenance: dict[str, Provenance] = Field(default_factory=dict)
+    source_agent: str | None = Field(
+        None,
+        max_length=120,
+        description="User-visible label for the agent or workspace that supplied this profile.",
+    )
 
     created_at: datetime = Field(default_factory=utcnow)
     updated_at: datetime = Field(default_factory=utcnow)
