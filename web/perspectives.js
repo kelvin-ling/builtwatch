@@ -52,6 +52,14 @@
   if(f.relevance==='not_relevant')return {status:'No app change needed',problemLabel:'Why it does not apply',problem:b.consequence,actionLabel:'What to do next',action:'Nothing needs fixing for this item. Revisit it only if the app or its dependencies change.',owner:'No action'};
   return {status:'Review needed',problemLabel:'Why it may matter',problem:b.consequence,actionLabel:'Next step',action:b.review,owner:'You'};
  }
+ function reviewRoute(f,system){
+  const d=diagnosis(f,system),text=`${d.problem} ${d.action}`.toLowerCase();
+  if(d.owner==='BuiltWatch'||d.owner==='No action')return {key:'none',label:'No review needed',title:'No action for you',description:'BuiltWatch is handling this check or has already ruled it out.',cta:''};
+  const decision=/\b(decide|approve|choose|authorize|accept|adopt|consent|risk tolerance|business decision|legal decision|policy decision)\b/.test(text)||/whether .+ should be/.test(text);
+  const technical=/\b(api|code|configur|dependency|version|service|integration|input|output|send|store|model|vulnerabilit|authentication|monitoring|alerting|enabled|installed|uses?)\b/.test(text);
+  if(decision||(!technical&&f.relevance==='insufficient_information'))return {key:'human',label:'Human decision needed',title:'You make the decision',description:'Your agent can prepare a recommendation, but the final choice stays with you.',cta:'Ask my agent to prepare'};
+  return {key:'agent',label:'Agent can investigate',title:'Send to your project agent',description:'BuiltWatch has prepared the change, evidence, and app context for your agent to check.',cta:'Send to my agent'};
+ }
  function requiresAttention(f,system){
   if((f.disposition||'open')!=='open')return false;
   if(f.relevance==='relevant')return true;
@@ -70,5 +78,5 @@
   return {...map,event:{change:b.change,connection:b.connection,review:b.review,stale:b.stale},anchor:anchors[b.connectionLabel]||'condition'};
  }
  function grouped(items,systems){const groups=new Map();for(const f of items){if(!groups.has(f.system_id))groups.set(f.system_id,{system:systems.find(x=>x.id===f.system_id)||{id:f.system_id,name:f.system_id,purpose:'App profile unavailable'},findings:[]});groups.get(f.system_id).findings.push(f);}return [...groups.values()];}
- root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context,brief,diagnosis,requiresAttention,automation,grouped};
+ root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context,brief,diagnosis,reviewRoute,requiresAttention,automation,grouped};
 })(typeof window!=='undefined'?window:globalThis);

@@ -72,6 +72,17 @@ test('diagnosis assigns a plain-language owner and action to every result type',
  assert.match(p.diagnosis(clear,app).action,/nothing needs fixing/i);
 });
 
+test('review routing separates agent investigation from human decisions',()=>{
+ const app={id:'agent',name:'Agent',purpose:'Answers customer questions',services:['Amazon Bedrock']};
+ const investigate={system_id:'agent',relevance:'relevant',facts:['A service policy changed'],system_facts:[],unknowns:[],evidence:[{passage:'Policy text'}],review_suggestions:['Review the service configuration and verify that it follows the updated policy.']};
+ const decide={...investigate,review_suggestions:['Decide whether the new response check should be added.']};
+ const missingBusinessFact={...investigate,relevance:'insufficient_information',unknowns:['Whether customers have approved this workflow'],review_suggestions:[]};
+ assert.equal(p.reviewRoute(investigate,app).key,'agent');
+ assert.equal(p.reviewRoute(decide,app).key,'human');
+ assert.equal(p.reviewRoute(missingBusinessFact,app).key,'human');
+ assert.match(p.reviewRoute(decide,app).description,/final choice stays with you/i);
+});
+
 test('presentation removes model-like assessment wording and app ids',()=>{
  const app={id:'support-widget',name:'Support widget',purpose:'Answers questions'};
  const finding={system_id:'support-widget',relevance:'insufficient_information',title:"Assessing relevance of Anthropic Usage Policy to 'support-widget'",unknowns:["Whether the 'support-widget' system accepts public input."],system_facts:[]};

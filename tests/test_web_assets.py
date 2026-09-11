@@ -100,13 +100,30 @@ def test_unsigned_demo_can_complete_the_review_flow_in_place():
     app = (ROOT / "web/app.js").read_text()
     css = (ROOT / "web/style.css").read_text()
 
-    assert "state.demo?'Review here':'Review with my agent'" in app
-    assert "Review this example in BuiltWatch" in app
-    assert "no sign-in, model use, or charge" in app
+    assert "state.demo?'Preview agent handoff':esc(route.cta)" in app
+    assert "Preview the agent handoff" in app
+    assert "Copy prompt for my agent" in app
     assert "!state.demo&&f.disposition==='open'" not in app
     assert 'class="group-title"' in app
     assert 'class="system-mini-copy"' in app
     assert ".app-finding-group>summary span.group-title:first-child{display:grid" in css
+
+
+def test_reviews_show_whether_an_agent_or_human_owns_the_next_step():
+    app = (ROOT / "web/app.js").read_text()
+    perspectives = (ROOT / "web/perspectives.js").read_text()
+    css = (ROOT / "web/style.css").read_text()
+
+    assert "function reviewRoute(" in perspectives
+    assert "Agent can investigate" in perspectives
+    assert "Human decision needed" in perspectives
+    assert "Agent can investigate · ${agentCount}" in app
+    assert "Human decision needed · ${humanCount}" in app
+    assert "Ask my agent to prepare" in perspectives
+    assert "Send to my agent" in perspectives
+    assert 'class="review-route ${route.key}"' in app
+    assert ".review-route.agent" in css
+    assert ".review-route.human" in css
 
 
 def test_impact_page_is_available_in_demo_and_private_workspaces():
