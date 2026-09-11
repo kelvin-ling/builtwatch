@@ -21,9 +21,9 @@ The original owner's verified email maps to the previously migrated workspace. T
 
 ## Let your builder register the app
 
-1. Open your account and choose **Connect my agent → Create connection**.
-2. Copy the private setup instructions into the agent conversation for this app. The agent uses the project context it already has to produce a small profile, avoiding manual form entry.
-3. If the agent supports scheduling, the instructions ask it to retrieve findings daily. Otherwise it should sync on request and explain that limitation. BuiltWatch does not wake arbitrary agents itself.
+1. Open your account and choose **Set up an app check-in → Create connection**.
+2. This is for one existing app profile, not for discovering every app in the agent’s project. Copy the private setup instructions into that app’s agent conversation.
+3. If the agent supports scheduling, it can retrieve findings for that one app daily. Otherwise it should sync on request and explain that limitation. BuiltWatch does not wake arbitrary agents itself.
 4. The first successful sync registers the app. Later syncs can update only that connected app and return a review recommendation. BuiltWatch shows the recommendation, but only the user can record the outcome and close the finding.
 5. Revoke the connection from the account menu whenever needed. Creating a replacement invalidates the previous token while keeping the same connected app. Tokens expire after 90 days.
 
