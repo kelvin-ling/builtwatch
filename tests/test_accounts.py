@@ -305,6 +305,42 @@ def test_summary_update_preserves_identity_and_requires_review(table, passport):
     assert store.get_system(passport.id).purpose == passport.purpose
 
 
+def test_repeated_single_import_matches_existing_app_by_name(table, passport):
+    """A second plain-text import refreshes the app instead of creating a duplicate."""
+    from builtwatch.web_intake import draft_profile
+
+    store = DynamoStore(table, tenant_id("repeat-import-user"))
+    store.upsert_system(passport)
+    jobs = []
+    result = serve(
+        event(
+            "/api/intake",
+            "POST",
+            json.dumps(
+                {
+                    "description": "A refreshed summary for the same app with updated limits.",
+                    "source_agent": "Project coding agent",
+                }
+            ),
+        ),
+        store,
+        Settings(),
+        jobs.append,
+    )
+    assert result["statusCode"] == 202
+
+    def extract(description, settings, meter, system_id):
+        meter.record(settings.assess_model_id, 100, 50)
+        return passport.model_copy(
+            update={"id": system_id, "purpose": "Updated purpose from the agent"}
+        )
+
+    assert draft_profile(jobs[0], store, Settings(), extract)["status"] == "complete"
+    draft = store.get("intake-draft")["profile"]
+    assert draft["id"] == passport.id
+    assert draft["purpose"] == "Updated purpose from the agent"
+
+
 def test_intake_cannot_update_another_accounts_system(table, passport):
     store = DynamoStore(table, tenant_id("missing-system"))
     r = serve(

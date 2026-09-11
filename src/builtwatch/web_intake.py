@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
 import uuid
 from dataclasses import replace
@@ -18,6 +19,11 @@ from .web_api import MAX_WEB_SYSTEMS, response
 MIN_DESCRIPTION = 20
 MAX_DESCRIPTION = 12000
 DAILY_DRAFTS = 5
+
+
+def _canonical_name(value: str) -> str:
+    """Match harmless naming changes so repeat imports update instead of duplicating."""
+    return " ".join(re.sub(r"[^a-z0-9]+", " ", value.casefold()).split())
 
 
 def queue_intake(store: Any, settings: Any, body: dict, invoke: Any) -> dict:
@@ -157,6 +163,20 @@ def draft_profile(event: dict, store: Any, settings: Any, extract: Any = from_te
                 profile.source_agent = previous.source_agent
             if previous:
                 profile.created_at = previous.created_at
+            else:
+                # A plain-text import has no stable ID in its summary. Match an existing
+                # profile by normalized name so importing the same app again updates it.
+                match = next(
+                    (
+                        candidate
+                        for candidate in store.list_systems()
+                        if _canonical_name(candidate.name) == _canonical_name(profile.name)
+                    ),
+                    None,
+                )
+                if match:
+                    profile.id = match.id
+                    profile.created_at = match.created_at
             # Drafts never silently become facts in the watched inventory.
             store.put(
                 "intake-draft",

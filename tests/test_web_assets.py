@@ -100,6 +100,14 @@ def test_agent_import_is_primary_and_profiles_show_their_source():
     assert "@keyframes agent-import-row" in css
 
 
+def test_profiles_expose_remove_action_without_hiding_it_in_more_options():
+    app = (ROOT / "web/app.js").read_text()
+    profile = app[app.index("function profile(") : app.index("\nfunction editContext", app.index("function profile("))]
+
+    assert 'data-delete="${esc(id)}">Remove app' in profile
+    assert profile.index('data-delete="${esc(id)}"') < profile.index('<details class="modal-more">')
+
+
 def test_unsigned_demo_can_complete_the_review_flow_in_place():
     app = (ROOT / "web/app.js").read_text()
     css = (ROOT / "web/style.css").read_text()
