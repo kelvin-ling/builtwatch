@@ -4,10 +4,9 @@ Current hosting is hybrid: Cognito, DynamoDB, Lambda, Strands/Bedrock and schedu
 monitoring are in AWS. The website, authenticated gateway and D1 session/limit state are
 hosted by Sites on Cloudflare. A new domain does not move those services to AWS.
 
-Sites exposes add/list/refresh custom-domain operations for this existing project:
-`appgprj_6a9fa33453988191895d1c0403f10071`. No custom domain is attached as of this release.
-A hostname is required before provisioning. Do not invent DNS targets or register an
-unapproved hostname. The supported path preserves the existing Site and AWS accounts.
+The preferred public hostname is `builtwatch.org`, attached to the existing Sites project.
+The original Sites hostname remains available as a fallback. The supported setup preserves
+the existing Site and AWS accounts.
 
 Once the owner supplies their purchased hostname:
 

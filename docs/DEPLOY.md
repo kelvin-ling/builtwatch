@@ -148,13 +148,13 @@ Success looks like: `job= complete`, a non-zero count of current-generation find
 regression, and its absence is the whole point of the deploy.
 
 Then load the site and confirm findings render:
-`https://builtwatch.kelvinlingac.chatgpt.site/`
+`https://builtwatch.org/`
 
 ---
 
 ## Admin dashboard
 
-`https://builtwatch.kelvinlingac.chatgpt.site/#admin`
+`https://builtwatch.org/#admin`
 
 Server-gated on `session.is_admin`, which is true only for the tenant whose id matches the
 `BW_OWNER_ACCOUNT` environment variable on `builtwatch-accounts-api` (currently

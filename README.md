@@ -106,7 +106,7 @@ A saved artifact, carrying its own evidence, that a person can read or a coding 
 
 ## Web workspace
 
-Open **https://builtwatch.kelvinlingac.chatgpt.site**.
+Open **https://builtwatch.org**.
 
 The public sample workspace shows saved, real Strands/Nova replay results for three
 example systems. It is read-only and never invokes a model. Findings are historical

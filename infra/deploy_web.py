@@ -23,7 +23,7 @@ from deploy_lambda import build_zip
 ROOT = Path(__file__).resolve().parents[1]
 NAME = "builtwatch-workspace"
 REGION = "us-east-1"
-ORIGIN = "https://builtwatch.kelvinlingac.chatgpt.site"
+ORIGIN = "https://builtwatch.org"
 
 
 def package() -> bytes:

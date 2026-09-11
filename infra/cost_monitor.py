@@ -178,7 +178,7 @@ def lambda_handler(event, context):
                     "\n\nMonthly target: CAD 25. Paid checks pause at USD 10 reported "
                     "account cost, with USD 5 shared model reservations. Billing can lag; "
                     "this is not an exact invoice cap."
-                    "\nhttps://builtwatch.kelvinlingac.chatgpt.site/#admin"
+                    "\nhttps://builtwatch.org/#admin"
                 ),
             )
             t.put_item(Item={**key, "expires": int(time.time()) + 2678400})

@@ -1,6 +1,6 @@
 # Using BuiltWatch
 
-Open https://builtwatch.kelvinlingac.chatgpt.site/ . No ChatGPT account is needed.
+Open https://builtwatch.org/ . No ChatGPT account is needed.
 
 ## Try it without registration
 

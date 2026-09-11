@@ -34,6 +34,16 @@ def test_frontend_copy_does_not_reference_chat_accounts_or_model_brands():
     assert "Claude" not in demo
 
 
+def test_live_links_use_the_preferred_custom_domain():
+    app = (ROOT / "web/app.js").read_text()
+    accounts = (ROOT / "docs/ACCOUNTS.md").read_text()
+    monitor = (ROOT / "infra/cost_monitor.py").read_text()
+
+    for text in (app, accounts, monitor):
+        assert "https://builtwatch.org" in text
+        assert "builtwatch.kelvinlingac.chatgpt.site" not in text
+
+
 def test_completed_checks_do_not_create_a_global_status_banner():
     app = (ROOT / "web/app.js").read_text()
     notice = app[app.index("function jobNotice()") : app.index("function render()")]
