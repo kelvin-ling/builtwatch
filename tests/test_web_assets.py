@@ -86,11 +86,15 @@ def test_agent_import_is_primary_and_profiles_show_their_source():
     css = (ROOT / "web/style.css").read_text()
 
     assert "Import from agent" in app
-    assert "Import apps from your agent" in app
+    assert "Import one app from your agent" in app
+    assert "Import several apps from your agent" in app
     assert "Describe the agent, automation, API integration, or app" not in app
     assert "source_agent" in app
     assert "Imported from ${esc(s.source_agent)}" in app
-    assert "Agent or workspace name" in app
+    add_flow = app[app.index("function add(") : app.index("function reviewDraft(")]
+    assert "Agent or workspace name" not in add_flow
+    assert "data-action=\"copy-builder\"" in add_flow
+    assert "Paste profile JSON" not in add_flow
     assert "visual-import" in app
     assert ".source-badge" in css
     assert "@keyframes agent-import-row" in css
