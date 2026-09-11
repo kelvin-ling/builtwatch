@@ -55,6 +55,7 @@ def test_dialog_focus_and_actions_are_safe_on_small_screens():
     assert ".modal-body{flex:1 1 auto;overflow-y:auto" in css
     assert "content.classList.toggle('has-footer',Boolean(actions))" in app
     assert "const actions=$('.modal-body .modal-actions')" in app
+    assert "modalBody.scrollTop=0" in app
     assert "button.setAttribute('form',actionForm.id)" in app
     assert "#modal-content.has-footer{height:90dvh}" in css
     assert "#modal-content.has-footer{height:calc(90dvh - 2px)}" in css
@@ -92,13 +93,40 @@ def test_impact_page_is_available_in_demo_and_private_workspaces():
     assert "impact:'Impact'" in app
     assert "impact:impactView" in app
     assert "function impactMetrics()" in app
-    assert "const evaluations=state.findings.length" in app
+    assert "function monitoredSystemIds()" in app
+    assert "r.status==='complete'" in app
+    assert "apps:monitored.size" in app
+    assert "Apps evaluated" in app
+    assert "Apps needing review" in app
     assert "f.relevance==='relevant'" in app
     assert "f.relevance==='not_relevant'" in app
     assert "f.relevance==='insufficient_information'" in app
     assert "Saved demonstration" in app
     assert "Your workspace" in app
     assert ".impact-summary{display:grid" in css
+
+
+def test_draft_notice_and_context_save_action_remain_visible_on_mobile():
+    app = (ROOT / "web/app.js").read_text()
+    css = (ROOT / "web/style.css").read_text()
+
+    assert 'class="notice info draft-ready"' in app
+    assert '.draft-ready{display:flex' in css
+    assert '.draft-ready{display:grid;grid-template-columns:1fr;gap:12px}' in css
+    save_action = (
+        '<div class="modal-actions"><button class="button primary" '
+        'type="submit">Save context</button></div>'
+    )
+    assert save_action in app
+    assert '.modal-footer{padding-bottom:calc(28px + env(safe-area-inset-bottom))!important}' in css
+
+
+def test_unchecked_profiles_are_not_described_as_monitored():
+    app = (ROOT / "web/app.js").read_text()
+
+    assert "Profile only · not evaluated" in app
+    assert "Waiting for first check" in app
+    assert "Profiles you add to the demo stay local and are not evaluated." in app
 
 
 def test_public_demo_offers_multiple_safe_example_inputs():
