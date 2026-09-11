@@ -81,6 +81,15 @@ def test_bulk_import_note_stays_above_its_submit_button():
     assert bulk.index('class="section-note"') < bulk.index('class="modal-actions"')
 
 
+def test_bulk_import_keeps_export_when_returning_from_review():
+    app = (ROOT / "web/app.js").read_text()
+
+    assert "let adminData=null,bulkProfiles=[],bulkInput=''" in app
+    assert 'textarea id="bulk-json" required maxlength="24000" placeholder=\'{"systems":[...]}\' spellcheck="false">${esc(bulkInput)}</textarea>' in app
+    assert "bulkInput=$('#bulk-json').value" in app
+    assert "if(e.target.id==='bulk-json')bulkInput=e.target.value" in app
+
+
 def test_agent_import_is_primary_and_profiles_show_their_source():
     app = (ROOT / "web/app.js").read_text()
     css = (ROOT / "web/style.css").read_text()
