@@ -283,6 +283,44 @@ served assets.
 
 ---
 
+## BW-13 · `www.builtwatch.org` does not resolve
+**Severity:** MED · **Owner:** HUMAN (Cloudflare DNS) · **Status:** open
+
+`builtwatch.org` serves 200 and resolves to `172.64.80.1` (Cloudflare). `www.builtwatch.org`
+has **no DNS records at all** and fails to connect — `curl` returns `000`, not a redirect.
+
+Anyone who types or is handed the `www` form gets a connection failure rather than the site.
+For a submission where judges are given a link, that is a needless way to lose them.
+
+**Fix:** in Cloudflare DNS for `builtwatch.org`, add a proxied `CNAME` `www` → `builtwatch.org`,
+then a redirect rule sending `www` to the apex so one canonical host wins. No agent here has
+Cloudflare access for this zone.
+
+---
+
+## BW-14 · The old host still serves a full copy of the site
+**Severity:** MED · **Owner:** AGENT (with Sites access) · **Status:** open
+
+`https://builtwatch.kelvinlingac.chatgpt.site` still returns **200 with the complete
+application** — it does not redirect to `builtwatch.org`. Two live copies now exist.
+
+Three consequences, in order of how much they matter:
+
+1. A judge handed the ChatGPT-branded URL sees an AWS-competition entry hosted on a
+   ChatGPT domain. BW-5 was closed on the basis that `builtwatch.org` is now primary; it
+   is only actually primary once the old host stops answering.
+2. The two copies drift. The old host is a separate deployment and will keep serving
+   whatever it last received.
+3. Duplicate content across two hosts, with no `rel=canonical` on either.
+
+**Fix:** make the old host issue a 301 to `https://builtwatch.org`, preserving the path.
+Requires ChatGPT Sites access.
+
+Related and cheap while there: `https://builtwatch.org/robots.txt` returns **404**, and no
+`<link rel="canonical">` is emitted. Add both.
+
+---
+
 ## Not broken — verified working
 
 Recorded so nobody re-investigates these.
