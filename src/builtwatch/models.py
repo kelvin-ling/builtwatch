@@ -362,6 +362,21 @@ class DispositionAction(str, Enum):
     EXPORTED = "exported"
 
 
+class AgentReviewOutcome(str, Enum):
+    NO_CHANGE_NEEDED = "no_change_needed"
+    APP_UPDATED = "app_updated"
+    NEEDS_HUMAN_DECISION = "needs_human_decision"
+    UNABLE_TO_VERIFY = "unable_to_verify"
+
+
+class AgentReview(BaseModel):
+    finding_id: str
+    system_id: str
+    outcome: AgentReviewOutcome
+    summary: str = Field(min_length=1, max_length=1000)
+    created_at: datetime = Field(default_factory=utcnow)
+
+
 class Disposition(BaseModel):
     id: str
     finding_id: str

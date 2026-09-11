@@ -26,6 +26,9 @@ test('Cognito authentication, bounded signup, secure sessions and scoped agent c
   r=await mf.dispatchFetch(origin+'/api/agent/sync',{method:'POST',headers:{Authorization:'Bearer '+first.token},body:'{}'});assert.equal(r.status,401);
   const sync=body=>mf.dispatchFetch(origin+'/api/agent/sync',{method:'POST',headers:{Authorization:'Bearer '+c.token},body:JSON.stringify(body)});
   r=await sync({profile:{id:'other-user-id',name:'My app'}});assert.equal(r.status,200);assert.equal((await r.json()).profile.id,c.system_id);
+  r=await sync({review:{finding_id:'find-one',outcome:'no_change_needed',summary:'No code change is needed.'}});assert.equal(r.status,200);assert.equal((await r.json()).review.outcome,'no_change_needed');
+  r=await sync({});assert.equal(r.status,200);
+  r=await sync({});assert.equal(r.status,200);
   r=await sync({});assert.equal(r.status,429);
   r=await mf.dispatchFetch(origin+'/api/workspace',{headers:{Authorization:'Bearer '+c.token}});assert.equal(r.status,401);
   await call('/api/connections',{system_id:c.system_id},cookie,'DELETE');r=await sync({});assert.equal(r.status,401);

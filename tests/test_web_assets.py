@@ -103,10 +103,30 @@ def test_unsigned_demo_can_complete_the_review_flow_in_place():
     assert "state.demo?'Preview agent handoff':esc(route.cta)" in app
     assert "Preview the agent handoff" in app
     assert "Copy prompt for my agent" in app
+    assert "Record outcome instead" in app
     assert "!state.demo&&f.disposition==='open'" not in app
     assert 'class="group-title"' in app
     assert 'class="system-mini-copy"' in app
     assert ".app-finding-group>summary span.group-title:first-child{display:grid" in css
+
+
+def test_review_outcomes_are_explicit_and_agent_handoff_is_optional():
+    app = (ROOT / "web/app.js").read_text()
+    css = (ROOT / "web/style.css").read_text()
+
+    assert "function recordOutcome(" in app
+    assert "Sending this to an agent is optional." in app
+    for label in (
+        "No app change needed",
+        "The app was updated",
+        "This does not apply",
+        "Keep this open",
+    ):
+        assert label in app
+    assert "Nothing closes until you record the outcome." in app
+    assert "data-record-outcome" in app
+    assert ".outcome-options" in css
+    assert ".agent-review-result" in css
 
 
 def test_reviews_show_whether_an_agent_or_human_owns_the_next_step():

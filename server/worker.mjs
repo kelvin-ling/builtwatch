@@ -184,9 +184,9 @@ export function createWorker(assets) {
       try{
         const input=JSON.parse(body);
         if(!input||typeof input!=='object'||Array.isArray(input))throw Error();
-        body=JSON.stringify({system_id:agent.system_id,...(input.profile?{profile:{...input.profile,id:agent.system_id}}:{})});
-        if(!await claimRequest(env.DB,'agent-daily-'+account,new Date().toISOString().slice(0,10),1))return json({error:'This connection syncs once per UTC day. Return tomorrow.'},429);
-      }catch{return json({error:'Send a JSON object with an optional profile.'},400);}
+        body=JSON.stringify({system_id:agent.system_id,...(input.profile?{profile:{...input.profile,id:agent.system_id}}:{}),...(input.review?{review:input.review}:{})});
+        if(!await claimRequest(env.DB,'agent-daily-'+account,new Date().toISOString().slice(0,10),4))return json({error:'This connection has reached today’s sync limit. Return tomorrow.'},429);
+      }catch{return json({error:'Send a JSON object with an optional profile or review.'},400);}
     }
     const stamp = Math.floor(Date.now()/1000).toString();
     const nonce = crypto.randomUUID();

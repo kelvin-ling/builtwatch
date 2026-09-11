@@ -338,7 +338,7 @@ def test_account_routes_accept_encoded_json_and_reject_nonobjects(table):
     assert serve(event("/api/intake", "POST", "[]"), store, Settings(), None)["statusCode"] == 400
 
 
-def test_agent_sync_registers_one_profile_without_model_and_scopes_response(table):
+def test_agent_sync_registers_one_profile_without_model_and_scopes_response(table, snapshot):
     from builtwatch.models import SystemPassport
 
     store = DynamoStore(table, tenant_id("agent-owner"))
@@ -368,6 +368,47 @@ def test_agent_sync_registers_one_profile_without_model_and_scopes_response(tabl
     assert "Other" not in result["body"]
     assert not calls
     assert store.get_system(other.id) is not None
+    finding, _ = store.save_finding(make_finding(profile, snapshot, finding_id="find-agent"))
+    review_result = serve(
+        event(
+            "/api/agent/sync",
+            "POST",
+            json.dumps(
+                {
+                    "system_id": profile.id,
+                    "review": {
+                        "finding_id": finding.id,
+                        "outcome": "no_change_needed",
+                        "summary": "The project does not use the affected feature.",
+                    },
+                }
+            ),
+        ),
+        store,
+        Settings(),
+        calls.append,
+    )
+    assert review_result["statusCode"] == 200
+    pending = store.get("agent-review#" + profile.id)
+    assert pending["outcome"] == "no_change_needed"
+    agent_response = json.loads(review_result["body"])
+    assert agent_response["findings"][0]["id"] == finding.id
+    assert agent_response["review"]["finding_id"] == finding.id
+    workspace = json.loads(serve(event(), store, Settings(), calls.append)["body"])
+    assert workspace["agent_reviews"][0]["finding_id"] == finding.id
+    assert store.get("agent-review#" + profile.id)["summary"].startswith("The project")
+    disposition = serve(
+        event(
+            "/api/dispositions",
+            "POST",
+            json.dumps({"finding_id": finding.id, "action": "acknowledged"}),
+        ),
+        store,
+        Settings(),
+        calls.append,
+    )
+    assert disposition["statusCode"] == 200
+    assert store.get("agent-review#" + profile.id) is None
     bad = serve(
         event(
             "/api/agent/sync",
@@ -384,6 +425,27 @@ def test_agent_sync_registers_one_profile_without_model_and_scopes_response(tabl
         calls.append,
     )
     assert bad["statusCode"] == 400
+
+    updated_without_profile = serve(
+        event(
+            "/api/agent/sync",
+            "POST",
+            json.dumps(
+                {
+                    "system_id": profile.id,
+                    "review": {
+                        "finding_id": finding.id,
+                        "outcome": "app_updated",
+                        "summary": "Updated the dependency.",
+                    },
+                }
+            ),
+        ),
+        store,
+        Settings(),
+        calls.append,
+    )
+    assert updated_without_profile["statusCode"] == 400
 
 
 def test_cost_guard_fails_closed(table, monkeypatch):

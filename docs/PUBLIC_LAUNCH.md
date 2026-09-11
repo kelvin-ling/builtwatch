@@ -18,7 +18,7 @@ User authorization: the user explicitly approved public deployment once ready. E
 2. Select **Import from agent**. Copy the provided request into the agent that already knows the project, then paste or upload the profiles it prepares.
 3. Review the imported names, purpose, dependencies and source-agent label. Missing facts remain unknown. Manual entry is available as a fallback.
 4. **Review profile → Save and start watching** confirms the draft, saves it in AWS, and queues the first check. The optional detailed editor and JSON import remain available.
-5. For a finding, **Review with my agent → Copy for my agent** produces a review request with evidence and source dates. Paste it into the existing project conversation. Markdown download remains available. No data is automatically sent to another agent.
+5. For a finding, **Record outcome** is the primary action. Keep it open, record that no app change is needed, update the app profile and recheck, or explain why it does not apply. Agent handoff is optional. A connected agent may return a recommendation, but only the user can close the finding.
 
 An alternate entry route asks the builder agent to inspect its existing project context and provide a plain-language summary. The user copies that answer into BuiltWatch; no schema or long questionnaire is required.
 

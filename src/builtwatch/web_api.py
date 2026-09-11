@@ -57,10 +57,18 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
         for health in run["source_health"]:
             if health.get("error"):
                 health["error"] = "This source could not be retrieved. Coverage is incomplete."
+    agent_reviews = []
+    if hasattr(store, "get"):
+        agent_reviews = [
+            review
+            for system in systems
+            if (review := store.get("agent-review#" + system.id))
+        ]
     return {
         "quality": quality,
         "systems": [s.model_dump(mode="json") for s in systems],
         "findings": findings,
+        "agent_reviews": agent_reviews,
         "sources": [s.model_dump(mode="json") for s in load_registry(settings.registry_path)],
         "runs": runs,
         "spend": {
@@ -146,6 +154,11 @@ def dispatch(
                 id=new_id("disp"), finding_id=body["finding_id"], action=action, reason=reason
             )
             store.add_disposition(item)
+            if hasattr(store, "get") and hasattr(store, "delete"):
+                finding = store.get_finding(body["finding_id"])
+                pending = store.get("agent-review#" + finding.system_id)
+                if pending and pending.get("finding_id") == body["finding_id"]:
+                    store.delete("agent-review#" + pending["system_id"])
             return response(200, {"saved": True})
         if path == "/api/scan" and method == "POST":
             if not store.list_systems():

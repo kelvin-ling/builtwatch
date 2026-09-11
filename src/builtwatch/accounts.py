@@ -160,7 +160,7 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
             except (ValueError, TypeError, UnicodeDecodeError):
                 return response(400, {"error": "Please send a valid JSON object."})
         if path == "/api/agent/sync" and method == "POST":
-            from .models import SystemPassport
+            from .models import AgentReview, AgentReviewOutcome, SystemPassport
             from .web_api import MAX_WEB_SYSTEMS, workspace
 
             system_id = body.get("system_id", "")
@@ -185,12 +185,32 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                     store.upsert_system(profile)
                 except (ValueError, TypeError):
                     return response(400, {"error": "Send a valid system profile"})
+            if "review" in body:
+                try:
+                    review = AgentReview.model_validate(
+                        {**body["review"], "system_id": system_id}
+                    )
+                    finding = store.get_finding(review.finding_id)
+                    if not finding or finding.system_id != system_id:
+                        raise ValueError("Review must match a finding for the connected app")
+                    if (
+                        review.outcome == AgentReviewOutcome.APP_UPDATED
+                        and "profile" not in body
+                    ):
+                        raise ValueError("An app-updated review must include the updated profile")
+                    store.put(
+                        "agent-review#" + system_id,
+                        review.model_dump(mode="json"),
+                    )
+                except (ValueError, TypeError):
+                    return response(400, {"error": "Send a valid review result"})
             result = workspace(store, settings)
             return response(
                 200,
                 {
                     "system": next((x for x in result["systems"] if x["id"] == system_id), None),
                     "findings": [x for x in result["findings"] if x["system_id"] == system_id],
+                    "review": store.get("agent-review#" + system_id),
                     "sources": result["sources"],
                     "latest_check": (
                         {k: result["runs"][0][k] for k in ("started_at", "status", "source_health")}

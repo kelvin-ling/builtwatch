@@ -14,7 +14,7 @@ The demo uses simple local text matching for drafts and saved real assessments f
 2. Enter your email and a password of at least 12 characters with uppercase, lowercase and a number. No name, company, payment details, AWS account or repository permission is requested.
 3. Enter the verification code sent to your email, then sign in. Use **Verify email → Resend code** if needed, or **Forgot password?** to recover access.
 4. Look for **Private workspace**. Choose **Import from agent**, copy the provided request into the agent that knows your projects, then paste or upload its export. Review before **Save and start watching**. BuiltWatch shows the source agent on imported profiles, and unknown facts stay unknown.
-5. Open **Needs attention**, inspect evidence and dates, then **Review with my agent → Copy for my agent**. Paste it into the existing project conversation. Use **Update from a summary** to bring back changes.
+5. Open **Needs attention** and inspect the evidence. Choose **Record outcome** to keep it open, record that no app change is needed, update the app profile and recheck, or explain why it does not apply. Agent handoff is optional.
 6. The account menu controls daily monitoring, agent connections and sign-out. Sign-in lasts seven days; signing in again replaces the previous session. Password recovery invalidates existing web sessions.
 
 The original owner's verified email maps to the previously migrated workspace. This operator-configured exception requires Cognito-verified email ownership. Other accounts receive separate partitions derived from their Cognito subject, never from caller-supplied identity headers.
@@ -23,11 +23,11 @@ The original owner's verified email maps to the previously migrated workspace. T
 
 1. Open your account and choose **Connect my agent → Create connection**.
 2. Copy the private setup instructions into the agent conversation for this app. The agent uses the project context it already has to produce a small profile, avoiding manual form entry.
-3. If the agent supports scheduling, the instructions ask it to send the profile and retrieve findings once per UTC day. Otherwise it should sync on request and explain that limitation. BuiltWatch does not wake arbitrary agents itself.
-4. The first successful sync registers the app. Later syncs update only that connected app. Check connection status for the last successful sync.
+3. If the agent supports scheduling, the instructions ask it to retrieve findings daily. Otherwise it should sync on request and explain that limitation. BuiltWatch does not wake arbitrary agents itself.
+4. The first successful sync registers the app. Later syncs can update only that connected app and return a review recommendation. BuiltWatch shows the recommendation, but only the user can record the outcome and close the finding.
 5. Revoke the connection from the account menu whenever needed. Creating a replacement invalidates the previous token while keeping the same connected app. Tokens expire after 90 days.
 
-One active connection per workspace. Its token can update one fixed profile and retrieve that profile's findings; it cannot read other profiles, alter account settings, delete apps or trigger model runs. Syncs use existing daily monitoring and budget limits. The token is shown once, kept only as a hash server-side, and must be stored privately by the agent—not in Git, logs, URLs or shared conversations. No public endpoint accepts arbitrary source URLs.
+One active connection per workspace. Its token can update one fixed profile, retrieve that profile's findings, and return a bounded recommendation; it cannot close findings, read other profiles, alter account settings, delete apps or trigger model runs. Up to four sync requests are allowed per UTC day so retrieval and review can make a round trip. Syncing itself makes no model call. The token is shown once, kept only as a hash server-side, and must be stored privately by the agent—not in Git, logs, URLs or shared conversations. No public endpoint accepts arbitrary source URLs.
 
 ## Hosting, privacy and limits
 
