@@ -83,6 +83,24 @@ def test_unsigned_demo_can_complete_the_review_flow_in_place():
     assert ".app-finding-group>summary span.group-title:first-child{display:grid" in css
 
 
+def test_impact_page_is_available_in_demo_and_private_workspaces():
+    app = (ROOT / "web/app.js").read_text()
+    html = (ROOT / "web/index.html").read_text()
+    css = (ROOT / "web/style.css").read_text()
+
+    assert 'data-view="impact"' in html
+    assert "impact:'Impact'" in app
+    assert "impact:impactView" in app
+    assert "function impactMetrics()" in app
+    assert "const evaluations=state.findings.length" in app
+    assert "f.relevance==='relevant'" in app
+    assert "f.relevance==='not_relevant'" in app
+    assert "f.relevance==='insufficient_information'" in app
+    assert "Saved demonstration" in app
+    assert "Your workspace" in app
+    assert ".impact-summary{display:grid" in css
+
+
 def test_every_registry_category_has_a_display_name_and_blurb():
     """A source in an unnamed category would render under a blank heading.
 
