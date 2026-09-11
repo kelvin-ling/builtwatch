@@ -30,3 +30,4 @@ node_modules/
 *.p12
 .builtwatch/
 private-setup*.txt
+deploy-prompt.txt
