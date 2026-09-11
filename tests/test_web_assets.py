@@ -101,6 +101,18 @@ def test_impact_page_is_available_in_demo_and_private_workspaces():
     assert ".impact-summary{display:grid" in css
 
 
+def test_public_demo_offers_multiple_safe_example_inputs():
+    app = (ROOT / "web/app.js").read_text()
+    demo = (ROOT / "web/demo.js").read_text()
+
+    assert "const demoExampleInputs=" in app
+    assert "data-demo-example" in app
+    for label in ("Incident Alert Bot", "Subscription Billing Helper", "Release Notes Agent"):
+        assert label in app
+    assert "normalizeSystem" in demo
+    assert "items.map(normalizeSystem)" in demo
+
+
 def test_every_registry_category_has_a_display_name_and_blurb():
     """A source in an unnamed category would render under a blank heading.
 
