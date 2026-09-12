@@ -93,3 +93,30 @@
 .agent-review-result{margin:18px 0;padding:16px 18px;border:1px solid #b9d5c4;border-radius:14px;background:#eef7f0}.agent-review-result .eyebrow{margin-bottom:7px;color:#3f6652}.agent-review-result strong{display:block;font-size:16px;line-height:1.4}.agent-review-result p{margin:5px 0;color:var(--ink);font-size:14px;line-height:1.55}.agent-review-result small{display:block;color:var(--muted);font-size:12px;line-height:1.5}.outcome-options{display:grid;gap:10px}.outcome-options>button{display:grid;grid-template-columns:38px minmax(0,1fr);gap:13px;align-items:center;width:100%;min-height:76px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#fff;text-align:left}.outcome-options>button:hover{border-color:#8eaa9a;background:#f8fbf9}.outcome-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#edf3ef;color:var(--green);font-weight:750}.outcome-options strong,.outcome-options small{display:block}.outcome-options strong{font-size:15px;line-height:1.4}.outcome-options small{margin-top:3px;color:var(--muted);font-size:13px;line-height:1.45}
 @media(max-width:600px){.outcome-options>button{grid-template-columns:32px minmax(0,1fr);padding:13px}.outcome-icon{width:32px;height:32px}}
 .copy-help{display:block;margin-top:8px;color:var(--muted);font-size:12px;line-height:1.45}
+
+/* Source coverage controls: keep the long registry scannable without hiding status. */
+.source-filter{display:grid;gap:14px;padding:18px 22px;margin:0 0 18px;background:#f4f8f4}
+.source-filter>div:first-child{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.source-filter .eyebrow{margin:0;color:#557164}
+.source-filter p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.source-filter-options{display:flex;gap:8px;flex-wrap:wrap}
+.source-filter-button{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 12px;border:1px solid #d5e2d9;border-radius:999px;background:#fff;color:#466257;font:inherit;font-size:13px;font-weight:600;white-space:nowrap;transition:background .18s,border-color .18s,transform .18s,box-shadow .18s}
+.source-filter-button strong{display:grid;place-items:center;min-width:22px;height:22px;padding:0 5px;border-radius:999px;background:#edf3ee;color:#557164;font-size:11px}
+.source-filter-button:hover{border-color:#91b49f;background:#f8fbf8;transform:translateY(-1px)}
+.source-filter-button[aria-pressed="true"]{border-color:#1c4b3e;background:#1c4b3e;color:#fff;box-shadow:0 4px 12px #183c3620}
+.source-filter-button[aria-pressed="true"] strong{background:#d9f277;color:#173e32}
+.source-group{margin-bottom:18px;overflow:hidden}
+.source-group>summary{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 24px;list-style:none;cursor:pointer;background:#f6f9f5}
+.source-group>summary::-webkit-details-marker{display:none}
+.source-group>summary:hover{background:#f1f7f2}
+.source-group>summary:focus-visible{outline-offset:-3px}
+.source-group[open]>summary{border-bottom:1px solid var(--line)}
+.source-group-head h2{font-size:17px;letter-spacing:-.4px;margin:0}
+.source-group-head p{font-size:13px;line-height:1.6;color:var(--muted);margin:6px 0 0;max-width:62ch}
+.source-group-head .eyebrow{margin:0 0 7px;color:#557164}
+.source-group-status{display:flex;align-items:center;gap:9px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.source-count{font-size:12px;color:var(--muted);white-space:nowrap}
+.source-group-chevron{display:inline-block;color:#6f8d7d;font-size:20px;line-height:1;transition:transform .18s}
+.source-group:not([open]) .source-group-chevron{transform:rotate(-90deg)}
+.source-group-body{background:#fff}
+@media(max-width:760px){.source-filter{padding:16px}.source-filter-options{overflow-x:auto;flex-wrap:nowrap;padding:2px 1px 5px;margin-right:-4px}.source-filter-button{flex:0 0 auto}.source-group>summary{flex-direction:column;gap:12px;padding:18px}.source-group-status{justify-content:flex-start}.source-group-chevron{position:absolute;right:18px;top:18px}.source-group>summary{position:relative;padding-right:48px}}
