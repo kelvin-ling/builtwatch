@@ -154,7 +154,7 @@ function bulkInputState(raw){
  return {state:'valid',profiles,matched,newApps:profiles.length-matched,message:`${profiles.length} ${profiles.length===1?'app':'apps'} detected · ${matched} update${matched===1?'':'s'} · ${profiles.length-matched} new`};
 }
 function updateBulkValidation(){
- const box=$('#bulk-json'),status=$('#bulk-validation'),submit=$('#bulk-form [type="submit"]');
+ const box=$('#bulk-json'),status=$('#bulk-validation'),submit=$('#bulk-form [type="submit"],#modal-content button[type="submit"][form="bulk-form"]');
  if(!box||!status)return;
  const result=bulkInputState(box.value);status.className=`json-validation ${result.state}`;status.textContent=result.message;box.setAttribute('aria-invalid',result.state==='invalid'?'true':'false');if(submit)submit.disabled=result.state!=='valid';
 }
