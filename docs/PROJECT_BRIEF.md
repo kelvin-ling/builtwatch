@@ -130,7 +130,7 @@ purchased.
   downgrades ungrounded "relevant" claims rather than publishing them.
 - Intake from plain text and neutral JSON; Markdown and JSON builder handoff export.
 - Full CLI covering every product function.
-- 41 tests, all passing offline with no AWS calls, covering relevant, irrelevant,
+- 147 Python tests and 48 Node/runtime tests, all passing offline with no AWS calls, covering relevant, irrelevant,
   ambiguous, duplicate, stale, failed-source and budget-abort cases. `ruff` clean.
 
 **Not yet done:**

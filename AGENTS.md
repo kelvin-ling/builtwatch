@@ -8,7 +8,7 @@ changing code. Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the design 
 ```bash
 uv venv --python 3.12 && uv pip install -e ".[dev]"
 source .venv/bin/activate
-pytest                      # 41 tests, fully offline, no AWS calls
+pytest                      # 147 tests, fully offline, no AWS calls
 ```
 
 Python 3.12 lives at `~/.local/bin/python3.12` (installed via `uv`). System Python is

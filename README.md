@@ -173,6 +173,13 @@ See [docs/COST_CONTROLS.md](docs/COST_CONTROLS.md) for the numbers and the AWS b
 
 Retrieved content is treated as data at every layer: delimited and labelled untrusted in the prompt, handled by an agent with no outbound-capable tools, and validated structurally on the way out. These controls reduce prompt-injection risk; they do not prove the model’s conclusions are correct.
 
+The public repository is intentionally safe to inspect. Runtime credentials, Cognito
+secrets, agent tokens, workspace databases, deployment exports and recordings are not
+part of the tracked source. The checked-in tests use synthetic identities only. Before
+making a fork public, scan the complete Git history as well as the working tree; removing
+a secret from the latest commit does not remove it from older commits. Report suspected
+security issues privately using [SECURITY.md](SECURITY.md), not in a public issue.
+
 ## Development
 
 ```bash
