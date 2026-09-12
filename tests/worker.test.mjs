@@ -11,6 +11,19 @@ test('anonymous visitors see sample but cannot read or mutate workspaces',async(
   const session=await (await worker.fetch(new Request(origin+'/api/session'),env)).json();
   assert.equal(session.signed_in,false);
 });
+test('public impact totals do not require a session or expose a tenant header',async()=>{
+  const original=globalThis.fetch;
+  try{
+    globalThis.fetch=async(url,opts)=>{
+      assert.equal(new URL(url).pathname,'/api/public-impact');
+      assert.equal(opts.headers['x-bw-account'],undefined);
+      return new Response('{"systems_monitored":2}',{headers:{'Cache-Control':'public, max-age=60'}});
+    };
+    const r=await worker.fetch(new Request(origin+'/api/public-impact'),env);
+    assert.equal(r.status,200);assert.equal((await r.json()).systems_monitored,2);
+    assert.equal(r.headers.get('Cache-Control'),'public, max-age=60');
+  }finally{globalThis.fetch=original;}
+});
 test('cross-origin writes are rejected even for a signed-in user',async()=>{
   const r=await worker.fetch(new Request(origin+'/api/systems',{method:'POST',headers:{Cookie:'__Host-bw_session='+('a'.repeat(64)),'Origin':'https://evil.example','X-BuiltWatch-Request':'1'},body:'{}'}),env);
   assert.equal(r.status,403);
