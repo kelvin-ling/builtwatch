@@ -201,8 +201,8 @@ def main() -> int:
             "BW_SCREEN_MODEL": "us.amazon.nova-lite-v1:0",
             "BW_ASSESS_MODEL": "us.amazon.nova-pro-v1:0",
             "BW_MAX_RUN_USD": "0.50",
-            "BW_MAX_DAY_USD": "1.00",
-            "BW_MAX_MONTH_USD": "15.00",
+            "BW_MAX_DAY_USD": "0.50",
+            "BW_MAX_MONTH_USD": "2.00",
         }
     }
     try:

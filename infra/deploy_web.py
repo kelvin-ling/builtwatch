@@ -166,7 +166,7 @@ def main() -> None:
             "BW_ASSESS_MODEL": "us.amazon.nova-pro-v1:0",
             "BW_MAX_RUN_USD": "0.25",
             "BW_MAX_DAY_USD": "0.50",
-            "BW_MAX_MONTH_USD": "10.00",
+            "BW_MAX_MONTH_USD": "2.00",
             "BW_MAX_SYSTEMS": "10",
             "BW_MAX_ITERATIONS": "8",
             "BW_REGISTRY": "sources/registry.yaml",

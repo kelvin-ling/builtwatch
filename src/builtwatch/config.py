@@ -65,7 +65,7 @@ class Limits:
     # Keep the deliberate registry ceiling above the current curated set. Operators can
     # lower this with BW_MAX_SOURCES if a workspace needs a smaller watch pass.
     max_sources_per_run: int = field(default_factory=lambda: _env_int("BW_MAX_SOURCES", 25))
-    max_systems_per_run: int = field(default_factory=lambda: _env_int("BW_MAX_SYSTEMS", 25))
+    max_systems_per_run: int = field(default_factory=lambda: _env_int("BW_MAX_SYSTEMS", 10))
     max_agent_iterations: int = field(default_factory=lambda: _env_int("BW_MAX_ITERATIONS", 12))
     # Structured assessments need headroom when a workspace has many changed sources.
     # SpendGuard still caps the run; this only avoids truncating a valid result.
@@ -91,9 +91,9 @@ class Limits:
 
     # Spend ceilings.
     max_cost_per_run_usd: float = field(default_factory=lambda: _env_float("BW_MAX_RUN_USD", 0.25))
-    max_cost_per_day_usd: float = field(default_factory=lambda: _env_float("BW_MAX_DAY_USD", 1.00))
+    max_cost_per_day_usd: float = field(default_factory=lambda: _env_float("BW_MAX_DAY_USD", 0.50))
     max_cost_per_month_usd: float = field(
-        default_factory=lambda: _env_float("BW_MAX_MONTH_USD", 15.00)
+        default_factory=lambda: _env_float("BW_MAX_MONTH_USD", 2.00)
     )
 
     # Network politeness / DoS resistance on the fetch side.
