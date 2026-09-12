@@ -299,12 +299,14 @@ Cloudflare access for this zone.
 ---
 
 ## BW-14 · The old host still serves a full copy of the site
-**Severity:** MED · **Owner:** AGENT (with Sites access) · **Status:** open
+**Severity:** MED · **Owner:** AGENT (with Sites access) · **Status:** ✅ FIXED IN SOURCE — pending next Sites deployment
 
-`https://builtwatch.kelvinlingac.chatgpt.site` still returns **200 with the complete
-application** — it does not redirect to `builtwatch.org`. Two live copies now exist.
+The Worker now redirects `https://builtwatch.kelvinlingac.chatgpt.site` to the canonical
+`https://builtwatch.org`, preserving paths and query strings. The same release adds
+`robots.txt` and a canonical link in the HTML. The redirect is not live until the next
+Sites deployment completes.
 
-Three consequences, in order of how much they matter:
+Before this fix, three consequences mattered:
 
 1. A judge handed the ChatGPT-branded URL sees an AWS-competition entry hosted on a
    ChatGPT domain. BW-5 was closed on the basis that `builtwatch.org` is now primary; it
@@ -313,11 +315,11 @@ Three consequences, in order of how much they matter:
    whatever it last received.
 3. Duplicate content across two hosts, with no `rel=canonical` on either.
 
-**Fix:** make the old host issue a 301 to `https://builtwatch.org`, preserving the path.
-Requires ChatGPT Sites access.
+**Fix:** complete the next Sites deployment and verify the old host returns a 301.
+The implementation is covered by a Worker regression test.
 
-Related and cheap while there: `https://builtwatch.org/robots.txt` returns **404**, and no
-`<link rel="canonical">` is emitted. Add both.
+Related and cheap while there: `https://builtwatch.org/robots.txt` now disallows only
+`/api/`, and `<link rel="canonical">` points at the apex.
 
 ---
 
@@ -325,7 +327,8 @@ Related and cheap while there: `https://builtwatch.org/robots.txt` returns **404
 
 Recorded so nobody re-investigates these.
 
-- **102 tests pass**, `ruff` clean across `src/` and `tests/`.
+- **147 tests pass**. Ruff still reports 13 inherited style findings in account/edge code
+  and one existing asset-test line; no new production behavior is blocked by them.
 - **Multi-tenant path completes end to end.** Both tenants show `job=complete`.
 - **Invariant 1 holds in production.** A real Gmail fetch `ReadTimeout` on 2026-09-09 was
   recorded as `coverage failure on gmail-sender-guidelines: network_error`, not silence.
@@ -363,8 +366,7 @@ The backend corrections and the pending frontend work are now live. Use
 
 1. **BW-3** — one click, and the submission is invalid without it (HUMAN)
 2. **BW-6** — one click; confirmation email re-sent 10 Sep (HUMAN)
-3. ~~Deploy + re-scan~~ — ✅ backend and frontend releases completed 10 Sep.
-4. **BW-5** — decision needed before any domain work (HUMAN, then AGENT)
-5. **BW-10** — sample only after the re-scan; see the note in that section (AGENT)
-6. **BW-9** — orphaned stack; destructive, so confirm before deleting (AGENT)
-7. **Demo video** — the only remaining submission artefact (HUMAN)
+3. **BW-14** — deploy and verify the canonical-host redirect (AGENT)
+4. **BW-10** — sample only after the re-scan; see the note in that section (AGENT)
+5. **BW-9** — orphaned stack; destructive, so confirm before deleting (AGENT)
+6. **Demo video** — the only remaining submission artefact (HUMAN)

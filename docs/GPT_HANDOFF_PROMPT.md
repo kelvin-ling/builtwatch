@@ -5,7 +5,8 @@
 > coverage failures, the modal scroll/footer correction, and the refreshed `?v=20` cache
 > key. Do not repeat this deployment. The broader source expansion remains intentionally
 > deferred because it would increase recurring assessment cost and should be chosen as a
-> separate product decision.
+> separate product decision. The live registry currently has 19 sources across 8
+> categories; do not repeat the old “12 sources” count below.
 
 Paste everything below the line into a fresh ChatGPT session once usage resets.
 
@@ -70,11 +71,11 @@ uses Microsoft Windows" against a passport listing only Strands, the AWS SDK and
 Workers) is absent from both tenants, no relevant finding carries an undeclared dependency,
 and `insufficient_information` fell from 27% to 13%.
 
-## Your second job: expand the watched sources
+## Your second job: expand the watched sources (only after an explicit cost decision)
 
-The owner wants broader coverage. There are currently **12 sources across 8 categories**,
-and the distribution is lopsided — 4 under `api_change`, 1 each under `security`,
-`regulation`, `communications`, `standards`, `vendor_policy` and `business_news`.
+The owner wants broader coverage. There are currently **19 sources across 8 categories**,
+with 9 under `api_change`, 3 under `security`, 2 under `privacy_ai`, and one or two in
+the remaining categories. The prior 12-source count is historical.
 
 Target roughly **20–25 sources**, weighted toward what independent builders running apps,
 agents and automations actually get caught by. Gaps worth filling:
@@ -142,8 +143,9 @@ Current position: `GLOBAL_MONTH_LIMIT` is **$5.00/month** shared, `$0.6392` used
 ## Ground rules
 
 - Run `.venv/bin/python -m pytest tests/ -q` and
-  `.venv/bin/python -m ruff check src tests infra` before and after every change. Both are
-  currently green; do not leave them red.
+  `.venv/bin/python -m ruff check src tests infra` before and after every change. The
+  test suite is green; the current checkout still has 13 inherited style findings that
+  should be handled as a separate format-only cleanup rather than hidden or deleted.
 - Do not weaken the seven invariants in `AGENTS.md`. In particular a failed fetch must never
   read as silence, and a relevance claim must stay grounded or be downgraded.
 - `NOTICE` discloses AI assistance and the contest requires that to stay accurate — it

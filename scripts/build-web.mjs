@@ -1,9 +1,9 @@
 import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 await rm('dist', { recursive:true, force:true });
 await mkdir('dist/server', { recursive:true });
-const types = {html:'text/html; charset=utf-8',css:'text/css; charset=utf-8',js:'text/javascript; charset=utf-8',json:'application/json',svg:'image/svg+xml'};
+const types = {html:'text/html; charset=utf-8',css:'text/css; charset=utf-8',js:'text/javascript; charset=utf-8',json:'application/json',svg:'image/svg+xml',txt:'text/plain; charset=utf-8'};
 const assets = {};
-for (const file of ['index.html','style.css','app.js','status.js','client.js','handoff.js','perspectives.js','demo.js','config.js','demo.json','favicon.svg']) {
+for (const file of ['index.html','style.css','app.js','status.js','client.js','handoff.js','perspectives.js','demo.js','config.js','demo.json','favicon.svg','robots.txt']) {
   assets['/'+file] = {content:await readFile('web/'+file,'utf8'),type:types[file.split('.').pop()]};
 }
 const source = await readFile('server/worker.mjs','utf8');

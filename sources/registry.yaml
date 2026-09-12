@@ -7,7 +7,7 @@
 # Adding a source is a deliberate, reviewable act: open a pull request against this file.
 #
 # Categories: vendor_policy | api_change | regulation | privacy_ai | communications
-#             | security | standards
+#             | security | standards | business_news
 
 sources:
   # -- vendor policies ---------------------------------------------------------------

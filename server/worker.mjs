@@ -214,6 +214,13 @@ async function publicImpact(request, env, url) {
 export function createWorker(assets) {
   return {async fetch(request, env) {
     const url = new URL(request.url);
+    // Keep the competition-facing custom domain canonical. The Sites-generated
+    // hostname remains useful as a deployment origin, but should not serve a
+    // second indexable copy of the application.
+    if (url.hostname === 'builtwatch.kelvinlingac.chatgpt.site') {
+      const target = new URL(`https://builtwatch.org${url.pathname}${url.search}`);
+      return new Response(null, {status:301, headers:{...security, 'Cache-Control':'public, max-age=3600', Location:target.toString()}});
+    }
     if (!url.pathname.startsWith('/api/')) {
       if (!['GET','HEAD'].includes(request.method)) return json({error:'Method not allowed'},405);
       const asset = assets[url.pathname === '/' ? '/index.html' : url.pathname];

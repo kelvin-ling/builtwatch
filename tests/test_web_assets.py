@@ -49,6 +49,14 @@ def test_live_links_use_the_preferred_custom_domain():
         assert "builtwatch.kelvinlingac.chatgpt.site" not in text
 
 
+def test_public_entry_has_one_canonical_host_and_crawler_policy():
+    html = (ROOT / "web/index.html").read_text()
+    robots = (ROOT / "web/robots.txt").read_text()
+
+    assert '<link rel="canonical" href="https://builtwatch.org/">' in html
+    assert "Disallow: /api/" in robots
+
+
 def test_completed_checks_do_not_create_a_global_status_banner():
     app = (ROOT / "web/app.js").read_text()
     notice = app[app.index("function jobNotice()") : app.index("function render()")]

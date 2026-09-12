@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHmac,createHash} from 'node:crypto';
 import {createWorker} from '../server/worker.mjs';
-const worker=createWorker({'/index.html':{content:'BuiltWatch',type:'text/html'}});
+const worker=createWorker({'/index.html':{content:'BuiltWatch',type:'text/html'},'/robots.txt':{content:'User-agent: *\nAllow: /\nDisallow: /api/',type:'text/plain'}});
 const origin='https://builtwatch.example';
 const env={BW_API_URL:'https://backend.example/',BW_PROXY_SECRET:'secret-for-tests',BW_AWS_ACCESS_KEY_ID:'TEST',BW_AWS_SECRET_ACCESS_KEY:'test',DB:{prepare:(sql)=>({bind:()=>({first:async()=>sql.startsWith('SELECT account,email')?{account:createHash('sha256').update('alice').digest('hex'),email:'alice@example.com'}:{used:1}})})}};
 test('anonymous visitors see sample but cannot read or mutate workspaces',async()=>{
@@ -10,6 +10,16 @@ test('anonymous visitors see sample but cannot read or mutate workspaces',async(
   assert.equal((await worker.fetch(new Request(origin+'/api/workspace'),env)).status,401);
   const session=await (await worker.fetch(new Request(origin+'/api/session'),env)).json();
   assert.equal(session.signed_in,false);
+});
+test('the generated Sites host redirects to the canonical custom domain',async()=>{
+  const r=await worker.fetch(new Request('https://builtwatch.kelvinlingac.chatgpt.site/systems?fresh=1'),env);
+  assert.equal(r.status,301);
+  assert.equal(r.headers.get('Location'),'https://builtwatch.org/systems?fresh=1');
+});
+test('robots policy is available from the static worker',async()=>{
+  const r=await worker.fetch(new Request(origin+'/robots.txt'),env);
+  assert.equal(r.status,200);
+  assert.match(await r.text(),/Disallow: \/api\//);
 });
 test('public impact totals do not require a session or expose a tenant header',async()=>{
   const original=globalThis.fetch;
