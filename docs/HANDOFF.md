@@ -14,8 +14,9 @@ build pass. Ruff still reports 13 pre-existing style findings outside this relea
 
 The first 21-source production pass also exposed one large-workspace response truncation at
 the old 2,000-token model ceiling. The worker now allows 4,000 output tokens while keeping
-the existing per-run/day/month spend guards; the follow-up pass should complete instead of
-ending with `MaxTokensReachedException`.
+the existing per-run/day/month spend guards. The larger workspace's immediate retry is
+still waiting on its normal 30-minute scan cooldown, so do not claim that tenant is fully
+rechecked until the next run record is `complete`.
 
 The `www.builtwatch.org` Sites custom-domain attachment is also created and pending DNS
 validation. The apex remains active; Cloudflare is still required to publish the supplied
