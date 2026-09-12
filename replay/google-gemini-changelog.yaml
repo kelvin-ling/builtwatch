@@ -1,0 +1,9 @@
+# Demo replay fixture. Use live mode for current Gemini API updates.
+source_id: google-gemini-changelog
+source_name: Gemini API Release Notes
+publisher: Google AI for Developers
+url: https://ai.google.dev/gemini-api/docs/changelog
+retrieved_at: '2026-09-11T00:00:00+00:00'
+captured_by: curated-demo-fixture
+fetch_status: ok
+content: 'Release notes. This page documents updates to the Gemini API, including releases, deprecations, shutdowns, and request or response changes.'

@@ -1,0 +1,9 @@
+# Demo replay fixture. Use live mode for current Vercel changes.
+source_id: vercel-changelog
+source_name: Vercel Changelog
+publisher: Vercel
+url: https://vercel.com/changelog
+retrieved_at: '2026-09-11T00:00:00+00:00'
+captured_by: curated-demo-fixture
+fetch_status: ok
+content: 'Vercel Changelog. Platform, framework, deployment, security, and AI infrastructure updates for applications hosted on Vercel.'

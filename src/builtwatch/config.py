@@ -62,7 +62,9 @@ class Limits:
     """Bounds applied to every scan. These are ceilings, not targets."""
 
     # Per-run bounds — cap the blast radius of a single scan.
-    max_sources_per_run: int = field(default_factory=lambda: _env_int("BW_MAX_SOURCES", 12))
+    # Keep the deliberate registry ceiling above the current curated set. Operators can
+    # lower this with BW_MAX_SOURCES if a workspace needs a smaller watch pass.
+    max_sources_per_run: int = field(default_factory=lambda: _env_int("BW_MAX_SOURCES", 20))
     max_systems_per_run: int = field(default_factory=lambda: _env_int("BW_MAX_SYSTEMS", 25))
     max_agent_iterations: int = field(default_factory=lambda: _env_int("BW_MAX_ITERATIONS", 12))
     max_output_tokens: int = field(default_factory=lambda: _env_int("BW_MAX_OUTPUT_TOKENS", 2000))

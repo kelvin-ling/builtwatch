@@ -1,0 +1,9 @@
+# Demo replay fixture. Use live mode for current AWS security bulletins.
+source_id: aws-security-bulletins
+source_name: AWS Security Bulletins
+publisher: Amazon Web Services
+url: https://aws.amazon.com/security/security-bulletins/rss/
+retrieved_at: '2026-09-11T00:00:00+00:00'
+captured_by: curated-demo-fixture
+fetch_status: ok
+content: 'AWS Security Bulletins. AWS publishes security and privacy announcements for vulnerabilities affecting AWS services, software, and products.'

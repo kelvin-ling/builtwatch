@@ -18,6 +18,13 @@ sources:
     publisher: Anthropic
     notes: Governs permitted uses of supported models, including through Amazon Bedrock.
 
+  - id: openai-api-changelog
+    name: OpenAI API Changelog
+    category: api_change
+    url: https://developers.openai.com/api/docs/changelog
+    publisher: OpenAI
+    notes: Official API release notes covering model lifecycle, deprecations, schema changes and new capabilities.
+
   # -- API changes and deprecations --------------------------------------------------
   - id: stripe-upgrades
     name: Stripe API Upgrades and Versioning
@@ -31,18 +38,49 @@ sources:
     category: api_change
     url: https://docs.github.com/en/rest/about-the-rest-api/breaking-changes
     publisher: GitHub
+    notes: Breaking changes and migration notices for GitHub REST API integrations.
+
+  - id: google-gemini-changelog
+    name: Gemini API Release Notes
+    category: api_change
+    url: https://ai.google.dev/gemini-api/docs/changelog
+    publisher: Google AI for Developers
+    notes: Official Gemini API releases, deprecations, shutdowns and request or response changes.
 
   - id: aws-bedrock-history
     name: Amazon Bedrock Document History
     category: api_change
     url: https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug-doc-history.html
     publisher: Amazon Web Services
+    notes: Amazon Bedrock documentation changes, model behavior notes and migration guidance.
 
   - id: twilio-changelog
     name: Twilio Changelog
     category: api_change
     url: https://www.twilio.com/en-us/changelog
     publisher: Twilio
+    notes: Product and API changes that can affect Twilio integrations and operational workflows.
+
+  - id: cloudflare-changelog
+    name: Cloudflare Developer Changelog
+    category: api_change
+    url: https://developers.cloudflare.com/changelog/
+    publisher: Cloudflare
+    notes: Developer-facing Cloudflare API, Workers, storage, security and platform changes.
+
+  - id: nodejs-releases
+    name: Node.js Releases and Security Updates
+    category: api_change
+    url: https://nodejs.org/en/blog
+    publisher: Node.js Project
+    notes: Official runtime releases, deprecations, migration notes and security releases for Node.js apps.
+
+  - id: vercel-changelog
+    name: Vercel Changelog
+    category: api_change
+    url: https://vercel.com/changelog
+    publisher: Vercel
+    notes: Platform, framework, deployment and AI infrastructure changes affecting Vercel-hosted apps.
 
   # -- laws and regulations ----------------------------------------------------------
   - id: eu-ai-act-article-50
@@ -61,12 +99,14 @@ sources:
     category: privacy_ai
     url: https://www.edpb.europa.eu/news_en
     publisher: European Data Protection Board
+    notes: European privacy regulator decisions, guidance and news relevant to data-driven systems.
 
   - id: ico-ai-guidance
     name: UK ICO — Artificial Intelligence and Data Protection
     category: privacy_ai
     url: https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/
     publisher: UK Information Commissioner's Office
+    notes: UK privacy and data-protection guidance for AI systems and automated processing.
 
   # -- communications restrictions ---------------------------------------------------
   - id: gmail-sender-guidelines
@@ -82,6 +122,21 @@ sources:
     category: security
     url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog
     publisher: US Cybersecurity and Infrastructure Security Agency
+    notes: Government-maintained catalog of vulnerabilities known to be exploited in the wild.
+
+  - id: aws-security-bulletins
+    name: AWS Security Bulletins
+    category: security
+    url: https://aws.amazon.com/security/security-bulletins/rss/
+    publisher: Amazon Web Services
+    notes: AWS security and privacy bulletins for vulnerabilities affecting AWS services and products.
+
+  - id: github-advisories
+    name: GitHub Advisory Database
+    category: security
+    url: https://github.com/advisories/
+    publisher: GitHub
+    notes: Reviewed open-source vulnerability and malware advisories across common package ecosystems.
 
   # -- standards and guidance --------------------------------------------------------
   - id: nist-ai-rmf
@@ -89,6 +144,7 @@ sources:
     category: standards
     url: https://www.nist.gov/itl/ai-risk-management-framework
     publisher: US National Institute of Standards and Technology
+    notes: US standards and guidance for managing AI risks across design, deployment and operation.
 
   # Business developments: fixed primary source, no user URL crawling or article fan-out.
   - id: ftc-business-blog

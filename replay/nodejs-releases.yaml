@@ -1,0 +1,9 @@
+# Demo replay fixture. Use live mode for current Node.js releases.
+source_id: nodejs-releases
+source_name: Node.js Releases and Security Updates
+publisher: Node.js Project
+url: https://nodejs.org/en/blog
+retrieved_at: '2026-09-11T00:00:00+00:00'
+captured_by: curated-demo-fixture
+fetch_status: ok
+content: 'Node.js Blog. The latest Node.js news, migration guides, releases, vulnerabilities, and security updates.'

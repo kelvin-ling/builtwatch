@@ -1,0 +1,9 @@
+# Demo replay fixture. Use live mode for current GitHub advisories.
+source_id: github-advisories
+source_name: GitHub Advisory Database
+publisher: GitHub
+url: https://github.com/advisories/
+retrieved_at: '2026-09-11T00:00:00+00:00'
+captured_by: curated-demo-fixture
+fetch_status: ok
+content: 'GitHub Advisory Database. A vulnerability database covering CVEs and GitHub-originated advisories across open-source package ecosystems.'

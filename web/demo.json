@@ -1127,7 +1127,7 @@
       "url": "https://docs.github.com/en/rest/about-the-rest-api/breaking-changes",
       "publisher": "GitHub",
       "enabled": true,
-      "notes": null
+      "notes": "Breaking changes and migration notices for GitHub REST API integrations."
     },
     {
       "id": "aws-bedrock-history",
@@ -1136,7 +1136,7 @@
       "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug-doc-history.html",
       "publisher": "Amazon Web Services",
       "enabled": true,
-      "notes": null
+      "notes": "Amazon Bedrock documentation changes, model behavior notes and migration guidance."
     },
     {
       "id": "twilio-changelog",
@@ -1145,7 +1145,7 @@
       "url": "https://www.twilio.com/en-us/changelog",
       "publisher": "Twilio",
       "enabled": true,
-      "notes": null
+      "notes": "Product and API changes that can affect Twilio integrations and operational workflows."
     },
     {
       "id": "eu-ai-act-article-50",
@@ -1163,7 +1163,7 @@
       "url": "https://www.edpb.europa.eu/news_en",
       "publisher": "European Data Protection Board",
       "enabled": true,
-      "notes": null
+      "notes": "European privacy regulator decisions, guidance and news relevant to data-driven systems."
     },
     {
       "id": "ico-ai-guidance",
@@ -1172,7 +1172,7 @@
       "url": "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/",
       "publisher": "UK Information Commissioner's Office",
       "enabled": true,
-      "notes": null
+      "notes": "UK privacy and data-protection guidance for AI systems and automated processing."
     },
     {
       "id": "gmail-sender-guidelines",
@@ -1190,7 +1190,7 @@
       "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
       "publisher": "US Cybersecurity and Infrastructure Security Agency",
       "enabled": true,
-      "notes": null
+      "notes": "Government-maintained catalog of vulnerabilities known to be exploited in the wild."
     },
     {
       "id": "nist-ai-rmf",
@@ -1199,7 +1199,7 @@
       "url": "https://www.nist.gov/itl/ai-risk-management-framework",
       "publisher": "US National Institute of Standards and Technology",
       "enabled": true,
-      "notes": null
+      "notes": "US standards and guidance for managing AI risks across design, deployment and operation."
     },
     {
       "id": "ftc-business-blog",
@@ -1209,6 +1209,69 @@
       "publisher": "US Federal Trade Commission",
       "enabled": true,
       "notes": "US consumer-protection and business-conduct news, including marketing claims, reviews, subscriptions and enforcement developments. This checks the index's published summaries only; linked articles are not automatically fetched. An enforcement case or consultation is not a new law or proof of applicability.\n"
+    },
+    {
+      "id": "openai-api-changelog",
+      "name": "OpenAI API Changelog",
+      "category": "api_change",
+      "url": "https://developers.openai.com/api/docs/changelog",
+      "publisher": "OpenAI",
+      "enabled": true,
+      "notes": "Official API release notes covering model lifecycle, deprecations, schema changes and new capabilities."
+    },
+    {
+      "id": "google-gemini-changelog",
+      "name": "Gemini API Release Notes",
+      "category": "api_change",
+      "url": "https://ai.google.dev/gemini-api/docs/changelog",
+      "publisher": "Google AI for Developers",
+      "enabled": true,
+      "notes": "Official Gemini API releases, deprecations, shutdowns and request or response changes."
+    },
+    {
+      "id": "cloudflare-changelog",
+      "name": "Cloudflare Developer Changelog",
+      "category": "api_change",
+      "url": "https://developers.cloudflare.com/changelog/",
+      "publisher": "Cloudflare",
+      "enabled": true,
+      "notes": "Developer-facing Cloudflare API, Workers, storage, security and platform changes."
+    },
+    {
+      "id": "nodejs-releases",
+      "name": "Node.js Releases and Security Updates",
+      "category": "api_change",
+      "url": "https://nodejs.org/en/blog",
+      "publisher": "Node.js Project",
+      "enabled": true,
+      "notes": "Official runtime releases, deprecations, migration notes and security releases for Node.js apps."
+    },
+    {
+      "id": "vercel-changelog",
+      "name": "Vercel Changelog",
+      "category": "api_change",
+      "url": "https://vercel.com/changelog",
+      "publisher": "Vercel",
+      "enabled": true,
+      "notes": "Platform, framework, deployment and AI infrastructure changes affecting Vercel-hosted apps."
+    },
+    {
+      "id": "aws-security-bulletins",
+      "name": "AWS Security Bulletins",
+      "category": "security",
+      "url": "https://aws.amazon.com/security/security-bulletins/rss/",
+      "publisher": "Amazon Web Services",
+      "enabled": true,
+      "notes": "AWS security and privacy bulletins for vulnerabilities affecting AWS services and products."
+    },
+    {
+      "id": "github-advisories",
+      "name": "GitHub Advisory Database",
+      "category": "security",
+      "url": "https://github.com/advisories/",
+      "publisher": "GitHub",
+      "enabled": true,
+      "notes": "Reviewed open-source vulnerability and malware advisories across common package ecosystems."
     }
   ],
   "runs": [
