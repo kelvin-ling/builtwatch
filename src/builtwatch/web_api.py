@@ -161,7 +161,9 @@ def dispatch(
             if not store.list_systems():
                 return response(409, {"error": "Add a system before checking sources."})
             if store.spent_this_month() >= settings.limits.max_cost_per_month_usd:
-                return response(429, {"error": "The workspace check limit has been reached. Try again later."})
+                return response(
+                    429, {"error": "The workspace check limit has been reached. Try again later."}
+                )
             if store.spent_today() >= settings.limits.max_cost_per_day_usd:
                 return response(
                     429, {"error": "Today’s check limit has been reached. Try again tomorrow."}

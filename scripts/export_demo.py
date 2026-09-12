@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 from builtwatch.config import Settings
@@ -9,7 +10,7 @@ from builtwatch.store import Store
 from builtwatch.web_api import workspace
 
 root = Path(__file__).resolve().parents[1]
-store = Store(root / "data/builtwatch2.db")
+store = Store(root / os.environ.get("BW_DEMO_DB", "data/builtwatch2.db"))
 data = workspace(store, Settings())
 allowed = {p.stem for p in (root / "examples/passports").glob("*.json")}
 data["systems"] = [s for s in data["systems"] if s["id"] in allowed]
@@ -29,31 +30,18 @@ if not data["findings"]:
 else:
     data["findings"] = [f for f in data["findings"] if f["system_id"] in allowed]
 
-# Keep the unauthenticated demo provider-neutral.  The product does not require
-# users to disclose which model their agent uses, and the demo should not imply a
-# ChatGPT/Claude account dependency.
-def scrub(value):
-    if isinstance(value, str):
-        replacements = (
-            ("Anthropic Claude model via Amazon Bedrock", "the model via Amazon Bedrock"),
-            ("Anthropic Claude via Amazon Bedrock", "the model via Amazon Bedrock"),
-            ("Claude Fable 5.1", "a Bedrock model"),
-            ("Claude Mythos 5.1", "a Bedrock model"),
-            ("Claude Sonnet 5", "the Bedrock model"),
-            ("Anthropic Messages API", "Messages API"),
-            ("Claude", "the Bedrock model"),
-        )
-        for old, new in replacements:
-            value = value.replace(old, new)
-        return value
-    if isinstance(value, list):
-        return [scrub(item) for item in value]
-    if isinstance(value, dict):
-        return {key: scrub(item) for key, item in value.items()}
-    return value
-
-data = scrub(data)
+# No text is rewritten here. demo.json is presented as saved results from a real replay,
+# and evidence passages are verbatim quotes checked against stored snapshots; rewriting
+# either breaks that claim. Provider neutrality belongs in the example passports, which
+# are inputs, not in the model's output. (An earlier string scrub produced "the the
+# model" and "a Bedrock model and a Bedrock model" on the public demo.)
+runs = store.list_runs(limit=1)
+replay_day = runs[0].started_at.strftime("%-d %B %Y") if runs else "an earlier date"
+data["replay_date"] = replay_day
 data["demo"] = True
-data["demo_note"] = "Saved results from a real source replay. Historical material; not a live change alert."
+data["demo_note"] = (
+    f"Saved results from a real source replay run on {replay_day}. "
+    "Historical material; not a live change alert."
+)
 (root / "web/demo.json").write_text(json.dumps(data, indent=2))
 store.close()

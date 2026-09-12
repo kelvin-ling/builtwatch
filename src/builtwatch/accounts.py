@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import contextlib
 import hashlib
 import hmac
 import json
@@ -15,8 +16,8 @@ from decimal import Decimal
 from http import HTTPStatus
 from typing import Any
 
-from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
+from botocore.exceptions import ClientError
 
 from .dynamo_store import DynamoStore
 from .web_api import dispatch, response
@@ -86,7 +87,9 @@ def public_impact(table: Any) -> dict[str, Any]:
                 systems += 1
             elif key.startswith("run#") and value.get("status") == "complete":
                 raw_evaluations = value.get("evaluations_performed")
-                evaluations += int(raw_evaluations if raw_evaluations is not None else len(value.get("systems_evaluated", [])))
+                if raw_evaluations is None:
+                    raw_evaluations = len(value.get("systems_evaluated", []))
+                evaluations += int(raw_evaluations)
                 raw_reviews = value.get("review_events_created")
                 if raw_reviews is not None:
                     has_review_metric = True
@@ -100,10 +103,9 @@ def public_impact(table: Any) -> dict[str, Any]:
                     detail_needed += int(raw_detail)
                 stamp = value.get("finished_at")
                 if stamp:
-                    try:
-                        last_activity = max(last_activity, datetime.fromisoformat(stamp.replace("Z", "+00:00")).timestamp())
-                    except (TypeError, ValueError):
-                        pass
+                    with contextlib.suppress(TypeError, ValueError):
+                        finished = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+                        last_activity = max(last_activity, finished.timestamp())
             elif key.startswith("finding#"):
                 findings[str(value.get("id", key[8:]))] = value
             elif key.startswith("disposition#"):
@@ -149,9 +151,19 @@ def public_impact(table: Any) -> dict[str, Any]:
         "detail_needed_evaluations": detail_needed,
         "last_activity": datetime.fromtimestamp(last_activity, timezone.utc).isoformat(),
         "updated_at": datetime.fromtimestamp(now, timezone.utc).isoformat(),
-        "privacy": "Anonymous totals only. App names, account details, evidence, and source URLs are never included.",
+        "privacy": (
+            "Anonymous totals only. App names, account details, evidence, "
+            "and source URLs are never included."
+        ),
     }
-    table.put_item(Item={"pk": "GLOBAL", "sk": "impact", "payload": json.dumps(payload), "expires_at": Decimal(str(now + 60))})
+    table.put_item(
+        Item={
+            "pk": "GLOBAL",
+            "sk": "impact",
+            "payload": json.dumps(payload),
+            "expires_at": Decimal(str(now + 60)),
+        }
+    )
     return payload
 
 
