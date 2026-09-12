@@ -48,7 +48,7 @@
   const b=brief(f,system);
   if(b.stale)return {status:'App details changed',problemLabel:"What's wrong",problem:'This result refers to an older version of the app profile.',actionLabel:'What to do next',action:'Update the app profile if needed, then run the check again before changing the app.',owner:'You'};
   if(isEvidenceFailure(f))return {status:'BuiltWatch could not verify this',problemLabel:"What's wrong",problem:'The suggested connection is missing a source passage that proves it. BuiltWatch blocked it so it cannot be mistaken for a real alert.',actionLabel:'What to do next',action:'Do not change the app based on this item. BuiltWatch must check the source again; only act on a later result that includes quoted evidence.',owner:'BuiltWatch'};
-  if(f.relevance==='insufficient_information')return {status:'Your input is needed',problemLabel:'Question to answer',problem:readableGap(f),actionLabel:'Next step',action:'Verify this detail, update the app profile, then run the check again.',owner:'You'};
+  if(f.relevance==='insufficient_information')return {status:'Confirm one detail',problemLabel:'Confirm before deciding',problem:readableGap(f),actionLabel:'What to do next',action:'Check the app’s actual setup. Update the profile and run the check again only if the detail is different.',owner:'You'};
   if(f.relevance==='not_relevant')return {status:'No app change needed',problemLabel:'Why it does not apply',problem:b.consequence,actionLabel:'What to do next',action:'Nothing needs fixing for this item. Revisit it only if the app or its dependencies change.',owner:'No action'};
   return {status:'Review needed',problemLabel:'Why it may matter',problem:b.consequence,actionLabel:'Next step',action:b.review,owner:'You'};
  }

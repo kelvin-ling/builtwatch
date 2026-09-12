@@ -67,7 +67,7 @@ test('diagnosis assigns a plain-language owner and action to every result type',
  assert.match(p.diagnosis(blocked,app).action,/do not change the app/i);
  assert.equal(p.diagnosis(missing,app).owner,'You');
  assert.match(p.diagnosis(missing,app).problem,/confirm recipients opted in/i);
- assert.match(p.diagnosis(missing,app).action,/update the app profile/i);
+ assert.match(p.diagnosis(missing,app).action,/update (?:the )?profile/i);
  assert.equal(p.diagnosis(clear,app).owner,'No action');
  assert.match(p.diagnosis(clear,app).action,/nothing needs fixing/i);
 });
@@ -89,7 +89,7 @@ test('presentation removes model-like assessment wording and app ids',()=>{
  const brief=p.brief(finding,app),diagnosis=p.diagnosis(finding,app);
  assert.equal(brief.change,'Anthropic Usage Policy');
  assert.equal(diagnosis.problem,'Confirm this app accepts public input.');
- assert.equal(diagnosis.status,'Your input is needed');
+ assert.equal(diagnosis.status,'Confirm one detail');
 });
 
 test('unverified results without source evidence never ask the user to act',()=>{
