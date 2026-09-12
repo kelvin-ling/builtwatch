@@ -1,11 +1,11 @@
 # Replay snapshot. Real content retrieved from the publisher URL below
-# on 2026-09-08 by scripts/capture_replay.py.
+# on 2026-09-12 by scripts/capture_replay.py.
 # Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: eu-ai-act-article-50
 source_name: EU AI Act Article 50 — Transparency Obligations
 publisher: artificialintelligenceact.eu (unofficial consolidated text)
 url: https://artificialintelligenceact.eu/article/50/
-retrieved_at: '2026-09-08T05:01:26.692490+00:00'
+retrieved_at: '2026-09-12T06:21:37.125941+00:00'
 captured_by: scripts/capture_replay.py
 published_at: null
 effective_at: null

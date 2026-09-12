@@ -1,9 +1,100 @@
-# Demo replay fixture. Use live mode for current Vercel changes.
+# Replay snapshot. Real content retrieved from the publisher URL below
+# on 2026-09-12 by scripts/capture_replay.py.
+# Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: vercel-changelog
 source_name: Vercel Changelog
 publisher: Vercel
 url: https://vercel.com/changelog
-retrieved_at: '2026-09-11T00:00:00+00:00'
-captured_by: curated-demo-fixture
+retrieved_at: '2026-09-12T06:21:36.593595+00:00'
+captured_by: scripts/capture_replay.py
+published_at: '2026-09-11'
+effective_at: null
 fetch_status: ok
-content: 'Vercel Changelog. Platform, framework, deployment, security, and AI infrastructure updates for applications hosted on Vercel.'
+content: 'Skip to content
+
+  Changelog
+
+  11 September
+
+  11 Sep
+
+  Vercel Sandbox now provides 64 GB of storage
+
+  Vercel Sandbox now provides 64 GB of storage per sandbox, up from 32 GB, by default on the latest SDK
+  and CLI versions and when created with an image.
+
+  Andy Waller, Luke Phillips-Sheard
+
+  Control who can manage connectors in Vercel Connect
+
+  Vercel Connect now lets teams on Pro and Enterprise plans restrict who can create and manage connectors.
+
+  Mark Roberts, Allen Zhou
+
+  10 September
+
+  10 Sep
+
+  GitHub Copilot is now available in the AI SDK harness layer
+
+  GitHub Copilot now runs through the AI SDK harness layer via @ai-sdk/harness-github-copilot, using the
+  same HarnessAgent interface as every other supported harness.
+
+  Felix Arntz
+
+  Software Engineer
+
+  FastAPI frontends and static files served from the CDN
+
+  FastAPI frontends and static files are now promoted to the Vercel CDN at build time and served without
+  invoking your Vercel Function.
+
+  Daniel Park
+
+  Software Engineer
+
+  Build with OpenAI Agents API on Vercel
+
+  Build and deploy an OpenAI Agents API app on Vercel with Next.js, Functions, Queues, and Sandbox for
+  isolated, persistent code execution.
+
+  Anshuman Bhardwaj, Allen Zhou
+
+  Tako Search is free on AI Gateway through September 30
+
+  Tako Search search tool is live on AI Gateway and provides live web search for any AI Gateway model.
+  The tool is free through September 30th.
+
+  Walter Korman, Zachary Chen, and 1 other
+
+  Vercel Sandbox is now available in all regions
+
+  Vercel Sandbox now runs in all Vercel compute regions. Choose a region per sandbox, set a project default,
+  and configure failover regions.
+
+  Marc Codina Segura, Rob Herley
+
+  9 September
+
+  9 Sep
+
+  Password Protection is now available per project on Pro
+
+  Password Protection is now $20 per month per protected project on Pro. Enterprise includes it at the
+  team level.
+
+  +2
+
+  Kit Foster, Caleb Boyd, and 2 others
+
+  Show more
+
+  Loading status…
+
+  Select a display theme:
+
+  system
+
+  light
+
+  dark'

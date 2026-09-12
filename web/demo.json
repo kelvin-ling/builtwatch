@@ -1,11 +1,11 @@
 {
+  "quality": [],
   "systems": [
     {
       "schema_version": 1,
       "id": "inbox-triage",
       "name": "Client Inbox Triage Bot",
       "purpose": "Reads the owner's shared client inbox each morning, drafts replies with a large language model, and sends the approved drafts to clients as email from the business domain.",
-      "source_agent": "Client operations workspace",
       "technologies": [
         "Python 3.12",
         "AWS Lambda",
@@ -13,7 +13,7 @@
       ],
       "services": [
         "Gmail API",
-        "Amazon Bedrock",
+        "the model via Amazon Bedrock",
         "SendGrid"
       ],
       "consequential_actions": [
@@ -52,6 +52,7 @@
         "services": "user_stated",
         "jurisdictions": "user_stated"
       },
+      "source_agent": null,
       "created_at": "2026-09-08T05:41:41.397025Z",
       "updated_at": "2026-09-08T05:41:41.397417Z"
     },
@@ -60,7 +61,6 @@
       "id": "recipe-site",
       "name": "Static Recipe Archive",
       "purpose": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code.",
-      "source_agent": "Personal site workspace",
       "technologies": [
         "Hugo",
         "HTML",
@@ -86,6 +86,7 @@
         "purpose": "user_stated",
         "services": "user_stated"
       },
+      "source_agent": null,
       "created_at": "2026-09-08T05:41:41.694495Z",
       "updated_at": "2026-09-08T05:41:41.694648Z"
     },
@@ -94,7 +95,6 @@
       "id": "support-widget",
       "name": "Website Support Chat Widget",
       "purpose": "A chat widget embedded on the company marketing site that answers visitor questions using a language model.",
-      "source_agent": "Support product workspace",
       "technologies": [
         "TypeScript",
         "Cloudflare Workers"
@@ -125,6 +125,7 @@
         "purpose": "user_stated",
         "services": "user_stated"
       },
+      "source_agent": null,
       "created_at": "2026-09-08T05:41:41.983821Z",
       "updated_at": "2026-09-08T05:41:41.983965Z"
     }
@@ -153,9 +154,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:45:13.614648Z",
       "revision_hash": "a450ec330fcb0aed8b201ff7a26cfb003fe4252b67d530a504268e4950cc3d36",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -174,9 +178,12 @@
         "Whether Amazon Bedrock or Cloudflare Workers are affected by any vulnerabilities in the CISA Known Exploited Vulnerabilities Catalog"
       ],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:45:06.492475Z",
       "revision_hash": "f4d51896222d95f8e27a5ffe4137aebc967754c57480c7f97e6b2cf495d72850",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -202,9 +209,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:45:00.413859Z",
       "revision_hash": "9754c005e6818482322e9f6c848d7a3a16594b11d7a5ec4e6e5b5c4786635d80",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -234,9 +244,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "adopted",
       "created_at": "2026-09-08T05:44:53.569434Z",
       "revision_hash": "ecad39f52e2e6f6fc43aa2795e5b50532854f06d67b9201a284a56dba3316f19",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -264,9 +277,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:44:46.951530Z",
       "revision_hash": "51a1fc42066c712a0dfe9fd42e28d720c0eee0c12cc977d213b9d897db62dadd",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -291,14 +307,17 @@
         "The 'support-widget' system falls under the category of AI systems intended to interact directly with natural persons, as it is a chat widget that answers visitor questions using a language model."
       ],
       "unknowns": [
-        "BuiltWatch could not verify the suggested connection because the assessment did not include enough source evidence. No app change is requested; this item must be checked again."
+        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
       ],
       "review_suggestions": [
         "Review the transparency obligations outlined in the EU AI Act Article 50 and ensure that the 'support-widget' system complies with these requirements."
       ],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "in_effect",
       "created_at": "2026-09-08T05:44:40.705358Z",
       "revision_hash": "e67cae0b01f7227e0402144baf9c59cb5a4db02666fe03ca1e1bf1d5df57db30",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -325,9 +344,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:44:33.398139Z",
       "revision_hash": "0235ce7ee2ed3dbafc3fdb62fa6870bb9b7b2ad051bb00d69411518af19292fd",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -346,24 +368,27 @@
         }
       ],
       "facts": [
-        "Added new foundation models",
-        "Corrected model thinking guidance",
-        "Fixed model API code samples",
+        "Added a Bedrock model and a Bedrock model",
+        "Corrected the Bedrock model thinking guidance",
+        "Fixed Messages API code samples",
         "Updated endpoint guidance to recommend the bedrock-runtime endpoint"
       ],
       "inferences": [
         "The updates to Amazon Bedrock, including the addition of new models and corrections to model guidance, could impact the 'support-widget' system since it uses Amazon Bedrock."
       ],
       "unknowns": [
-        "BuiltWatch could not verify the suggested connection because the assessment did not include enough source evidence. No app change is requested; this item must be checked again."
+        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
       ],
       "review_suggestions": [
         "Review the changes to Amazon Bedrock to ensure the 'support-widget' system remains compatible and up-to-date.",
         "Consider testing the 'support-widget' system with the new models and updated API guidance."
       ],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "adopted",
       "created_at": "2026-09-08T05:44:25.400293Z",
       "revision_hash": "6299ede6834da004959d5ff18a13779c0b6771fefa09fe9f2946fce494fbcdd8",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -389,9 +414,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:44:18.231916Z",
       "revision_hash": "2d69e0958e2c4fa2853396ae87596631ba978224d3f6369d5e75da3651887f04",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -415,9 +443,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:44:11.487316Z",
       "revision_hash": "78d3bf7fbd3218f072ce4a68b9436564899d1b6a9b332c65b1c2e2e61f8f8d84",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -441,9 +472,12 @@
         "Whether the 'support-widget' system accepts inputs that could potentially violate the Anthropic Usage Policy."
       ],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:44:05.522740Z",
       "revision_hash": "7574f069923cc1b5909ef4dfdc48c5c1da9e8f03aa20db7e386d2609c9a8b762",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -501,9 +535,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:43:57.640631Z",
       "revision_hash": "b9c2487d8053b880e9698ae23922c5b0492c2e745b0464c3f1348101d04acdfb",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -531,9 +568,12 @@
       "review_suggestions": [
         "Periodically review the CISA Known Exploited Vulnerabilities Catalog for any changes that may affect the system."
       ],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "adopted",
       "created_at": "2026-09-08T05:43:49.208823Z",
       "revision_hash": "bf49706314d1b4efeb9b0a42a5a6a91a7fdec01952cfc29bb6ca23aa50567b32",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -569,9 +609,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:43:41.864224Z",
       "revision_hash": "0fbbdda87e2598b2d919ab0420946343e1baffbb81355f83ac15b8eb0e68c4ca",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -632,9 +675,12 @@
       "review_suggestions": [
         "Review the system's constraints and assumptions to ensure they remain appropriate."
       ],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "adopted",
       "created_at": "2026-09-08T05:43:35.030173Z",
       "revision_hash": "8ac9510929d7fafa1300df26f5c37a2d4f4c668d852ab9f41c257108cbbc5e87",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -668,9 +714,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:43:24.536082Z",
       "revision_hash": "fa620f6ba5d5f51059cd07dd750ab87fbcbd0397c56e049d222d56d004a1620a",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -696,9 +745,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:43:17.626753Z",
       "revision_hash": "99223e57d618c504c73059ec650e0a1fa19dca2f7bdb50acea0cc37d0f030662",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -721,7 +773,7 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "Amazon Bedrock"
+          "value": "the model via Amazon Bedrock"
         }
       ],
       "facts": [
@@ -734,9 +786,12 @@
       "review_suggestions": [
         "The system owner should review the NIST AI Risk Management Framework to ensure the system is managing AI risks appropriately."
       ],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:43:04.621809Z",
       "revision_hash": "19e8df415638aaa1fcf18cf3da577b1acf89ac3eb86a4edaacff6523aacb3eec",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -767,7 +822,7 @@
         },
         {
           "key": "services[1]",
-          "value": "Amazon Bedrock"
+          "value": "the model via Amazon Bedrock"
         },
         {
           "key": "services[2]",
@@ -780,9 +835,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:42:57.636112Z",
       "revision_hash": "e0c08ca012cb52a3d7bcc65aa9a11d52460c90d8a0ffac3f4152ed2b8bdfaaa0",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -812,7 +870,7 @@
         "The system must ensure it meets these new requirements to continue sending emails to Gmail accounts."
       ],
       "unknowns": [
-        "BuiltWatch could not verify the suggested connection because the assessment did not include enough source evidence. No app change is requested; this item must be checked again."
+        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
       ],
       "review_suggestions": [
         "Review the system's email sending configuration to ensure it complies with the new Gmail sender guidelines.",
@@ -821,9 +879,12 @@
         "Monitor spam rates and ensure they stay below 0.3%.",
         "Verify that email messages comply with the Internet Message Format standard."
       ],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "in_effect",
       "created_at": "2026-09-08T05:42:48.072767Z",
       "revision_hash": "e163ef488fe514fb5f0fcb9226c24d32bee441b0b6a0cf73aae5e22d88e82dce",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -846,7 +907,7 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "Amazon Bedrock"
+          "value": "the model via Amazon Bedrock"
         }
       ],
       "facts": [
@@ -857,9 +918,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "adopted",
       "created_at": "2026-09-08T05:42:41.141109Z",
       "revision_hash": "b54870191ec3d66e8525ed568dde5b3b07b265d1cd2ab48d283a9d301b93ecc4",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -878,7 +942,7 @@
         },
         {
           "key": "services[1]",
-          "value": "Amazon Bedrock"
+          "value": "the model via Amazon Bedrock"
         },
         {
           "key": "services[2]",
@@ -894,9 +958,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:42:33.311126Z",
       "revision_hash": "ad593a1800b611808251b49dbf8be1e3116dc4e8a63308c94e5388cfabcaac2c",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -911,7 +978,7 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "Amazon Bedrock"
+          "value": "the model via Amazon Bedrock"
         }
       ],
       "facts": [
@@ -921,14 +988,17 @@
         "The 'inbox-triage' system uses a large language model to draft replies, which could be considered an AI system under the Act."
       ],
       "unknowns": [
-        "BuiltWatch could not verify the suggested connection because the assessment did not include enough source evidence. No app change is requested; this item must be checked again."
+        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
       ],
       "review_suggestions": [
         "Review the system's compliance with the transparency obligations outlined in the EU AI Act Article 50."
       ],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "in_effect",
       "created_at": "2026-09-08T05:42:26.633000Z",
       "revision_hash": "273bf16fb32315ce230eca4322fbe4a055fa2593dadde822f5ca7b20f453370e",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -956,9 +1026,12 @@
       "review_suggestions": [
         "Monitor SendGrid updates for any future changes that might impact email delivery."
       ],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "adopted",
       "created_at": "2026-09-08T05:42:18.873897Z",
       "revision_hash": "f525a0a2e2d98a702096baaff5d5f2d00600e6761e831a148330843996f1525f",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -973,7 +1046,7 @@
         {
           "snapshot_id": "snap_710e684a3090",
           "source_id": "aws-bedrock-history",
-          "passage": "Amazon Bedrock Guardrails now supports Automated Reasoning checks to validate the accuracy of foundation model responses.",
+          "passage": "Added a Bedrock model and a Bedrock model\nAdded model cards for\na Bedrock model\nand\na Bedrock model\n. Updated the Adaptive thinking, Extended thinking, Tool use, and Prompt caching pages. Added a new\nThinking block binding (beta)\ntopic.",
           "published_at": null,
           "effective_at": null
         }
@@ -981,22 +1054,28 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "Amazon Bedrock"
+          "value": "the model via Amazon Bedrock"
         }
       ],
       "facts": [
-        "Amazon Bedrock Guardrails added Automated Reasoning checks for foundation model responses"
+        "Added a Bedrock model and a Bedrock model",
+        "Added model cards for a Bedrock model and a Bedrock model",
+        "Updated the Adaptive thinking, Extended thinking, Tool use, and Prompt caching pages",
+        "Added a new Thinking block binding (beta) topic"
       ],
       "inferences": [
-        "The system uses a foundation model through Amazon Bedrock, so the new Guardrails check may help verify response accuracy."
+        "The system uses the the model via Amazon Bedrock, and there have been updates to the model cards and thinking guidance."
       ],
       "unknowns": [],
       "review_suggestions": [
-        "Decide whether Automated Reasoning checks should be added to this system's response review."
+        "Review the updated model cards and thinking guidance to ensure the system is using the latest features and configurations."
       ],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:42:11.349884Z",
       "revision_hash": "38cfd7266b1475a29e41799d42828c5f28cde03a9db21c5e27c80d09cfda8a02",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -1020,9 +1099,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:42:03.628214Z",
       "revision_hash": "32ff6201f777f18bcdc6b8caed516e9dc1fc55c02b0b31dd7f41b7d0f1129971",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -1041,7 +1123,7 @@
         },
         {
           "key": "services[1]",
-          "value": "Amazon Bedrock"
+          "value": "the model via Amazon Bedrock"
         },
         {
           "key": "services[2]",
@@ -1057,9 +1139,12 @@
       ],
       "unknowns": [],
       "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "unknown",
       "created_at": "2026-09-08T05:41:57.428185Z",
       "revision_hash": "08982c0a6325eebe52b8adce2d40b5d314cac90ad5182ce10917adf21e6f7e5f",
+      "quality_version": 0,
       "disposition": "open"
     },
     {
@@ -1082,25 +1167,29 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "Amazon Bedrock"
+          "value": "the model via Amazon Bedrock"
         }
       ],
       "facts": [
         "The Anthropic Usage Policy applies to all users and use cases of Anthropic's products and services."
       ],
       "inferences": [
-        "The inbox-triage system uses a foundation model through Amazon Bedrock that is subject to the Anthropic Usage Policy."
+        "The inbox-triage system uses the the model via Amazon Bedrock, which is subject to the Anthropic Usage Policy."
       ],
       "unknowns": [],
       "review_suggestions": [
         "Review the Anthropic Usage Policy to ensure compliance with the guidelines and restrictions."
       ],
+      "app_impact": null,
+      "validation_issues": [],
       "adoption_status": "adopted",
       "created_at": "2026-09-08T05:41:50.664670Z",
       "revision_hash": "40f5d930701b30d6b5d35058ee2722000b50756092debd1404288e4c553be768",
+      "quality_version": 0,
       "disposition": "open"
     }
   ],
+  "agent_reviews": [],
   "sources": [
     {
       "id": "anthropic-aup",
@@ -1110,6 +1199,15 @@
       "publisher": "Anthropic",
       "enabled": true,
       "notes": "Governs permitted uses of supported models, including through Amazon Bedrock."
+    },
+    {
+      "id": "openai-api-changelog",
+      "name": "OpenAI API Changelog",
+      "category": "api_change",
+      "url": "https://developers.openai.com/api/docs/changelog",
+      "publisher": "OpenAI",
+      "enabled": true,
+      "notes": "Official API release notes covering model lifecycle, deprecations, schema changes and new capabilities."
     },
     {
       "id": "stripe-upgrades",
@@ -1130,6 +1228,15 @@
       "notes": "Breaking changes and migration notices for GitHub REST API integrations."
     },
     {
+      "id": "google-gemini-changelog",
+      "name": "Gemini API Release Notes",
+      "category": "api_change",
+      "url": "https://ai.google.dev/gemini-api/docs/changelog",
+      "publisher": "Google AI for Developers",
+      "enabled": true,
+      "notes": "Official Gemini API releases, deprecations, shutdowns and request or response changes."
+    },
+    {
       "id": "aws-bedrock-history",
       "name": "Amazon Bedrock Document History",
       "category": "api_change",
@@ -1146,6 +1253,42 @@
       "publisher": "Twilio",
       "enabled": true,
       "notes": "Product and API changes that can affect Twilio integrations and operational workflows."
+    },
+    {
+      "id": "cloudflare-changelog",
+      "name": "Cloudflare Developer Changelog",
+      "category": "api_change",
+      "url": "https://developers.cloudflare.com/changelog/",
+      "publisher": "Cloudflare",
+      "enabled": true,
+      "notes": "Developer-facing Cloudflare API, Workers, storage, security and platform changes."
+    },
+    {
+      "id": "nodejs-releases",
+      "name": "Node.js Releases and Security Updates",
+      "category": "api_change",
+      "url": "https://nodejs.org/en/blog",
+      "publisher": "Node.js Project",
+      "enabled": true,
+      "notes": "Official runtime releases, deprecations, migration notes and security releases for Node.js apps."
+    },
+    {
+      "id": "vercel-changelog",
+      "name": "Vercel Changelog",
+      "category": "api_change",
+      "url": "https://vercel.com/changelog",
+      "publisher": "Vercel",
+      "enabled": true,
+      "notes": "Platform, framework, deployment and AI infrastructure changes affecting Vercel-hosted apps."
+    },
+    {
+      "id": "azure-openai-whats-new",
+      "name": "Azure OpenAI What\u2019s New",
+      "category": "api_change",
+      "url": "https://learn.microsoft.com/en-us/azure/foundry-classic/openai/whats-new",
+      "publisher": "Microsoft",
+      "enabled": true,
+      "notes": "Official Azure OpenAI model, API, availability and retirement updates for hosted integrations."
     },
     {
       "id": "eu-ai-act-article-50",
@@ -1193,69 +1336,6 @@
       "notes": "Government-maintained catalog of vulnerabilities known to be exploited in the wild."
     },
     {
-      "id": "nist-ai-rmf",
-      "name": "NIST AI Risk Management Framework",
-      "category": "standards",
-      "url": "https://www.nist.gov/itl/ai-risk-management-framework",
-      "publisher": "US National Institute of Standards and Technology",
-      "enabled": true,
-      "notes": "US standards and guidance for managing AI risks across design, deployment and operation."
-    },
-    {
-      "id": "ftc-business-blog",
-      "name": "FTC Business Blog \u2014 Consumer and Business Developments",
-      "category": "business_news",
-      "url": "https://www.ftc.gov/business-guidance/blog",
-      "publisher": "US Federal Trade Commission",
-      "enabled": true,
-      "notes": "US consumer-protection and business-conduct news, including marketing claims, reviews, subscriptions and enforcement developments. This checks the index's published summaries only; linked articles are not automatically fetched. An enforcement case or consultation is not a new law or proof of applicability.\n"
-    },
-    {
-      "id": "openai-api-changelog",
-      "name": "OpenAI API Changelog",
-      "category": "api_change",
-      "url": "https://developers.openai.com/api/docs/changelog",
-      "publisher": "OpenAI",
-      "enabled": true,
-      "notes": "Official API release notes covering model lifecycle, deprecations, schema changes and new capabilities."
-    },
-    {
-      "id": "google-gemini-changelog",
-      "name": "Gemini API Release Notes",
-      "category": "api_change",
-      "url": "https://ai.google.dev/gemini-api/docs/changelog",
-      "publisher": "Google AI for Developers",
-      "enabled": true,
-      "notes": "Official Gemini API releases, deprecations, shutdowns and request or response changes."
-    },
-    {
-      "id": "cloudflare-changelog",
-      "name": "Cloudflare Developer Changelog",
-      "category": "api_change",
-      "url": "https://developers.cloudflare.com/changelog/",
-      "publisher": "Cloudflare",
-      "enabled": true,
-      "notes": "Developer-facing Cloudflare API, Workers, storage, security and platform changes."
-    },
-    {
-      "id": "nodejs-releases",
-      "name": "Node.js Releases and Security Updates",
-      "category": "api_change",
-      "url": "https://nodejs.org/en/blog",
-      "publisher": "Node.js Project",
-      "enabled": true,
-      "notes": "Official runtime releases, deprecations, migration notes and security releases for Node.js apps."
-    },
-    {
-      "id": "vercel-changelog",
-      "name": "Vercel Changelog",
-      "category": "api_change",
-      "url": "https://vercel.com/changelog",
-      "publisher": "Vercel",
-      "enabled": true,
-      "notes": "Platform, framework, deployment and AI infrastructure changes affecting Vercel-hosted apps."
-    },
-    {
       "id": "aws-security-bulletins",
       "name": "AWS Security Bulletins",
       "category": "security",
@@ -1272,6 +1352,33 @@
       "publisher": "GitHub",
       "enabled": true,
       "notes": "Reviewed open-source vulnerability and malware advisories across common package ecosystems."
+    },
+    {
+      "id": "cisa-cybersecurity-advisories",
+      "name": "CISA Cybersecurity Advisories",
+      "category": "security",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories",
+      "publisher": "US Cybersecurity and Infrastructure Security Agency",
+      "enabled": true,
+      "notes": "Official alerts and advisories covering exploited weaknesses, mitigations and defensive actions."
+    },
+    {
+      "id": "nist-ai-rmf",
+      "name": "NIST AI Risk Management Framework",
+      "category": "standards",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "publisher": "US National Institute of Standards and Technology",
+      "enabled": true,
+      "notes": "US standards and guidance for managing AI risks across design, deployment and operation."
+    },
+    {
+      "id": "ftc-business-blog",
+      "name": "FTC Business Blog \u2014 Consumer and Business Developments",
+      "category": "business_news",
+      "url": "https://www.ftc.gov/business-guidance/blog",
+      "publisher": "US Federal Trade Commission",
+      "enabled": true,
+      "notes": "US consumer-protection and business-conduct news, including marketing claims, reviews, subscriptions and enforcement developments. This checks the index's published summaries only; linked articles are not automatically fetched. An enforcement case or consultation is not a new law or proof of applicability.\n"
     }
   ],
   "runs": [
@@ -1376,11 +1483,15 @@
         "recipe-site",
         "support-widget"
       ],
+      "evaluations_performed": 0,
+      "review_events_created": 0,
+      "no_action_evaluations": 0,
+      "detail_needed_evaluations": 0,
       "model_id": "us.amazon.nova-pro-v1:0",
       "input_tokens": 0,
       "output_tokens": 0,
-      "estimated_cost_usd": 0.0,
-      "abort_reason": null
+      "abort_reason": null,
+      "validation_failures": 0
     },
     {
       "id": "run_9cab3777af54",
@@ -1483,18 +1594,17 @@
         "recipe-site",
         "support-widget"
       ],
+      "evaluations_performed": 0,
+      "review_events_created": 0,
+      "no_action_evaluations": 0,
+      "detail_needed_evaluations": 0,
       "model_id": "us.amazon.nova-pro-v1:0",
       "input_tokens": 308046,
       "output_tokens": 17842,
-      "estimated_cost_usd": 0.2542472000000001,
-      "abort_reason": null
+      "abort_reason": null,
+      "validation_failures": 0
     }
   ],
-  "spend": {
-    "month": 0.2542472000000001,
-    "day": 0.2542472000000001,
-    "limit": 15.0
-  },
   "demo": true,
-  "demo_note": "Saved results from a real Strands + Amazon Nova replay on 8 September 2026. Historical material; not a live change alert."
+  "demo_note": "Saved results from a real source replay. Historical material; not a live change alert."
 }

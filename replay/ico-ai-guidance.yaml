@@ -1,11 +1,11 @@
 # Replay snapshot. Real content retrieved from the publisher URL below
-# on 2026-09-08 by scripts/capture_replay.py.
+# on 2026-09-12 by scripts/capture_replay.py.
 # Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: ico-ai-guidance
 source_name: UK ICO — Artificial Intelligence and Data Protection
 publisher: UK Information Commissioner's Office
 url: https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/
-retrieved_at: '2026-09-08T05:01:27.343930+00:00'
+retrieved_at: '2026-09-12T06:21:37.829152+00:00'
 captured_by: scripts/capture_replay.py
 published_at: null
 effective_at: null

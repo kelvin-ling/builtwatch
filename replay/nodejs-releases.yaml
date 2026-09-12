@@ -1,9 +1,77 @@
-# Demo replay fixture. Use live mode for current Node.js releases.
+# Replay snapshot. Real content retrieved from the publisher URL below
+# on 2026-09-12 by scripts/capture_replay.py.
+# Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: nodejs-releases
 source_name: Node.js Releases and Security Updates
 publisher: Node.js Project
 url: https://nodejs.org/en/blog
-retrieved_at: '2026-09-11T00:00:00+00:00'
-captured_by: curated-demo-fixture
+retrieved_at: '2026-09-12T06:21:36.408606+00:00'
+captured_by: scripts/capture_replay.py
+published_at: '2026-09-09'
+effective_at: null
 fetch_status: ok
-content: 'Node.js Blog. The latest Node.js news, migration guides, releases, vulnerabilities, and security updates.'
+content: 'Skip to content
+
+  Everything
+
+  Announcements
+
+  Releases
+
+  Vulnerabilities
+
+  Migration Guides
+
+  Events
+
+  Categories
+
+  Everything
+
+  Everything
+
+  Announcements
+
+  Releases
+
+  Vulnerabilities
+
+  Migration Guides
+
+  Events
+
+  Node.js 26.8.2 (Current)
+
+  Releases
+
+  Node.js 26.8.2 (Current)
+
+  Node.js 24.21.0 (LTS)
+
+  Releases
+
+  Node.js 24.21.0 (LTS)
+
+  Node.js 26.8.1 (Current)
+
+  Releases
+
+  Node.js 26.8.1 (Current)
+
+  Node.js 26.8.0 (Current)
+
+  Releases
+
+  Node.js 26.8.0 (Current)
+
+  Node.js 24.20.0 (LTS)
+
+  Releases
+
+  Node.js 24.20.0 (LTS)
+
+  Node.js Interactive 2026: A Recap
+
+  Events
+
+  Node.js Interactive 2026: A Recap'

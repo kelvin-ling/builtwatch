@@ -82,6 +82,13 @@ sources:
     publisher: Vercel
     notes: Platform, framework, deployment and AI infrastructure changes affecting Vercel-hosted apps.
 
+  - id: azure-openai-whats-new
+    name: Azure OpenAI What’s New
+    category: api_change
+    url: https://learn.microsoft.com/en-us/azure/foundry-classic/openai/whats-new
+    publisher: Microsoft
+    notes: Official Azure OpenAI model, API, availability and retirement updates for hosted integrations.
+
   # -- laws and regulations ----------------------------------------------------------
   - id: eu-ai-act-article-50
     name: EU AI Act Article 50 — Transparency Obligations
@@ -137,6 +144,13 @@ sources:
     url: https://github.com/advisories/
     publisher: GitHub
     notes: Reviewed open-source vulnerability and malware advisories across common package ecosystems.
+
+  - id: cisa-cybersecurity-advisories
+    name: CISA Cybersecurity Advisories
+    category: security
+    url: https://www.cisa.gov/news-events/cybersecurity-advisories
+    publisher: US Cybersecurity and Infrastructure Security Agency
+    notes: Official alerts and advisories covering exploited weaknesses, mitigations and defensive actions.
 
   # -- standards and guidance --------------------------------------------------------
   - id: nist-ai-rmf

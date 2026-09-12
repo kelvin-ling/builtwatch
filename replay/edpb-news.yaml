@@ -1,13 +1,13 @@
 # Replay snapshot. Real content retrieved from the publisher URL below
-# on 2026-09-08 by scripts/capture_replay.py.
+# on 2026-09-12 by scripts/capture_replay.py.
 # Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: edpb-news
 source_name: European Data Protection Board — News
 publisher: European Data Protection Board
 url: https://www.edpb.europa.eu/news_en
-retrieved_at: '2026-09-08T05:01:26.871839+00:00'
+retrieved_at: '2026-09-12T06:21:37.351126+00:00'
 captured_by: scripts/capture_replay.py
-published_at: '2026-09-03'
+published_at: '2026-09-11'
 effective_at: null
 fetch_status: ok
 content: 'Skip to main content
@@ -18,7 +18,9 @@ content: 'Skip to main content
   data protection authorities on plenary decisions, GDPR enforcement, cross-border cooperation and the
   one-stop-shop mechanism.
 
-  184 items
+  186 items
+
+  RSS Feed
 
   Skip to main content
 
@@ -34,15 +36,15 @@ content: 'Skip to main content
 
   Poland
 
-  Italy
-
   France
+
+  Italy
 
   Greece
 
-  Iceland
-
   Finland
+
+  Iceland
 
   Norway
 
@@ -50,17 +52,17 @@ content: 'Skip to main content
 
   Ireland
 
-  Slovenia
+  Germany
 
   Netherlands
 
-  Germany
+  Slovenia
+
+  Austria
 
   Spain
 
   Belgium
-
-  Austria
 
   EDPB News
 
@@ -72,61 +74,61 @@ content: 'Skip to main content
 
   Spain
 
-  France
-
   Belgium
-
-  Hungary
 
   Poland
 
-  Portugal
+  France
+
+  Hungary
 
   Czech Republic
 
-  Sweden
+  Netherlands
 
   Germany
 
+  Sweden
+
   Denmark
 
-  Netherlands
+  Portugal
 
   Italy
 
-  Austria
+  Croatia
 
   Norway
-
-  Malta
-
-  Croatia
 
   Ireland
 
   Greece
 
+  Austria
+
+  Malta
+
   Slovenia
+
+  Slovakia
+
+  Lithuania
 
   Romania
 
   Finland
 
-  Cyprus
-
-  Lithuania
+  Latvia
 
   Estonia
 
   Luxembourg
 
-  Latvia
-
-  Slovakia
-
-  Iceland
+  Cyprus
 
   Liechtenstein
+
+  Iceland
 
   Bulgaria
 
@@ -168,6 +170,12 @@ content: 'Skip to main content
 
   Elections
 
+  Security & data breaches
+
+  Personal data breaches
+
+  Cybersecurity
+
   AI and technology
 
   Artificial intelligence
@@ -177,12 +185,6 @@ content: 'Skip to main content
   Anonymisation / pseudonymisation
 
   Automated decision making, profiling and Online tracking
-
-  Security & data breaches
-
-  Personal data breaches
-
-  Cybersecurity
 
   Accountability and Compliance tools
 
@@ -201,6 +203,22 @@ content: 'Skip to main content
   Filter on date
 
   Apply
+
+  National News
+
+  fr
+
+  Failure to respect the rights of individuals: The CNIL fined EXTIA 300 000 EUR
+
+  11 September 2026
+
+  National News
+
+  fr
+
+  Health data breach: the CNIL fined Hôpital Privé de la Loire 500 000 EUR
+
+  09 September 2026
 
   National News
 
@@ -294,23 +312,6 @@ content: 'Skip to main content
 
   The Italian Supervisory Authority has fined Verisure Italia for unlawful processing of personal data
   for direct marketing purposes
-
-  04 June 2026
-
-  National News
-
-  it
-
-  The Italian SA fined Poste Vita for data breach
-
-  04 June 2026
-
-  National News
-
-  it
-
-  The Italian Supervisory Authority fined a company 120 000 EUR for tracking five employees who drove
-  company cars
 
   04 June 2026
 

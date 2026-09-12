@@ -1,11 +1,11 @@
 # Replay snapshot. Real content retrieved from the publisher URL below
-# on 2026-09-08 by scripts/capture_replay.py.
+# on 2026-09-12 by scripts/capture_replay.py.
 # Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: twilio-changelog
 source_name: Twilio Changelog
 publisher: Twilio
 url: https://www.twilio.com/en-us/changelog
-retrieved_at: '2026-09-08T05:01:26.364333+00:00'
+retrieved_at: '2026-09-12T06:21:35.812444+00:00'
 captured_by: scripts/capture_replay.py
 published_at: null
 effective_at: null
@@ -136,6 +136,34 @@ content: 'Changelog
   See results
 
   Clear all filters
+
+  Sep 09, 2026
+
+  Beta
+
+  Voice API
+
+  ElevenLabs Voices for Say is now Public Beta
+
+  ElevenLabs voices are now available in Public Beta for <Say>, powered by the Flash v2 and Flash v2.5
+  models for fast, natural-sounding text-to-speech. Get started by specifying an ElevenLabs voice via
+  the REST API or in a TwiML Bin.
+
+  Learn more
+
+  Sep 08, 2026
+
+  Webhook Configuration API is now in Public Beta
+
+  Using the Webhook Configuration API, customers can configure how Twilio authenticates and delivers outbound
+  webhooks, per URL. The API consists of two resources: Webhook Settings and Webhook Rules.
+
+  Webhook Settings hold the authentication and connection configuration. Customers can secure endpoints
+  with OAuth 2.0. Twilio fetches an access token from the customer''s authorization server using the client
+  credentials flow and sends it as a Bearer token in the Authorization header of every webhook or with
+  Shared Key signatures. Customers can also configure delivery behavior like timeouts and retries.
+
+  Learn more
 
   Sep 04, 2026
 
@@ -362,63 +390,6 @@ content: 'Changelog
   For more information, see our
 
   Consent Management API docs
-
-  .
-
-  Learn more
-
-  Aug 12, 2026
-
-  Twilio end-user certificates for all REST API endpoints will be rotated on September 9, 2026
-
-  On September 9, 2026, Twilio will rotate the end-user TLS certificate for all REST API endpoints. Only
-  the end-user certificate and certificate serial number will be renewed; root and intermediate certificates
-  will remain the same.
-
-  This is a routine update that won’t impact most customers unless they’re pinning certificates or are
-  managing them manually. Customers using the
-
-  Twilio Helper Libraries
-
-  don’t need to take any action since the change will be handled automatically.
-
-  Twilio recommends against certificate pinning because it creates potential security risks, can cause
-  downtimes for services, and a higher probability of failed API requests.
-
-  How to test your connection
-
-  The new certificate will be available for testing at https://tls-test.twilio.com starting August 12,
-  2026. If the request succeeds with a 200 OK, no further action is required.
-
-  Need a hand?
-
-  These resources have more detail:
-
-  Monitoring Updates to Twilio REST API Security Settings
-
-  Security best practices
-
-  Learn more
-
-  Aug 06, 2026
-
-  GA
-
-  Twilio Email
-
-  Dedicated IPs and IP Management for Twilio Email
-
-  Dedicated IPs are now available for Twilio Email, enabling streamlined control over email deliverability
-  directly within the Twilio console. This functionality simplifies sending reputation management at scale.
-
-  To ensure deliverability from day one, newly provisioned dedicated IPs automatically enter a 41-day
-  warm-up schedule, complete with shared pool overflow protection to smooth out volume spikes. Organizations
-  can also segment traffic by grouping IPs into custom pools, assigning specific IPs directly to sub-accounts,
-  and configuring flexible fallback options to maintain continuous email flow.
-
-  To learn more about how to manage your email reputation and IP warmup, see the
-
-  Twilio Docs
 
   .
 

@@ -3,10 +3,9 @@
 > **Completed 10 September 2026:** the pending frontend work described below shipped in
 > Sites version 21. The live assets now include categorized watched sources, group-level
 > coverage failures, the modal scroll/footer correction, and the refreshed `?v=20` cache
-> key. Do not repeat this deployment. The broader source expansion remains intentionally
-> deferred because it would increase recurring assessment cost and should be chosen as a
-> separate product decision. The live registry currently has 19 sources across 8
-> categories; do not repeat the old “12 sources” count below.
+> key. Do not repeat this deployment. The source expansion was then completed on 12
+> September: the registry now has 21 sources across 8 categories, with replay evidence
+> captured for all 21. Do not repeat the old “12 sources” count below.
 
 > **12 September 2026:** Sites version 78 also canonicalizes the generated host to
 > `builtwatch.org`, adds `robots.txt`, and emits a canonical link. Verify those live
@@ -75,11 +74,13 @@ uses Microsoft Windows" against a passport listing only Strands, the AWS SDK and
 Workers) is absent from both tenants, no relevant finding carries an undeclared dependency,
 and `insufficient_information` fell from 27% to 13%.
 
-## Your second job: expand the watched sources (only after an explicit cost decision)
+## Source coverage status (already completed)
 
-The owner wants broader coverage. There are currently **19 sources across 8 categories**,
-with 9 under `api_change`, 3 under `security`, 2 under `privacy_ai`, and one or two in
-the remaining categories. The prior 12-source count is historical.
+The owner wanted broader coverage. The live registry now has **21 sources across 8
+categories**: 10 `api_change`, 4 `security`, 2 `privacy_ai`, and one in each of
+`vendor_policy`, `regulation`, `communications`, `standards`, and `business_news`. The
+prior 12-source count is historical. Replay evidence for every source is checked in under
+`replay/`; only add another source after an explicit cost and quality decision.
 
 Target roughly **20–25 sources**, weighted toward what independent builders running apps,
 agents and automations actually get caught by. Gaps worth filling:

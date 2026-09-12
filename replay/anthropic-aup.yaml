@@ -1,11 +1,11 @@
 # Replay snapshot. Real content retrieved from the publisher URL below
-# on 2026-09-08 by scripts/capture_replay.py.
+# on 2026-09-12 by scripts/capture_replay.py.
 # Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: anthropic-aup
 source_name: Anthropic Usage Policy
 publisher: Anthropic
 url: https://www.anthropic.com/legal/aup
-retrieved_at: '2026-09-08T05:01:24.852465+00:00'
+retrieved_at: '2026-09-12T06:21:33.129371+00:00'
 captured_by: scripts/capture_replay.py
 published_at: null
 effective_at: null

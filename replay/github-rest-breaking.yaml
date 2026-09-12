@@ -1,11 +1,11 @@
 # Replay snapshot. Real content retrieved from the publisher URL below
-# on 2026-09-08 by scripts/capture_replay.py.
+# on 2026-09-12 by scripts/capture_replay.py.
 # Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: github-rest-breaking
 source_name: GitHub REST API Breaking Changes
 publisher: GitHub
 url: https://docs.github.com/en/rest/about-the-rest-api/breaking-changes
-retrieved_at: '2026-09-08T05:01:26.077779+00:00'
+retrieved_at: '2026-09-12T06:21:34.373757+00:00'
 captured_by: scripts/capture_replay.py
 published_at: null
 effective_at: null

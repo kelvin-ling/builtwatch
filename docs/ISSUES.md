@@ -123,48 +123,48 @@ into the actual entry.
 ---
 
 ## BW-5 · Public demo is served from a ChatGPT-branded domain
-**Severity:** HIGH · **Owner:** HUMAN (decision) + AGENT (implementation) · **Status:** open
+**Severity:** HIGH · **Owner:** HUMAN (decision) + AGENT (implementation) · **Status:** ✅ RESOLVED — `builtwatch.org` is canonical
 
 Live URL is `https://builtwatch.org` (verified 200). This is the demo
 link an AWS-competition judge would open. `.openai/hosting.json` also binds a Cloudflare
 D1 database.
 
 The AWS-native substance is real and substantial — Strands, Bedrock, Lambda, DynamoDB,
-Cognito, EventBridge Scheduler, S3 — but the front door does not communicate it.
+Cognito, EventBridge Scheduler, S3. The competition-facing URL now uses the custom
+`builtwatch.org` domain, and the generated Sites host redirects to it.
 
-`builtwatch.org`, `.com`, `.io`, `.dev`, `.app` and `.net` were all unregistered as of
-8 September 2026. `docs/CUSTOM_DOMAIN.md` exists; a domain purchase requires a human.
+The remaining hostname task is only `www.builtwatch.org` DNS/redirect configuration
+(BW-13).
 
 ---
 
 ## BW-6 · Operational cost warnings are not being delivered
-**Severity:** MED · **Owner:** HUMAN · **Status:** open — confirmation re-sent 10 Sep 2026
+**Severity:** MED · **Owner:** HUMAN · **Status:** ✅ FIXED AND VERIFIED 12 Sep 2026
 
 *Corrected 10 Sep: an earlier revision of this file called cost alerting "dead". That was
-wrong and overstated the risk. Budget alerts work. Only the SNS channel is unconfirmed.*
+wrong and overstated the risk. Budget alerts work. The SNS channel is now confirmed.*
 
 Two independent alerting paths exist. One works, one does not:
 
 | Path | Destination | Needs opt-in? | Status |
 |---|---|---|---|
 | **AWS Budgets** — 50% / 80% / 100% of `builtwatch-monthly-20usd` | `[owner-email-redacted]` | No | ✅ **Working** |
-| **SNS** `builtwatch-owner-cost-alerts` — operational warnings from the daily monitor | `[owner-email-redacted]` | Yes | ❌ `PendingConfirmation` |
+| **SNS** `builtwatch-owner-cost-alerts` — operational warnings from the daily monitor | `[owner-email-redacted]` | Yes | ✅ Confirmed |
 
-So spend threshold alerts are being delivered. What is *not* delivered is the daily
-monitor's richer operational warnings — unusual-spend detection, "approaching allowance",
-"paid checks paused", "shared reserve nearly used".
+Spend threshold alerts and the daily monitor's richer operational warnings — unusual-spend
+detection, "approaching allowance", "paid checks paused", and "shared reserve nearly used"
+— can now be delivered.
 
-**Action.** The confirmation email was re-sent on 10 Sep 2026 to `[owner-email-redacted]`
-(subject: *AWS Notification - Subscription Confirmation*). Click the link in it. Only the
-mailbox owner can do this. Verify with:
+**Verification.** AWS now reports a real subscription ARN for `[owner-email-redacted]`
+under account `[aws-account-redacted]`; it is no longer `PendingConfirmation`.
 
 ```bash
 aws sns list-subscriptions-by-topic --topic-arn \
   arn:aws:sns:us-east-1:[aws-account-redacted]:builtwatch-owner-cost-alerts
 ```
 
-`SubscriptionArn` will change from `PendingConfirmation` to a real ARN, and the monitor's
-`email_confirmed` flag flips true on its next daily run.
+The monitor's cached `email_confirmed` flag will reflect this on its next daily run; AWS
+subscription state is authoritative until then.
 
 **Note two budget facts worth knowing.** The budget is now **$12**, not the $20 originally
 set — `deploy_cost_monitor.py` lowered it. And a separate `Monthly EC2 Budget`, also $12,
@@ -364,7 +364,7 @@ The backend corrections and the pending frontend work are now live. Use
 [DEPLOY.md](DEPLOY.md) only when future backend code changes require another release.
 
 1. **BW-3** — one click, and the submission is invalid without it (HUMAN)
-2. **BW-6** — one click; confirmation email re-sent 10 Sep (HUMAN)
+2. **BW-13** — add the `www` DNS/redirect rule in Cloudflare (HUMAN unless an authenticated session is provided)
 3. **BW-10** — sample only after the re-scan; see the note in that section (AGENT)
 4. **BW-9** — orphaned stack; destructive, so confirm before deleting (AGENT)
 5. **Demo video** — the only remaining submission artefact (HUMAN)

@@ -1,11 +1,11 @@
 # Replay snapshot. Real content retrieved from the publisher URL below
-# on 2026-09-08 by scripts/capture_replay.py.
+# on 2026-09-12 by scripts/capture_replay.py.
 # Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: nist-ai-rmf
 source_name: NIST AI Risk Management Framework
 publisher: US National Institute of Standards and Technology
 url: https://www.nist.gov/itl/ai-risk-management-framework
-retrieved_at: '2026-09-08T05:01:28.776149+00:00'
+retrieved_at: '2026-09-12T06:21:39.946376+00:00'
 captured_by: scripts/capture_replay.py
 published_at: '2021-07-12'
 effective_at: null

@@ -1,9 +1,817 @@
-# Demo replay fixture. Use live mode for current GitHub advisories.
+# Replay snapshot. Real content retrieved from the publisher URL below
+# on 2026-09-12 by scripts/capture_replay.py.
+# Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: github-advisories
 source_name: GitHub Advisory Database
 publisher: GitHub
 url: https://github.com/advisories/
-retrieved_at: '2026-09-11T00:00:00+00:00'
-captured_by: curated-demo-fixture
+retrieved_at: '2026-09-12T06:21:39.475126+00:00'
+captured_by: scripts/capture_replay.py
+published_at: null
+effective_at: null
 fetch_status: ok
-content: 'GitHub Advisory Database. A vulnerability database covering CVEs and GitHub-originated advisories across open-source package ecosystems.'
+content: 'Skip to content
+
+  You signed in with another tab or window.
+
+  Reload
+
+  to refresh your session.
+
+  You signed out in another tab or window.
+
+  Reload
+
+  to refresh your session.
+
+  You switched accounts on another tab or window.
+
+  Reload
+
+  to refresh your session.
+
+  Dismiss alert
+
+  {{ message }}
+
+  GitHub Advisory Database
+
+  Security vulnerability database inclusive of CVEs and GitHub originated security advisories from the
+  world of open source software.
+
+  Filter advisories
+
+  GitHub reviewed advisories
+
+  All reviewed
+
+  35,538
+
+  Composer
+
+  6,472
+
+  Erlang
+
+  116
+
+  GitHub Actions
+
+  55
+
+  Go
+
+  4,741
+
+  Maven
+
+  7,071
+
+  npm
+
+  7,402
+
+  NuGet
+
+  1,116
+
+  pip
+
+  6,234
+
+  Pub
+
+  13
+
+  RubyGems
+
+  1,152
+
+  Rust
+
+  1,570
+
+  Swift
+
+  62
+
+  Unreviewed advisories
+
+  All unreviewed
+
+  335,186
+
+  Malware advisories
+
+  All malware
+
+  92,798
+
+  Composer
+
+  2
+
+  Go
+
+  18
+
+  Maven
+
+  2
+
+  npm
+
+  77,286
+
+  NuGet
+
+  264
+
+  pip
+
+  11,697
+
+  RubyGems
+
+  3,510
+
+  Rust
+
+  19
+
+  CC-BY-4.0 License
+
+  Language support
+
+  About GitHub Advisory Database
+
+  Filter advisories
+
+  GitHub reviewed advisories
+
+  All reviewed
+
+  5,000+
+
+  Composer
+
+  5,000+
+
+  Erlang
+
+  116
+
+  GitHub Actions
+
+  55
+
+  Go
+
+  4,741
+
+  Maven
+
+  5,000+
+
+  npm
+
+  5,000+
+
+  NuGet
+
+  1,116
+
+  pip
+
+  5,000+
+
+  Pub
+
+  13
+
+  RubyGems
+
+  1,152
+
+  Rust
+
+  1,570
+
+  Swift
+
+  62
+
+  Unreviewed advisories
+
+  All unreviewed
+
+  5,000+
+
+  Malware advisories
+
+  All malware
+
+  5,000+
+
+  Composer
+
+  2
+
+  Go
+
+  18
+
+  Maven
+
+  2
+
+  npm
+
+  5,000+
+
+  NuGet
+
+  264
+
+  pip
+
+  5,000+
+
+  RubyGems
+
+  3,510
+
+  Rust
+
+  19
+
+  Search
+
+  35,538
+
+  advisories
+
+  Filter by severity
+
+  Filter by CWE
+
+  Sort by
+
+  Severity
+
+  Filter by severity
+
+  All severities
+
+  Low
+
+  Moderate
+
+  High
+
+  Critical
+
+  CWE
+
+  Loading
+
+  Uh oh!
+
+  There was an error while loading.
+
+  Please reload this page
+
+  .
+
+  Sort
+
+  Sort by
+
+  Newest
+
+  Oldest
+
+  Recently updated
+
+  Least recently updated
+
+  ZITADEL: Auto-linking by email: IdP-side email verification is not checked
+
+  Moderate
+
+  CVE-2026-56666
+
+  was published
+
+  for
+
+  github.com/zitadel/zitadel
+
+  (Go)
+
+  Sep 11, 2026
+
+  Credited to Android-Login-Analysis, livio-a, IAM-marco, and ayadlin
+
+  livio-a
+
+  IAM-marco
+
+  ayadlin
+
+  yayson: Prototype pollution in Store/LegacyStore deserialization
+
+  Critical
+
+  CVE-2026-61534
+
+  was published
+
+  for
+
+  yayson
+
+  (npm)
+
+  Sep 11, 2026
+
+  Credited to hackchang and jede
+
+  jede
+
+  @Mockoon/commons-server: Unauthenticated admin API + wildcard CORS allows mock-state hijack and secret
+  theft
+
+  High
+
+  CVE-2026-59148
+
+  was published
+
+  for
+
+  @mockoon/cli
+
+  (npm)
+
+  Sep 11, 2026
+
+  Credited to sajdakabir and zerotrail-ai
+
+  zerotrail-ai
+
+  @Mockoon/commons-server: Path traversal in templated `filePath` lets a request escape the served directory
+  (prefix-only base check)
+
+  Moderate
+
+  CVE-2026-59149
+
+  was published
+
+  for
+
+  @mockoon/cli
+
+  (npm)
+
+  Sep 11, 2026
+
+  Credited to miauzxw and geo-chen
+
+  geo-chen
+
+  FrontMCP and mcp-from-openapi have bypass of OpenAPI external $ref SSRF fix
+
+  High
+
+  CVE-2026-59973
+
+  was published
+
+  for
+
+  @frontmcp/adapters
+
+  (npm)
+
+  Sep 11, 2026
+
+  Credited to DavidCarliez
+
+  Prowler: SAML Domain Claiming Enables Cross-Tenant Account Takeover
+
+  Critical
+
+  CVE-2026-59151
+
+  was published
+
+  for
+
+  prowler-cloud
+
+  (pip)
+
+  Sep 11, 2026
+
+  Credited to EQSTLab, AdriiiPRodri, jfagoagas, and josema-xyz
+
+  AdriiiPRodri
+
+  jfagoagas
+
+  josema-xyz
+
+  ZITADEL: Missing Token Expiration (`exp`) Validation in JWT IdP Provider
+
+  Moderate
+
+  CVE-2026-56665
+
+  was published
+
+  for
+
+  github.com/zitadel/zitadel
+
+  (Go)
+
+  Sep 11, 2026
+
+  Credited to Android-Login-Analysis, IAM-marco, livio-a, and Punisher100
+
+  IAM-marco
+
+  livio-a
+
+  Punisher100
+
+  Shopper: Missing authorization on product removal actions in CollectionProducts component
+
+  High
+
+  CVE-2026-56825
+
+  was published
+
+  for
+
+  shopper/framework
+
+  (Composer)
+
+  Sep 11, 2026
+
+  Credited to therawdev
+
+  Shopper: Media sub-form store() still lacks authorization (Incomplete fix for GHSA-h4mp-g9c6-xwph)
+
+  Moderate
+
+  CVE-2026-56830
+
+  was published
+
+  for
+
+  shopper/framework
+
+  (Composer)
+
+  Sep 11, 2026
+
+  Shopper: Unauthorized inventory stock manipulation via unlocked variant property in VariantStock component
+
+  High
+
+  CVE-2026-56829
+
+  was published
+
+  for
+
+  shopper/framework
+
+  (Composer)
+
+  Sep 11, 2026
+
+  Credited to therawdev
+
+  Shopper: privilege escalation via improper Livewire admin component authorization
+
+  High
+
+  CVE-2026-56828
+
+  was published
+
+  for
+
+  shopper/framework
+
+  (Composer)
+
+  Sep 11, 2026
+
+  Credited to therawdev
+
+  Shopping privilege escalation through missing authorization in Settings components
+
+  Moderate
+
+  CVE-2026-56826
+
+  was published
+
+  for
+
+  shopper/framework
+
+  (Composer)
+
+  Sep 11, 2026
+
+  Credited to baradika
+
+  Shopper: Negative discount values accepted and propagated through order calculation pipeline
+
+  Moderate
+
+  CVE-2026-56831
+
+  was published
+
+  for
+
+  shopper/framework
+
+  (Composer)
+
+  Sep 11, 2026
+
+  Credited to Fr6ey
+
+  Shopper: Authorization bypass in Filament bulk actions allows browse-only staff to mass-delete attributes/tags
+  and mass-toggle visibility of brands/categories/suppliers
+
+  High
+
+  CVE-2026-56827
+
+  was published
+
+  for
+
+  shopper/framework
+
+  (Composer)
+
+  Sep 11, 2026
+
+  Credited to therawdev
+
+  Central Dogma: SSH host-key verification permanently disabled in Git mirror (SshGitMirror)
+
+  High
+
+  CVE-2026-11745
+
+  was published
+
+  for
+
+  com.linecorp.centraldogma:centraldogma-server-mirror-git
+
+  (Maven)
+
+  Sep 11, 2026
+
+  Central Dogma: Hard-coded ZooKeeper replication secret ''ch4n63m3'' with silent fallback enables cluster
+  takeover
+
+  Critical
+
+  CVE-2026-11746
+
+  was published
+
+  for
+
+  com.linecorp.centraldogma:centraldogma-server
+
+  (Maven)
+
+  Sep 11, 2026
+
+  Central Dogma: LDAP injection in SearchFirstActiveDirectoryRealm enables authentication confusion and
+  audit log evasion
+
+  Moderate
+
+  CVE-2026-11748
+
+  was published
+
+  for
+
+  com.linecorp.centraldogma:centraldogma-server-auth-shiro
+
+  (Maven)
+
+  Sep 11, 2026
+
+  MySQL MCP Server: Missing Origin/Host Validation in SSE Transport Enables Unauthenticated SQL Execution
+  (DNS Rebinding / Direct Exposure)
+
+  Critical
+
+  CVE-2026-59971
+
+  was published
+
+  for
+
+  mysql-mcp-server
+
+  (pip)
+
+  Sep 11, 2026
+
+  Credited to designcomputer
+
+  Open WebUI: Users denied by the OAuth role policy can still sign in via token exchange
+
+  Moderate
+
+  CVE-2026-88006
+
+  was published
+
+  for
+
+  open-webui
+
+  (pip)
+
+  Sep 10, 2026
+
+  Credited to Classic298
+
+  Traefik: Inconsistent Interpretation of HTTP Requests (''HTTP Request/Response Smuggling'') and Incorrect
+  Authorization
+
+  High
+
+  CVE-2026-88008
+
+  was published
+
+  for
+
+  github.com/traefik/traefik/v2
+
+  (Go)
+
+  Sep 10, 2026
+
+  Credited to ihopenre-eng
+
+  Traefik entrypoint header-name sanitization bypassed via request trailers
+
+  High
+
+  CVE-2026-88004
+
+  was published
+
+  for
+
+  github.com/traefik/traefik/v3
+
+  (Go)
+
+  Sep 10, 2026
+
+  Credited to bipol4r
+
+  Traefik HTTP/3 Backend NTLM Connection Reuse
+
+  Critical
+
+  CVE-2026-88007
+
+  was published
+
+  for
+
+  github.com/traefik/traefik/v2
+
+  (Go)
+
+  Sep 10, 2026
+
+  Credited to OneZ3r0
+
+  Traefik: Rootless HTTP/1 request-target routes as "/" but is forwarded verbatim, bypassing path-scoped
+  routing, middleware guards and access logging
+
+  High
+
+  CVE-2026-88009
+
+  was published
+
+  for
+
+  github.com/traefik/traefik/v2
+
+  (Go)
+
+  Sep 10, 2026
+
+  rclone archive/zip: Zip Slip via unsanitized zip entry names lets a malicious archive escape its own
+  namespace
+
+  Moderate
+
+  CVE-2026-88014
+
+  was published
+
+  for
+
+  github.com/rclone/rclone
+
+  (Go)
+
+  Sep 10, 2026
+
+  Credited to iaohkut and ncw
+
+  ncw
+
+  rclone: http backend forwards custom/auth headers to a different host on redirect
+
+  Low
+
+  CVE-2026-88013
+
+  was published
+
+  for
+
+  github.com/rclone/rclone
+
+  (Go)
+
+  Sep 10, 2026
+
+  Credited to iaohkut and ncw
+
+  ncw
+
+  Previous
+
+  1
+
+  …
+
+  400
+
+  Next
+
+  Previous
+
+  1
+
+  2
+
+  3
+
+  4
+
+  5
+
+  …
+
+  399
+
+  400
+
+  Next
+
+  ProTip!
+
+  Advisories are also available from the
+
+  GraphQL API
+
+  CC-BY-4.0 License
+
+  Language support
+
+  About GitHub Advisory Database
+
+  You can’t perform that action at this time.'

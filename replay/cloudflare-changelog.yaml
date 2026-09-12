@@ -1,9 +1,1578 @@
-# Demo replay fixture. Use live mode for current Cloudflare changes.
+# Replay snapshot. Real content retrieved from the publisher URL below
+# on 2026-09-12 by scripts/capture_replay.py.
+# Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: cloudflare-changelog
 source_name: Cloudflare Developer Changelog
 publisher: Cloudflare
 url: https://developers.cloudflare.com/changelog/
-retrieved_at: '2026-09-11T00:00:00+00:00'
-captured_by: curated-demo-fixture
+retrieved_at: '2026-09-12T06:21:36.265904+00:00'
+captured_by: scripts/capture_replay.py
+published_at: '2026-09-11'
+effective_at: null
 fetch_status: ok
-content: 'Cloudflare Developer Changelog. Product and platform updates cover Workers, APIs, storage, security, networking, and developer tooling.'
+content: 'Skip to content
+
+  All products
+
+  Product groups
+
+  AI
+
+  Analytics
+
+  Application performance
+
+  Application security
+
+  Cloudflare One
+
+  Consumer services
+
+  Core platform
+
+  Developer platform
+
+  Docs collections
+
+  Media
+
+  Network security
+
+  Privacy
+
+  Storage
+
+  Products
+
+  1.1.1.1 (DNS Resolver)
+
+  Access
+
+  Agents
+
+  AI Crawl Control
+
+  AI Gateway
+
+  AI Search
+
+  Analytics
+
+  API Shield
+
+  Artifacts
+
+  Audit Logs
+
+  Billing
+
+  Bots
+
+  Browser Isolation
+
+  Browser Run
+
+  Cache / CDN
+
+  CASB
+
+  Challenges
+
+  Cloudflare for SaaS
+
+  Cloudflare Fundamentals
+
+  Cloudflare Images
+
+  Cloudflare Mesh
+
+  Cloudflare Network Firewall
+
+  Cloudflare One
+
+  Cloudflare One Appliance
+
+  Cloudflare One Client
+
+  Cloudflare Tunnel
+
+  Cloudflare Tunnel for SASE
+
+  Cloudflare WAN
+
+  Cloudflare Web Analytics
+
+  Containers
+
+  D1
+
+  Data Localization Suite
+
+  Data Loss Prevention
+
+  Digital Experience Monitoring
+
+  DNS
+
+  Durable Objects
+
+  Email security
+
+  Email Service
+
+  Flagship
+
+  Gateway
+
+  Go SDK
+
+  Hyperdrive
+
+  KV
+
+  Load Balancing
+
+  Log Explorer
+
+  Logpush
+
+  Logpush Connectors
+
+  Logs
+
+  Magic Transit
+
+  Multi-Cloud Networking
+
+  Network Flow
+
+  Network Interconnect
+
+  Organizations
+
+  Pages
+
+  Pipelines
+
+  Privacy Proxy
+
+  Queues
+
+  R2
+
+  R2 Data Catalog
+
+  R2 SQL
+
+  Radar
+
+  Realtime
+
+  Registrar
+
+  Resource Tagging
+
+  Risk Score
+
+  Rules
+
+  Sandbox SDK
+
+  SDK
+
+  Secrets Store
+
+  Security Center
+
+  Security Overview
+
+  Speed
+
+  SSL/TLS
+
+  Stream
+
+  Support
+
+  Terraform
+
+  Turnstile
+
+  Vectorize
+
+  WAF
+
+  Workers
+
+  Workers AI
+
+  Workers Analytics Engine
+
+  Workers for Platforms
+
+  Workers VPC
+
+  Workflows
+
+  Zaraz
+
+  No products found.
+
+  View RSS feeds
+
+  Subscribe to RSS
+
+  Sep 11, 2026
+
+  Inspect Voice Agent turn latency and outcomes
+
+  Agents
+
+  @cloudflare/voice
+
+  v0.4.0 now lets you inspect where each Voice Agent turn spends time and how it ends.
+
+  client.
+
+  addEventListener
+
+  (
+
+  "turnmetrics"
+
+  , (
+
+  turn
+
+  )
+
+  =>
+
+  {
+
+  console.
+
+  log
+
+  (turn.outcome, turn.turnTotalMs);
+
+  });
+
+  About the Voice package
+
+  The
+
+  @cloudflare/voice
+
+  package lets you build real-time voice agents with Cloudflare Agents. It streams microphone audio to
+  an Agent over WebSocket, transcribes speech, runs your model through
+
+  onTurn()
+
+  , converts the response to speech, and streams audio back to the caller.
+
+  A turn moves through several stages:
+
+  User speaks -> speech-to-text -> model -> text-to-speech -> audio
+
+  Previously, the package''s four aggregate metrics covered successful, non-empty speech turns. They did
+  not show how failed, aborted, empty, or text turns ended.
+
+  Turn metrics
+
+  Each speech or text turn now produces a typed
+
+  VoiceTurnMetrics
+
+  summary with:
+
+  A
+
+  turnId
+
+  for correlating events from the same turn.
+
+  A terminal outcome such as
+
+  completed
+
+  ,
+
+  no_output
+
+  ,
+
+  output_limit
+
+  ,
+
+  content_filtered
+
+  ,
+
+  model_error
+
+  ,
+
+  tts_error
+
+  , or
+
+  aborted
+
+  .
+
+  Timings for important stages, including speech-to-final-transcript, model-to-first-text, TTS-to-first-audio,
+  and total turn duration.
+
+  These timings can overlap and are not additive. Timings for stages that a turn did not reach are omitted.
+
+  The latest summary is available through
+
+  VoiceClient
+
+  ,
+
+  useVoiceAgent()
+
+  , and
+
+  useVoiceInput()
+
+  . Voice input includes only the speech and transcription timings it can measure.
+
+  If an agent produces no audio, you can now distinguish between the model returning no output, reaching
+  an output limit, encountering content filtering, or failing.
+
+  Additional diagnostics
+
+  For local debugging, you can forward server lifecycle events to the browser console:
+
+  import
+
+  { Agent }
+
+  from
+
+  "agents"
+
+  ;
+
+  import
+
+  { withVoice }
+
+  from
+
+  "@cloudflare/voice"
+
+  ;
+
+  const
+
+  VoiceAgent
+
+  =
+
+  withVoice
+
+  (Agent, {
+
+  diagnostics: {
+
+  browserConsole:
+
+  true
+
+  ,
+
+  },
+
+  });
+
+  import
+
+  { Agent }
+
+  from
+
+  "agents"
+
+  ;
+
+  import
+
+  { withVoice }
+
+  from
+
+  "@cloudflare/voice"
+
+  ;
+
+  const
+
+  VoiceAgent
+
+  =
+
+  withVoice
+
+  (Agent, {
+
+  diagnostics: {
+
+  browserConsole:
+
+  true
+
+  ,
+
+  },
+
+  });
+
+  The browser console combines server lifecycle events with local microphone, connection, and playback
+  events, including model start, first model text, first audio, and playback start. Diagnostics are off
+  by default, and their event names and fields can change.
+
+  VoiceClient
+
+  also exposes typed events for speech-to-text failures, connection errors, and model outcomes. The SDK
+  removes known content fields and does not read arbitrary provider responses, but custom error messages
+  must not contain sensitive data.
+
+  Install the release with a compatible Agents SDK version:
+
+  npm
+
+  yarn
+
+  pnpm
+
+  bun
+
+  npm
+
+  i @cloudflare/voice@^0.4.0 agents@^0.22.0
+
+  yarn
+
+  add @cloudflare/voice@^0.4.0 agents@^0.22.0
+
+  pnpm
+
+  add @cloudflare/voice@^0.4.0 agents@^0.22.0
+
+  bun
+
+  add @cloudflare/voice@^0.4.0 agents@^0.22.0
+
+  Refer to the
+
+  Voice pipeline metrics
+
+  and
+
+  Voice Agent example
+
+  ↗
+
+  to get started.
+
+  Sep 11, 2026
+
+  AI Search supports extensionless R2 objects with Content-Type metadata
+
+  AI Search
+
+  AI Search can index R2 objects without filename extensions when they include supported
+
+  Content-Type
+
+  metadata. This supports object keys that do not include file extensions while preserving file-type validation
+  during indexing.
+
+  For supported file types and Content-Type requirements, refer to
+
+  R2 data sources
+
+  .
+
+  Sep 10, 2026
+
+  Default instance retention for new Workflows on Workers Paid is seven days
+
+  Workflows
+
+  Workflows
+
+  created on or after September 10, 2026, on the Workers Paid plan retain completed and errored instance
+  state for seven days by default (previously 30 days). The seven day default helps to reduce storage
+  costs by default. The maximum retention
+
+  limit
+
+  remains 30 days.
+
+  The retention period for existing Workflows is unchanged. The Workers Free plan retains its three-day
+  default and limit.
+
+  To set the retention period for a Workflow instance, specify
+
+  successRetention
+
+  ,
+
+  errorRetention
+
+  , or both:
+
+  const
+
+  instance
+
+  =
+
+  await
+
+  env.
+
+  MY_WORKFLOW
+
+  .
+
+  create
+
+  ({
+
+  retention: {
+
+  successRetention:
+
+  "2 days"
+
+  ,
+
+  errorRetention:
+
+  "30 days"
+
+  ,
+
+  },
+
+  });
+
+  const
+
+  instance
+
+  =
+
+  await
+
+  env.
+
+  MY_WORKFLOW
+
+  .
+
+  create
+
+  ({
+
+  retention: {
+
+  successRetention:
+
+  "2 days"
+
+  ,
+
+  errorRetention:
+
+  "30 days"
+
+  ,
+
+  },
+
+  });
+
+  You can also set the retention period per Workflow and per instance in the
+
+  Cloudflare dashboard
+
+  ↗
+
+  .
+
+  For retention details, refer to
+
+  Workflows pricing
+
+  and the
+
+  WorkflowInstanceCreateOptions
+
+  API reference
+
+  .
+
+  Sep 10, 2026
+
+  Use Cloudflare Containers with Codex via the OpenAI Agents API
+
+  Containers
+
+  The OpenAI Agents API gives your application access to Codex through an OpenAI-managed API.
+
+  OpenAI manages sessions, orchestration, context compaction, and recovery while your application provides
+  tools and uses Cloudflare Containers as the execution environment.
+
+  Cloudflare Containers can now provide self-hosted execution environments for the OpenAI Agents API.
+  The open-source
+
+  OpenAI Agents API Workers template
+
+  ↗
+
+  provides a reference implementation. The Worker maintains a Cloudflare Container for each Codex session,
+  keeps active work running, reconnects on follow-up input, and shuts down automatically when idle.
+
+  You can configure the reference implementation to meet your needs by extending the Container to provide
+  controlled access to data and the network or by integrating it with other Cloudflare products.
+
+  To get started, refer to
+
+  Run Codex on Cloudflare using the OpenAI Agents API
+
+  .
+
+  Sep 10, 2026
+
+  WAF Release - 2026-09-10 - Emergency
+
+  WAF
+
+  This update provides immediate defense against a high-severity, actively exploited zero-day vulnerability
+  targeting Adobe Commerce and Magento Open Source storefronts.
+
+  Key Findings
+
+  Adobe Commerce and Magento RCE (CVE-2026-75650 / "StyleSmuggler"): Unauthenticated Remote Code Execution
+  (RCE) vulnerability caused by improper neutralization of special elements in the platform''s template
+  engine. Unauthenticated attackers can inject arbitrary PHP payloads through style properties to execute
+  system commands and deploy persistent malware.
+
+  Impact
+
+  This emergency rule provides immediate edge-level mitigation and virtual patching, origin applications
+  must be urgently updated. We strongly recommend to apply the hotfix outlined in Adobe Security Bulletin
+
+  APSB26-146
+
+  and immediately rotate all potentially exposed encryption keys, integration tokens, and system credentials,
+  as patching alone does not remediate an existing compromise.
+
+  Ruleset
+
+  Rule ID
+
+  Legacy Rule ID
+
+  Description
+
+  Previous Action
+
+  New Action
+
+  Comments
+
+  Cloudflare Managed Ruleset
+
+  ...440f5c55
+
+  N/A
+
+  Adobe Commerce - Remote Code Execution - CVE:CVE-2026-75650
+
+  N/A
+
+  Block
+
+  This is a new detection.
+
+  Sep 9, 2026
+
+  Cloudflare One Client for macOS (version 2026.8.1290.1)
+
+  Cloudflare One Client
+
+  A new Beta release for the macOS Cloudflare One Client is now available on the
+
+  beta releases downloads page
+
+  .
+
+  This beta release includes the following changes and improvements:
+
+  Added support for routing non-RFC 1918 local IPv4 networks through the WARP tunnel when unrestricted
+  LAN inclusion is enabled by policy or MDM.
+
+  Improved DNS reliability on networks with lower MTUs by clamping the TCP maximum segment size (MSS)
+  for DNS-over-HTTPS connections sent through the tunnel.
+
+  Improved API reliability by retrying requests dropped when reusing pooled connections.
+
+  Fixed Extra Logging failing to capture packets across all interfaces.
+
+  Fixed an issue that could prevent remote diagnostics from completing.
+
+  Fixed DNS connectivity checks failing on IPv6-only networks.
+
+  Fixed the client service exiting when its route-monitoring socket was closed after sleep or wake.
+
+  Fixed DNS enforcement checks making the client service unresponsive on systems with large routing tables.
+
+  Fixed slow captive portal checks causing the client service to become unresponsive or restart while
+  connecting.
+
+  Fixed a race when switching tunnel protocols during key rotation that could prevent WireGuard from connecting.
+
+  Fixed the client continuing to report ''No network'' after a successful manual disconnect.
+
+  Fixed a client UI crash that could occur when the daemon connection was reset during an IPC request.
+
+  Fixed a startup crash when date formatting data for the system locale had not yet loaded.
+
+  Known issues
+
+  None
+
+  For Zero Trust documentation, see:
+
+  https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/cloudflare-one-client/
+
+  For Consumer documentation, see:
+
+  https://developers.cloudflare.com/warp-client/
+
+  Sep 9, 2026
+
+  Cloudflare One Client for Windows (version 2026.8.1290.1)
+
+  Cloudflare One Client
+
+  A new Beta release for the Windows Cloudflare One Client is now available on the
+
+  beta releases downloads page
+
+  .
+
+  This beta release includes the following changes and improvements:
+
+  Added support for routing non-RFC 1918 local IPv4 networks through the WARP tunnel when unrestricted
+  LAN inclusion is enabled by policy or MDM.
+
+  Improved DNS reliability on networks with lower MTUs by clamping the TCP maximum segment size (MSS)
+  for DNS-over-HTTPS connections sent through the tunnel.
+
+  Improved API reliability by retrying requests dropped when reusing pooled connections.
+
+  The client no longer requires the Windows WLAN AutoConfig service to be running.
+
+  Implemented a service recovery mechanism backed by Windows scheduler task to start WARP service on system
+  unlock if not already started.
+
+  Fixed slow captive portal checks causing the client service to become unresponsive or restart while
+  connecting.
+
+  Fixed a race when switching tunnel protocols during key rotation that could prevent WireGuard from connecting.
+
+  Fixed the client continuing to report ''No network'' after a successful manual disconnect.
+
+  Fixed Digital Experience Monitoring (DEX) HTTP tests failing TLS validation on Windows.
+
+  Fixed the client UI crashing at startup when it could not write to the Windows registry.
+
+  Fixed latency spikes and traffic interruptions during TPM-backed API authentication when hardware-backed
+  registration is enabled.
+
+  Fixed trailing whitespace in BIOS serial numbers causing serial-number and client-certificate device
+  posture checks to fail.
+
+  Fixed a client UI crash that could occur when the daemon connection was reset during an IPC request.
+
+  Fixed a startup crash when date formatting data for the system locale had not yet loaded.
+
+  Known issues
+
+  None
+
+  For Zero Trust documentation, see:
+
+  https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/cloudflare-one-client/
+
+  For Consumer documentation, see:
+
+  https://developers.cloudflare.com/warp-client/
+
+  Sep 9, 2026
+
+  AI Gateway custom costs support cache tokens
+
+  AI Gateway
+
+  AI Gateway custom costs now support cache-read and cache-write token rates. This lets custom cost metrics
+  reflect negotiated cache pricing across providers.
+
+  Add
+
+  per_cache_read_token
+
+  or
+
+  per_cache_write_token
+
+  to the
+
+  cf-aig-custom-cost
+
+  header:
+
+  {
+
+  "per_token_in"
+
+  :
+
+  0.000001
+
+  ,
+
+  "per_token_out"
+
+  :
+
+  0.000002
+
+  ,
+
+  "per_cache_read_token"
+
+  :
+
+  0.0000001
+
+  ,
+
+  "per_cache_write_token"
+
+  :
+
+  0.0000005
+
+  }
+
+  Cache-token pricing activates when either cache rate is present. An omitted cache rate defaults to
+
+  per_token_in
+
+  . If both cache rates are omitted, AI Gateway preserves the existing input and output calculation.
+
+  Providers can include cache tokens within input tokens or report them separately. AI Gateway automatically
+  accounts for these differences and prevents double-counting.
+
+  For more information, refer to
+
+  Custom costs
+
+  .
+
+  Sep 9, 2026
+
+  Improved iOS tap-to-type experience for Browser Isolation
+
+  Browser Isolation
+
+  Cloudflare One
+
+  Browser Isolation
+
+  has improved the tap-to-type experience for users on iOS devices.
+
+  Previously, Browser Isolation displayed a full-screen overlay with the message
+
+  tap to type
+
+  when users focused a text field. The prompt now appears inline over the focused text field, reducing
+  disruption when users enter text in isolated sessions.
+
+  If the focused text field is too small to display the full prompt, Browser Isolation displays a keyboard
+  icon in the center of the text field instead.
+
+  iOS users should tap twice to begin entering text. This update applies automatically to Browser Isolation
+  sessions on iOS.
+
+  For more information on why this interaction is required, refer to
+
+  iOS limitations
+
+  .
+
+  Sep 9, 2026
+
+  New CASB integration for Zoom
+
+  CASB
+
+  Cloudflare CASB
+
+  now integrates with
+
+  Zoom
+
+  . The integration connects through Cloudflare''s pre-built OAuth application — no manual app setup in
+  Zoom is required. After an initial scan, CASB continuously scans your Zoom account to surface new findings
+  as your environment changes.
+
+  Zoom is widely used for meetings, webinars, and collaboration. Misconfigurations in account settings,
+  meeting security controls, and recording access can expose organizations to data leakage, unauthorized
+  access, and compliance risk. Cloudflare CASB ingests Zoom account data via API to surface security findings
+  across these areas.
+
+  Key capabilities
+
+  Starting today, security teams can scan for security findings across the following assets:
+
+  Account settings
+
+  — Detect weak password policies, unlocked security controls, and two-factor authentication gaps across
+  your Zoom account
+
+  User accounts
+
+  — Identify users not enforcing SSO, accounts with insecure host keys, unverified or inactive users,
+  and unsafe overrides of account-level security settings
+
+  Meetings
+
+  — Surface meetings without passwords or waiting rooms, meetings using Personal Meeting IDs (PMIs), and
+  meetings with external domain hosts
+
+  Recordings
+
+  — Detect publicly accessible cloud recordings, recordings without passcodes, and weak recording password
+  configurations
+
+  Content
+
+  — Identify sensitive information in meeting and recording content via DLP Profile matching
+
+  Learn more
+
+  This
+
+  integration
+
+  is available to all Cloudflare Zero Trust customers today. New customers can sign up and start with
+  their first two integrations for free. Existing customers can enable the integration directly in the
+  Cloudflare One dashboard under
+
+  Cloud & SaaS findings
+
+  >
+
+  Integrations
+
+  . The integration begins scanning immediately and surfaces findings in the dashboard within minutes.
+
+  Sep 8, 2026
+
+  Radar search now includes Internet events
+
+  Radar
+
+  Cloudflare Radar
+
+  search now includes Internet events and outages alongside existing results. Search event descriptions
+  or related entities, such as locations, ASes, bots, and top-level domains, to find relevant events and
+  open the most relevant Radar view.
+
+  Event links preserve the event date range, making it easier to investigate what changed before, during,
+  and after an event. These results are also available to browser-based AI agents through
+
+  WebMCP
+
+  .
+
+  Sep 8, 2026
+
+  WAF Release - 2026-09-08
+
+  WAF
+
+  This release enhances detection logic for existing rules targeting Next.js remote code execution (RCE)
+  vulnerabilities by consolidating active beta rules into baseline signatures.
+
+  Ruleset
+
+  Rule ID
+
+  Legacy Rule ID
+
+  Description
+
+  Previous Action
+
+  New Action
+
+  Comments
+
+  Cloudflare Managed Ruleset
+
+  ...c76ba662
+
+  N/A
+
+  Next.js - Image Optimizer Remote Code Execution via Crafted AVIF - Beta
+
+  Log
+
+  Block
+
+  This rule is merged into the original rule "Next.js - Image Optimizer Remote Code Execution via Crafted
+  AVIF" (ID:
+
+  ...80256efe
+
+  ).
+
+  Cloudflare Managed Ruleset
+
+  ...208457cf
+
+  N/A
+
+  Next.js - Remote Code Execution - CVE:CVE-2026-75604 - Beta
+
+  Log
+
+  Block
+
+  This rule is merged into the original rule "Next.js - Remote Code Execution - CVE:CVE-2026-75604" (ID:
+
+  ...2ca6cce3
+
+  ).
+
+  Sep 8, 2026
+
+  WAF Release - Scheduled changes for 2026-09-15
+
+  WAF
+
+  Announcement Date
+
+  Release Date
+
+  Release Behavior
+
+  Legacy Rule ID
+
+  Rule ID
+
+  Description
+
+  Comments
+
+  2026-09-08
+
+  2026-09-15
+
+  Log
+
+  N/A
+
+  ...ca453d31
+
+  SSRF - Cloud - 3
+
+  This is a new detection.
+
+  2026-09-08
+
+  2026-09-15
+
+  Log
+
+  N/A
+
+  ...e540f17f
+
+  Version Control - Information Disclosure - Beta
+
+  This rule will be merged into the original rule "Version Control - Information Disclosure" (ID:
+
+  ...0550c529
+
+  ).
+
+  2026-09-08
+
+  2026-09-15
+
+  Log
+
+  N/A
+
+  ...ba458b4b
+
+  Command Injection - Generic 10
+
+  This is a new detection.
+
+  Sep 8, 2026
+
+  Miniflare v5 prepares local development for the cf CLI
+
+  Workers
+
+  Miniflare v5 prepares Cloudflare local development tooling for the upcoming
+
+  cf
+
+  CLI.
+
+  Miniflare powers local Workers development behind
+
+  wrangler dev
+
+  , the Cloudflare Vite plugin, and
+
+  @cloudflare/vitest-plugin
+
+  .
+
+  Most projects should use those tools instead of depending on Miniflare directly, and Miniflare v5 will
+  not require any action.
+
+  The most significant change is a new configuration shape which aligns Miniflare with
+
+  cloudflare.config.ts
+
+  , the programmatic Cloudflare configuration format now available for testing.
+
+  Other breaking changes include:
+
+  Removed deprecated APIs and options, such as legacy alpha D1 bindings.
+
+  Removed now-unused, internal APIs like
+
+  wrappedBindings
+
+  Removed Miniflare''s built-in module discovery; higher-level tools like Wrangler and the Vite plugin
+  should be providing the module graph.
+
+  Moved local-only /cdn-cgi routes under /cdn-cgi/local.
+
+  Replaced per-resource persistence options with shared persistence root options.
+
+  For a more comprehensive list, refer to
+
+  Miniflare''s changelog
+
+  ↗
+
+  This work sets up a cleaner foundation for the next generation of local development tooling, including
+  the new
+
+  cf
+
+  CLI.
+
+  Sep 8, 2026
+
+  Python 3.14 for Python Workers
+
+  Workers
+
+  Python workers now use Python 3.14 by default.
+
+  This change applies to all new Python workers using compatibility date
+
+  2026-09-08
+
+  or later.
+
+  Internally, this change updates the Pyodide runtime to 314.0.6.
+
+  Sep 4, 2026
+
+  Enterprise customers can self-serve CDN upload limits up to 5 GB
+
+  Cloudflare Fundamentals
+
+  Workers
+
+  Enterprise customers can now configure a zone''s CDN
+
+  Maximum Upload Size
+
+  up to 5 GB directly from the
+
+  Network
+
+  page in the Cloudflare dashboard. This removes the need to contact your account team or Cloudflare Support
+  when applications need to accept request bodies larger than 500 MB and no greater than 5 GB.
+
+  The default maximum upload size remains 500 MB. Upload limits above 5 GB still require additional configuration
+  through your account team or
+
+  Cloudflare Support
+
+  .
+
+  Very large uploads may reach connection or read timeouts before reaching the configured size limit.
+  Make sure clients and origins allow enough time to complete the transfer when increasing this setting.
+
+  Refer to
+
+  Cache upload limits
+
+  and
+
+  Workers request body size limits
+
+  for details.
+
+  Sep 4, 2026
+
+  R2 Data Access Logs
+
+  R2
+
+  R2 Data Access Logs are now generally available. Turn on logging for a bucket to record object read,
+  write, list, multipart upload, and delete operations with response status codes below
+
+  400
+
+  .
+
+  Data Access Logs cover requests made through the S3-compatible API, Cloudflare API and dashboard, Workers
+  bindings, and public buckets through
+
+  r2.dev
+
+  or custom domains. Events are available in Workers Observability, where you can filter by bucket, operation,
+  interface, actor, and other request fields.
+
+  Log delivery is asynchronous and best effort. Events may be delayed or omitted, so do not rely on Data
+  Access Logs as a complete record of bucket activity.
+
+  Data Access Logs are available for non-jurisdictional buckets. For setup instructions, supported operations,
+  and the event field reference, refer to
+
+  R2 Data Access Logs
+
+  .
+
+  Sep 4, 2026
+
+  Deploy larger Workers — up to 64 MiB for both free and paid plans
+
+  Workers
+
+  You can now deploy Workers with larger dependencies, heavier frameworks, and more code without hitting
+  size limits.
+
+  When you deploy a Worker, Wrangler bundles your code and compresses it before uploading. Previously,
+  Cloudflare checked that compressed size and rejected deploys over 3 MB (Free) or 10 MB (Paid). That
+  limit has been removed. Cloudflare now only checks the uncompressed size of your bundle, which is 64
+  MiB across all plans.
+
+  To check your Worker''s bundle size before deploying:
+
+  wrangler
+
+  deploy
+
+  --outdir
+
+  bundled/
+
+  --dry-run
+
+  Total
+
+  Upload:
+
+  259.61
+
+  KiB
+
+  /
+
+  gzip:
+
+  47.23
+
+  KiB
+
+  The
+
+  Total Upload
+
+  value is your uncompressed bundle size. This is what counts against the 64 MiB limit. The
+
+  gzip
+
+  value is shown for reference but is no longer a limit.
+
+  For more information, refer to the
+
+  Worker size limits documentation
+
+  .
+
+  Sep 2, 2026
+
+  Define custom applications for breakout and prioritized traffic from the Cloudflare One Appliance dashboard
+
+  Cloudflare One Appliance
+
+  Cloudflare One
+
+  Cloudflare WAN
+
+  You can now define
+
+  custom applications
+
+  for
+
+  breakout
+
+  and
+
+  prioritized
+
+  traffic on the
+
+  Cloudflare One Appliance
+
+  directly from the dashboard, without calling the API.
+
+  In
+
+  Traffic Steering
+
+  >
+
+  Breakout traffic
+
+  or
+
+  Prioritized traffic
+
+  , select
+
+  Assign application traffic
+
+  >
+
+  Add
+
+  to create a custom application matched by
+
+  Hostnames
+
+  ,
+
+  IP subnets
+
+  , and/or the new
+
+  Source subnets
+
+  field, alongside Cloudflare-managed applications.
+
+  Edit or delete an existing custom application from the same panel, no API round-trip required.
+
+  Source subnets
+
+  lets you match traffic by its source IP range, complementing the existing
+
+  source LAN interface breakout criteria
+
+  .
+
+  This complements the existing API and Terraform workflow for managing applications.
+
+  For details, refer to
+
+  Breakout traffic
+
+  and
+
+  Prioritized traffic
+
+  .
+
+  Sep 2, 2026
+
+  Configure DHCP options from the dashboard on Cloudflare One Appliance
+
+  Cloudflare One Appliance
+
+  Cloudflare One
+
+  Cloudflare WAN
+
+  You can now configure
+
+  custom DHCP options
+
+  directly from the dashboard when the
+
+  Cloudflare One Appliance
+
+  is acting as the DHCP server for a LAN.
+
+  In
+
+  LAN configuration
+
+  , under
+
+  DHCP server options
+
+  , select
+
+  Add DHCP option
+
+  to choose from common options for PXE / iPXE boot, VoIP phone provisioning, and vendor-specific configuration,
+  or select
+
+  Add custom option
+
+  to enter your own option code, type, and value.
+
+  This complements the existing
+
+  API and Terraform workflow
+
+  for configuring DHCP options.
+
+  For details, refer to
+
+  DHCP server options
+
+  .
+
+  Sep 2, 2026
+
+  New in Images: text rasterization and updates to the binding
+
+  Cloudflare Images
+
+  We''ve added more ways to manage and manipulate images with the
+
+  Images binding
+
+  . Here''s what''s new:
+
+  Render text into an image.
+
+  Output a string of text into its own image or draw it over another image.
+
+  Use the
+
+  .text()
+
+  method to rasterize text with the Images binding.
+
+  Style content using the
+
+  font
+
+  ,
+
+  size
+
+  , and
+
+  color
+
+  options.
+
+  The
+
+  draw
+
+  array in
+
+  cf.image
+
+  now accepts a
+
+  text
+
+  key.
+
+  Manage hosted images without an API token.
+
+  Metadata filtering:
+
+  Pass
+
+  filter.metadata
+
+  to
+
+  .list()
+
+  to return images by custom metadata. Match a bounded range by setting two operators in one condition,
+  for example,
+
+  priority: { gte: 2, lte: 5 }
+
+  .
+
+  Server-side signing:
+
+  Get a signed URL for a private image with
+
+  .signedUrl()
+
+  .
+
+  User uploads:
+
+  Create a Direct Creator Upload link with
+
+  .createDirectUpload()
+
+  so that a client can upload an image to your storage.
+
+  Set headers in a single call.
+
+  Pass a
+
+  headers
+
+  option to
+
+  .response()
+
+  to set headers without rebuilding the
+
+  Response
+
+  .
+
+  Content-Type
+
+  is always taken from the o'

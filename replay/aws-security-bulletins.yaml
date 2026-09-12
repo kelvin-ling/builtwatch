@@ -1,9 +1,22 @@
-# Demo replay fixture. Use live mode for current AWS security bulletins.
+# Replay snapshot. Real content retrieved from the publisher URL below
+# on 2026-09-12 by scripts/capture_replay.py.
+# Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: aws-security-bulletins
 source_name: AWS Security Bulletins
 publisher: Amazon Web Services
 url: https://aws.amazon.com/security/security-bulletins/rss/
-retrieved_at: '2026-09-11T00:00:00+00:00'
-captured_by: curated-demo-fixture
+retrieved_at: '2026-09-12T06:21:38.976561+00:00'
+captured_by: scripts/capture_replay.py
+published_at: null
+effective_at: null
 fetch_status: ok
-content: 'AWS Security Bulletins. AWS publishes security and privacy announcements for vulnerabilities affecting AWS services, software, and products.'
+content: 'Skip to main content
+
+  Security Bulletins
+
+  No matter how carefully engineered the services are, from time to time it may be necessary to notify
+  customers of security and privacy events with AWS services.
+
+  Subscribe to our Security Bulletin RSS Feed
+
+  to keep abreast of security announcements.'

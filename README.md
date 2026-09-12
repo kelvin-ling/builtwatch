@@ -112,8 +112,9 @@ The public sample workspace shows saved, real Strands/Nova replay results for th
 example systems. It is read-only and never invokes a model. Findings are historical
 assessments, not announcements of newly detected changes today.
 
-Choose **Open your workspace** and enter the private access key supplied with the
-deployment. The key stays in browser session storage. The owner workspace supports:
+Choose **Sign in / Register** to create or open a private email account. AWS Cognito
+handles passwords and email verification; no ChatGPT account or payment details are
+required. The signed-in workspace supports:
 
 - Import profiles prepared by a project agent, with the source agent shown on each app.
 - Review and edit imported details, with manual entry available as a fallback.
@@ -126,11 +127,9 @@ No repository connection is required. The recommended flow is to copy BuiltWatch
 request into an agent that already knows the project, then import its export for review.
 Importing the returned JSON is local to the request and does not invoke a model.
 
-This deployment is a **single-owner workspace**, protected by a high-entropy access key.
-It does not offer public account registration or multiple independent tenants.
 A running check may temporarily make the private API busy; the static sample remains
-available. Keep the access key private. Local access instructions are in the gitignored
-`data/WORKSPACE_ACCESS.md` file created at deployment.
+available. Sessions last seven days, and signing in again replaces the previous session.
+Registration, intake and live checks have conservative pilot limits.
 
 ## Architecture
 
@@ -156,13 +155,15 @@ builtwatch finding list
 BuiltWatch minimizes idle compute and avoids anonymous AI spending.
 
 - The frontend is static. Lambda has no provisioned concurrency or always-on server.
-- Estimated model usage is checked before calls: $0.25/run, $0.50/day, $10/month
-  in the web deployment. An in-flight call can exceed a threshold before usage is known.
+- Estimated model usage is checked before calls: $0.25/check, $0.50/day and $2/month per
+  workspace, within a shared USD $5/month model reserve. An in-flight call can exceed a
+  threshold before usage is known.
 - Acknowledged findings can surface again when their material evidence changes.
 - Completed assessments are cached by profile, source content, and live/replay mode.
   New profiles, edited profiles, and interrupted pairs are still assessed.
 - Retrieval is bounded and limited to the committed source registry.
-- API reads and writes require the owner's key; public visitors use static sample data.
+- API reads and writes require a verified account session; public visitors use static
+  sample data.
 - Private SQLite checkpoints are encrypted in S3, with one concurrent Lambda writer.
   Storage, requests, bandwidth, and logs can still incur charges; no zero-cost guarantee.
 

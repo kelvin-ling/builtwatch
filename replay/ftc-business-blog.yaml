@@ -1,14 +1,21 @@
+# Replay snapshot. Real content retrieved from the publisher URL below
+# on 2026-09-12 by scripts/capture_replay.py.
+# Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: ftc-business-blog
+source_name: FTC Business Blog — Consumer and Business Developments
+publisher: US Federal Trade Commission
 url: https://www.ftc.gov/business-guidance/blog
-retrieved_at: '2026-09-09T13:10:38.902565+00:00'
-published_at: null
+retrieved_at: '2026-09-12T06:21:40.170762+00:00'
+captured_by: scripts/capture_replay.py
+published_at: '2026-02-13'
 effective_at: null
+fetch_status: ok
 content: 'Skip to main content
 
   The .gov means it’s official.
 
-  Federal government websites often end in .gov or .mil. Before sharing sensitive
-  information, make sure you’re on a federal government site.
+  Federal government websites often end in .gov or .mil. Before sharing sensitive information, make sure
+  you’re on a federal government site.
 
   The site is secure.
 
@@ -16,10 +23,16 @@ content: 'Skip to main content
 
   https://
 
-  ensures that you are connecting to the official website and that any information
-  you provide is encrypted and transmitted securely.
+  ensures that you are connecting to the official website and that any information you provide is encrypted
+  and transmitted securely.
 
   Español
+
+  Report Fraud
+
+  Submit Public Comments
+
+  Search the Legal Library
 
   Business Blog
 
@@ -213,7 +226,7 @@ content: 'Skip to main content
 
   July 2026
 
-  (1)
+  (2)
 
   June 2026
 
@@ -253,7 +266,18 @@ content: 'Skip to main content
 
   View More
 
-  Displaying 1 - 20 of 807
+  Displaying 1 - 20 of 808
+
+  Business Blog
+
+  Announcing the Bureau of Consumer Protection’s New Guidance Program
+
+  Date
+
+  September 10, 2026
+
+  The Bureau of Consumer Protection under Chairman Ferguson’s and my leadership has worked to provide
+  clear, accessible, and timely guidance that helps the public understand — and comply with — the law...
 
   Business Blog
 
@@ -263,22 +287,19 @@ content: 'Skip to main content
 
   July 20, 2026
 
-  As a veteran, you’ve worked hard to protect our country. And if you’re a veteran-run
-  small business, you know how important it is to have protections against scammers
-  and cybercriminals. Your best...
+  As a veteran, you’ve worked hard to protect our country. And if you’re a veteran-run small business,
+  you know how important it is to have protections against scammers and cybercriminals. Your best...
 
   Business Blog
 
-  Back up those earnings claims — and other lessons from the FTC’s Labor Task Force
-  work
+  Back up those earnings claims — and other lessons from the FTC’s Labor Task Force work
 
   Date
 
   June 16, 2026
 
-  A healthy labor market is critical to the country’s success. That’s why last year,
-  FTC Chairman Andrew N. Ferguson formed a Labor Task Force to maximize the agency’s
-  broad-based jurisdiction and...
+  A healthy labor market is critical to the country’s success. That’s why last year, FTC Chairman Andrew
+  N. Ferguson formed a Labor Task Force to maximize the agency’s broad-based jurisdiction and...
 
   Business Blog
 
@@ -288,35 +309,30 @@ content: 'Skip to main content
 
   May 19, 2026
 
-  On May 19, 2025, President Donald J. Trump signed the TAKE IT DOWN Act (“Act”) into
-  law. Championed by First Lady Melania Trump, the Act represents a significant step
-  in combating harmful digital...
+  On May 19, 2025, President Donald J. Trump signed the TAKE IT DOWN Act (“Act”) into law. Championed
+  by First Lady Melania Trump, the Act represents a significant step in combating harmful digital...
 
   Business Blog
 
-  Protect your business from scams and online threats this National Small Business
-  Week
+  Protect your business from scams and online threats this National Small Business Week
 
   Date
 
   May 4, 2026
 
-  All week long, learn how the FTC can help you protect your small business from scams
-  and online threats. Run a small business or want to support the small businesses
-  in your community? Here’s how you...
+  All week long, learn how the FTC can help you protect your small business from scams and online threats.
+  Run a small business or want to support the small businesses in your community? Here’s how you...
 
   Business Blog
 
-  Protecting kids from deceptive and unsubstantiated health claims: the FTC’s case
-  against TruHeight
+  Protecting kids from deceptive and unsubstantiated health claims: the FTC’s case against TruHeight
 
   Date
 
   April 16, 2026
 
-  Parents and kids (like all consumers) need clear, truthful information to make informed
-  decisions — especially when those decisions affect their children’s health and physical
-  safety. With that in...
+  Parents and kids (like all consumers) need clear, truthful information to make informed decisions —
+  especially when those decisions affect their children’s health and physical safety. With that in...
 
   Business Blog
 
@@ -326,22 +342,19 @@ content: 'Skip to main content
 
   April 8, 2026
 
-  The FTC’s Bureau of Consumer Protection (BCP) is committed to providing legal clarity
-  to legitimate businesses that wish to deal honestly with their customers and comply
-  with the law. Last year, I...
+  The FTC’s Bureau of Consumer Protection (BCP) is committed to providing legal clarity to legitimate
+  businesses that wish to deal honestly with their customers and comply with the law. Last year, I...
 
   Business Blog
 
-  Do you have thoughts on negative option-related regulations? Share them with the
-  FTC
+  Do you have thoughts on negative option-related regulations? Share them with the FTC
 
   Date
 
   March 24, 2026
 
-  The FTC recently published an Advanced Notice of Proposed Rulemaking to request
-  input on whether it needs to update the Negative Option Rule from 1973. The comment
-  period is open until April 13, so...
+  The FTC recently published an Advanced Notice of Proposed Rulemaking to request input on whether it
+  needs to update the Negative Option Rule from 1973. The comment period is open until April 13, so...
 
   Business Blog
 
@@ -351,9 +364,8 @@ content: 'Skip to main content
 
   March 23, 2026
 
-  Many of us use or work with rental housing in some way. Maybe you have been — or
-  are currently — a renter. Or maybe you own a rental property, operate a property
-  management company, or otherwise work...
+  Many of us use or work with rental housing in some way. Maybe you have been — or are currently — a renter.
+  Or maybe you own a rental property, operate a property management company, or otherwise work...
 
   Business Blog
 
@@ -363,9 +375,8 @@ content: 'Skip to main content
 
   March 18, 2026
 
-  If you’re thinking about opening a franchise, you’re probably looking for things
-  like name recognition, training, and support to help you grow your business. What
-  you’re probably not looking for is...
+  If you’re thinking about opening a franchise, you’re probably looking for things like name recognition,
+  training, and support to help you grow your business. What you’re probably not looking for is...
 
   Business Blog
 
@@ -375,22 +386,20 @@ content: 'Skip to main content
 
   March 17, 2026
 
-  The Bureau of Consumer Protection is deeply honored to recognize one of its most
-  distinguished alumnae, Jodie Bernstein, as she celebrates her 100 th Birthday. For
-  Jodie, one of the Commission’s...
+  The Bureau of Consumer Protection is deeply honored to recognize one of its most distinguished alumnae,
+  Jodie Bernstein, as she celebrates her 100 th Birthday. For Jodie, one of the Commission’s...
 
   Business Blog
 
-  Be honest with workers about how much they’ll earn, and other lessons from the FTC’s
-  settlement with Walmart
+  Be honest with workers about how much they’ll earn, and other lessons from the FTC’s settlement with
+  Walmart
 
   Date
 
   February 26, 2026
 
-  Protecting workers and ensuring competitive labor markets is a top priority for
-  the FTC and the agency’s Labor Task Force. By maximizing the agency’s jurisdiction
-  and interdisciplinary expertise, the...
+  Protecting workers and ensuring competitive labor markets is a top priority for the FTC and the agency’s
+  Labor Task Force. By maximizing the agency’s jurisdiction and interdisciplinary expertise, the...
 
   Business Blog
 
@@ -400,9 +409,8 @@ content: 'Skip to main content
 
   January 28, 2026
 
-  Your small business likely has had many milestones. Hiring your first employee.
-  Opening your doors for the first time. Making your first sale. But some milestones
-  you’d probably rather avoid — like...
+  Your small business likely has had many milestones. Hiring your first employee. Opening your doors for
+  the first time. Making your first sale. But some milestones you’d probably rather avoid — like...
 
   Business Blog
 
@@ -412,22 +420,19 @@ content: 'Skip to main content
 
   January 12, 2026
 
-  If you represent, coach, recruit, or otherwise work with student athletes, you probably
-  know about the Sports Agent Responsibility and Trust Act (SPARTA). Since 2004, SPARTA
-  has protected student...
+  If you represent, coach, recruit, or otherwise work with student athletes, you probably know about the
+  Sports Agent Responsibility and Trust Act (SPARTA). Since 2004, SPARTA has protected student...
 
   Business Blog
 
-  A warning letter (or ten) for businesses: comply with the FTC’s Consumer Review
-  Rule
+  A warning letter (or ten) for businesses: comply with the FTC’s Consumer Review Rule
 
   Date
 
   December 22, 2025
 
-  Consumers often rely on reviews to help them choose between everything from home
-  repair companies to apartments to lawyers. When those reviews reflect honest feedback
-  from real people who have...
+  Consumers often rely on reviews to help them choose between everything from home repair companies to
+  apartments to lawyers. When those reviews reflect honest feedback from real people who have...
 
   Business Blog
 
@@ -437,9 +442,8 @@ content: 'Skip to main content
 
   December 8, 2025
 
-  Price can be one of the most important factors people consider when looking for
-  housing. But what happens when the rental price advertised doesn’t represent the
-  price your tenants end up paying...
+  Price can be one of the most important factors people consider when looking for housing. But what happens
+  when the rental price advertised doesn’t represent the price your tenants end up paying...
 
   Business Blog
 
@@ -449,9 +453,8 @@ content: 'Skip to main content
 
   September 30, 2025
 
-  The FTC is committed to fighting illegal telemarketing. For proof, look no further
-  than the recently announced settlement with Citizens Disability, LLC and its subsidiary,
-  CD Media, LLC (collectively...
+  The FTC is committed to fighting illegal telemarketing. For proof, look no further than the recently
+  announced settlement with Citizens Disability, LLC and its subsidiary, CD Media, LLC (collectively...
 
   Business Blog
 
@@ -461,9 +464,8 @@ content: 'Skip to main content
 
   September 30, 2025
 
-  If you run a business, you might have employees on Medicare. Or maybe you know family
-  or friends on Medicare or employees with family or friends on Medicare. Here’s how
-  to help everyone avoid scams...
+  If you run a business, you might have employees on Medicare. Or maybe you know family or friends on
+  Medicare or employees with family or friends on Medicare. Here’s how to help everyone avoid scams...
 
   Business Blog
 
@@ -473,9 +475,8 @@ content: 'Skip to main content
 
   September 29, 2025
 
-  Small businesses are the engine of the American economy. Whether you own a bakery,
-  an accounting firm, a local repair shop, or something else, you want to protect
-  what you’ve built. Sometimes that...
+  Small businesses are the engine of the American economy. Whether you own a bakery, an accounting firm,
+  a local repair shop, or something else, you want to protect what you’ve built. Sometimes that...
 
   Business Blog
 
@@ -485,22 +486,9 @@ content: 'Skip to main content
 
   September 25, 2025
 
-  Is your business in the fundraising business? Want a refresher on the rules of the
-  road? Check out the FTC’s recent settlement with Kars-R-Us.com, Inc. (“Kars”), a
-  company that collected donations on...
+  Is your business in the fundraising business? Want a refresher on the rules of the road? Check out the
+  FTC’s recent settlement with Kars-R-Us.com, Inc. (“Kars”), a company that collected donations on...
 
-  Business Blog
-
-  FTC takes steps to stop deceptive and unfair labor market practices
-
-  Date
-
-  September 24, 2025
-
-  Deceptive and unfair labor market practices hurt American workers and honest businesses
-  that comply with the law. Protecting workers and ensuring fair, honest, and competitive
-  labor markets is a top...
-
-  Displaying 1 - 20 of 807
+  Displaying 1 - 20 of 808
 
   Return to top'

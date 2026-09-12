@@ -5,7 +5,7 @@ Judging: 15 September – 8 October 2026. Winners: 14 October 2026.
 
 ## Hackathon requirements
 
-> **Verified against live state on 10 September 2026.** Every ✅ below was checked
+> **Verified against live state on 12 September 2026.** Every ✅ below was checked
 > against the running system, not assumed. Known-open defects are tracked separately in
 > [ISSUES.md](ISSUES.md) — read that before submitting, since BW-3 (private repo) is a
 > hard blocker and BW-5 (demo domain) affects how this is judged.
@@ -25,21 +25,19 @@ Judging: 15 September – 8 October 2026. Winners: 14 October 2026.
 | Functioning end-to-end agent | ✅ | Running in production on Amazon Nova (`nova-lite` screen / `nova-pro` assess). Two tenants have completed scans end to end. *Anthropic models are not entitled on this account; the model ladder fell back automatically.* |
 | AI assistance disclosed | ✅ | [NOTICE](../NOTICE) and README |
 | Newly created in submission period | ✅ | First commit 8 Sep 2026; no prior code incorporated |
-| Live demo link *(bonus)* | ✅ | `https://builtwatch.org` — registered, deployed and returning 200 (verified 11 Sep 2026). BW-5 closed. **`www.builtwatch.org` does not resolve** — see BW-13. |
+| Live demo link *(bonus)* | ✅ | `https://builtwatch.org` — registered, deployed and returning 200. The generated Sites hostname redirects to the custom domain; `www` DNS remains a Cloudflare account action. |
 | builder.aws blog post *(bonus)* | ⬜ | Up to +0.6 (0.2 × 3 posts) |
 
-## Open blockers
+## Historical provider-access note
 
-### 1. Bedrock model access is not enabled — **critical path**
-
-Every model invocation fails:
+Earlier diagnostic output said some provider models were unavailable:
 
 ```
 ValidationException: Error 002: Access to Bedrock models is not allowed for this account
 ```
 
-Diagnosed, and it is **not** an IAM problem — the user has AdministratorAccess and the
-control plane works fine (`ListFoundationModels` returns 122 models):
+This was **not an IAM problem**. The AWS account has AdministratorAccess and the
+control plane works correctly:
 
 ```
 get_use_case_for_model_access  → ResourceNotFoundException:
@@ -49,14 +47,13 @@ anthropic.claude-sonnet-4-5   agreement=NOT_AVAILABLE  entitlement=AVAILABLE  au
 amazon.nova-lite-v1:0         agreement=AVAILABLE      entitlement=AVAILABLE  auth=AUTHORIZED
 ```
 
-The account has never accepted Anthropic's model terms, so Anthropic models return
-`ValidationException: Error 002`. **This is not a blocker.** The model ladder in
-`config.py` falls back automatically and the system has been running in production on
-Amazon Nova (`nova-lite` screening, `nova-pro` assessment) since 9 September.
+The account has not accepted Anthropic's model terms, so Anthropic models can return
+`ValidationException: Error 002`. **This is not a blocker.** The model ladder falls back
+automatically and production runs on Amazon Nova (`nova-lite` screening, `nova-pro`
+assessment).
 
-Pursuing Anthropic access is a **quality upgrade, not a fix**: the grounding rules lean on
-instruction-following, and Nova has been observed fabricating quotes (~2 in 57 assessments;
-the validator catches them, but a downgraded answer still costs a model call).
+Pursuing Anthropic access is optional quality work, not a release requirement: grounding
+validation still catches unsupported quotes and downgrades the result when needed.
 
 **If you want it — console, ~3 minutes, account owner only** (it is an acceptance of model
 provider terms, so no agent can do it):
@@ -83,13 +80,15 @@ eval "$(aws configure export-credentials --format env)"
 `doctor` probes each model with a real one-token call and prints the cheapest working pair.
 Trust it over `ListFoundationModels`, which lists models the account cannot invoke.
 
-## 2. Repository must become public
+## Remaining submission blockers
+
+### Repository must become public
 
 Rules require a public repo. Flip it in **Settings → General → Danger Zone → Change
 visibility** before 14 Sep. Nothing in the repo contains credentials — `.gitignore`
 excludes `data/`, `*.db` and `.env*`, and no AWS keys are committed.
 
-### 3. Demo video
+### Demo video
 
 Five minutes maximum, must show the working project and pitch the problem, audience, and
 why it matters.

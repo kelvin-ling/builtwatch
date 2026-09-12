@@ -1,11 +1,11 @@
 # Replay snapshot. Real content retrieved from the publisher URL below
-# on 2026-09-08 by scripts/capture_replay.py.
+# on 2026-09-12 by scripts/capture_replay.py.
 # Quoted in findings as historical material, clearly labelled mode='replay'.
 source_id: cisa-kev
 source_name: CISA Known Exploited Vulnerabilities Catalog
 publisher: US Cybersecurity and Infrastructure Security Agency
 url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog
-retrieved_at: '2026-09-08T05:01:28.432295+00:00'
+retrieved_at: '2026-09-12T06:21:38.708958+00:00'
 captured_by: scripts/capture_replay.py
 published_at: null
 effective_at: null
@@ -101,7 +101,11 @@ content: 'Skip to main content
 
   Langflow
 
+  N-able
+
   Accellion
+
+  ConnectWise
 
   SimpleHelp
 
@@ -109,13 +113,11 @@ content: 'Skip to main content
 
   Gladinet
 
-  N-able
-
   Sangoma
 
-  Qlik
+  JFrog
 
-  ConnectWise
+  Qlik
 
   CrushFTP
 
@@ -174,8 +176,6 @@ content: 'Skip to main content
   LiteSpeed
 
   Arista
-
-  JFrog
 
   Unitronics
 
@@ -698,24 +698,410 @@ content: 'Skip to main content
 
   Showing 1 to 20 of
 
-  1695
+  1709
 
   results
 
+  GitLab | Community Edition and Enterprise Edition
+
+  CVE-2026-85706
+
+  GitLab Community Edition and Enterprise Edition Path Traversal Vulnerability:
+
+  GitLab Community Edition and Enterprise Edition contains a path traversal vulnerability that allows
+  an unauthenticated user to read arbitrary files due to an improper path confinement and missing authentication
+  enforcement in the repository commits API.
+
+  Related CWE:
+
+  CWE-35
+
+  Known To Be Used in Ransomware Campaigns?
+
+  Unknown
+
+  Forensic triage required per BOD-26-04:
+
+  Yes
+
+  Date Added:
+
+  2026-09-11
+
+  Due Date:
+
+  2026-09-14
+
+  Action:
+
+  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
+  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
+  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
+  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
+  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
+
+  Additional Notes
+
+  https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-3-2-released/
+
+  ; BOD 26-04:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
+
+  ; Forensics Triage Requirements:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
+
+  ;
+
+  https://nvd.nist.gov/vuln/detail/CVE-2026-85706
+
+  JFrog | Artifactory
+
+  CVE-2026-42018
+
+  JFrog Artifactory Improper Authentication Vulnerability:
+
+  JFrog Artifactory contains an improper authentication vulnerability that could return an internal anonymous-user
+  token to an unauthenticated caller when anonymous access is disabled, potentially exposing sensitive
+  resources.
+
+  Related CWE:
+
+  CWE-287
+
+  Known To Be Used in Ransomware Campaigns?
+
+  Unknown
+
+  Forensic triage required per BOD-26-04:
+
+  No
+
+  Date Added:
+
+  2026-09-11
+
+  Due Date:
+
+  2026-09-25
+
+  Action:
+
+  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
+  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
+  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
+  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
+  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
+
+  Additional Notes
+
+  https://docs.jfrog.com/releases/docs/jfrog-security-advisories
+
+  ;
+
+  https://docs.jfrog.com/releases/docs/artifactory-self-managed-releases
+
+  ; BOD 26-04:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
+
+  ; Forensics Triage Requirements:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
+
+  ;
+
+  https://nvd.nist.gov/vuln/detail/CVE-2026-42018
+
+  JFrog | Artifactory
+
+  CVE-2026-42016
+
+  JFrog Artifactory Incorrect Authorization Vulnerability:
+
+  JFrog Artifactory contains an incorrect authorization vulnerability that allows leads to privilege escalation
+  attack due to a validation check of the token signature/issuer and not the token’s scope.
+
+  Related CWE:
+
+  CWE-863
+
+  Known To Be Used in Ransomware Campaigns?
+
+  Unknown
+
+  Forensic triage required per BOD-26-04:
+
+  No
+
+  Date Added:
+
+  2026-09-11
+
+  Due Date:
+
+  2026-09-25
+
+  Action:
+
+  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
+  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
+  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
+  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
+  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
+
+  Additional Notes
+
+  https://docs.jfrog.com/releases/docs/jfrog-security-advisories
+
+  ;
+
+  https://docs.jfrog.com/releases/docs/artifactory-self-managed-releases
+
+  ; BOD 26-04:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
+
+  ; Forensics Triage Requirements:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
+
+  ;
+
+  https://nvd.nist.gov/vuln/detail/CVE-2026-42016
+
+  ConnectWise | ScreenConnect
+
+  CVE-2026-84869
+
+  ConnectWise ScreenConnect Improper Privilege Management and Missing Authorization Vulnerability:
+
+  ConnectWise ScreenConnect contains both an improper privilege management and missing authorization vulnerability
+  that may allow an attacker to file transfer and execution through an active remote sessions without
+  authorization or host confirmation.
+
+  Related CWEs:
+
+  CWE-269
+
+  |
+
+  CWE-862
+
+  Known To Be Used in Ransomware Campaigns?
+
+  Unknown
+
+  Forensic triage required per BOD-26-04:
+
+  Yes
+
+  Date Added:
+
+  2026-09-11
+
+  Due Date:
+
+  2026-09-14
+
+  Action:
+
+  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
+  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
+  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
+  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
+  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
+
+  Additional Notes
+
+  https://www.connectwise.com/company/trust/security-bulletins/2026-09-08-screenconnect-bulletin
+
+  ; BOD 26-04:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
+
+  ; Forensics Triage Requirements:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
+
+  ;
+
+  https://nvd.nist.gov/vuln/detail/CVE-2026-84869
+
+  MikroTik | RouterOS
+
+  CVE-2026-67277
+
+  MikroTik RouterOS Missing Authentication for Critical Function Vulnerability:
+
+  MikroTik RouterOS contains a missing authenticaion for critical function vulnerability which allows
+  kernel memory disclosure and denial of service in the btest service.
+
+  Related CWE:
+
+  CWE-306
+
+  Known To Be Used in Ransomware Campaigns?
+
+  Unknown
+
+  Forensic triage required per BOD-26-04:
+
+  No
+
+  Date Added:
+
+  2026-09-10
+
+  Due Date:
+
+  2026-09-13
+
+  Action:
+
+  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
+  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
+  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
+  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
+  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
+
+  Additional Notes
+
+  https://mikrotik.com/supportsec/september-2026-vulnerability/
+
+  ; BOD 26-04:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
+
+  ; Forensics Triage Requirements:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
+
+  ;
+
+  https://nvd.nist.gov/vuln/detail/CVE-2026-67277
+
+  MikroTik | RouterOS
+
+  CVE-2026-86060
+
+  MikroTik RouterOS Improper Neutralization of Argument Delimiters in a Command Vulnerability:
+
+  MikroTik RouterOS contains an improper neutralization of argument delimiters in a command vulnerability
+  which allows an attacked to change the trusted RouterOS policy mask, leading to privilege escalation.
+
+  Related CWE:
+
+  CWE-88
+
+  Known To Be Used in Ransomware Campaigns?
+
+  Unknown
+
+  Forensic triage required per BOD-26-04:
+
+  Yes
+
+  Date Added:
+
+  2026-09-10
+
+  Due Date:
+
+  2026-09-13
+
+  Action:
+
+  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
+  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
+  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
+  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
+  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
+
+  Additional Notes
+
+  ; BOD 26-04:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
+
+  ; Forensics Triage Requirements:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
+
+  ;
+
+  https://nvd.nist.gov/vuln/detail/CVE-2026-86060
+
+  Cisco | Secure Firewall Management Center (FMC) and Security Cloud Control (SCC) Firewall Management
+
+  CVE-2026-20079
+
+  Cisco Firewall Management Center Authentication Bypass Using an Alternate Path or Channel Vulnerability:
+
+  Cisco Secure Firewall Management Center (FMC) Software and Cisco Security Cloud Control (SCC) Firewall
+  Management contain an authentication Bypass using an alternate path or channel vulnerability that could
+  allow an unauthenticated, remote attacker to bypass authentication and execute script files on an affected
+  device to obtain root access to the underlying operating system.
+
+  Related CWE:
+
+  CWE-288
+
+  Known To Be Used in Ransomware Campaigns?
+
+  Unknown
+
+  Forensic triage required per BOD-26-04:
+
+  Yes
+
+  Date Added:
+
+  2026-09-09
+
+  Due Date:
+
+  2026-09-12
+
+  Action:
+
+  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
+  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
+  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
+  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
+  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
+
+  Additional Notes
+
+  https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-onprem-fmc-authbypass-5JPp45V2
+
+  ; BOD 26-04:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
+
+  ; Forensics Triage Requirements:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
+
+  ;
+
+  https://nvd.nist.gov/vuln/detail/CVE-2026-20079
+
   Google | Chromium V8
 
-  CVE-2026-85046
+  CVE-2026-87491
 
-  Google Chromium V8 Type Confusion Vulnerability:
+  Google Chromium V8 Out of Bounds Write Vulnerability:
 
-  Google Chromium V8 contains a type confusion vulnerability that allows a remote attacker to execute
+  Google Chromium V8 contains an out of bounds write vulnerability that allows a remote attacker to execute
   arbitrary code inside the sandbox via a crafted HTML page. This vulnerability could affect multiple
   web browsers that utilize Chromium, including, but not limited to, Google Chrome, Microsoft Edge, and
   Opera.
 
   Related CWE:
 
-  CWE-843
+  CWE-787
 
   Known To Be Used in Ransomware Campaigns?
 
@@ -727,11 +1113,11 @@ content: 'Skip to main content
 
   Date Added:
 
-  2026-09-04
+  2026-09-09
 
   Due Date:
 
-  2026-09-18
+  2026-09-23
 
   Action:
 
@@ -743,7 +1129,7 @@ content: 'Skip to main content
 
   Additional Notes
 
-  https://chromereleases.googleblog.com/2026/09/stable-channel-update-for-desktop_01882797386.html
+  https://chromereleases.googleblog.com/2026/09/stable-channel-update-for-desktop_0808145027.html
 
   ; BOD 26-04:
 
@@ -755,78 +1141,24 @@ content: 'Skip to main content
 
   ;
 
-  https://nvd.nist.gov/vuln/detail/CVE-2026-85046
+  https://nvd.nist.gov/vuln/detail/CVE-2026-87491
 
-  SonicWall | SMA1000 Appliances
+  Fortinet | Multiple Products
 
-  CVE-2026-83549
+  CVE-2025-25249
 
-  SonicWall SMA1000 Appliances OS Command Injection Vulnerability:
+  Fortinet Multiple Products Heap-based Buffer Overflow Vulnerability:
 
-  SonicWall SMA1000 Appliances contains an OS command injection vulnerability that could enable a remote
-  authenticated attacker as administrator to execute arbitrary OS commands, resulting in remote code execution.
-
-  Related CWE:
-
-  CWE-78
-
-  Known To Be Used in Ransomware Campaigns?
-
-  Unknown
-
-  Forensic triage required per BOD-26-04:
-
-  Yes
-
-  Date Added:
-
-  2026-09-02
-
-  Due Date:
-
-  2026-09-05
-
-  Action:
-
-  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
-  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
-  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
-  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
-  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-
-  Additional Notes
-
-  https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2026-0016
-
-  ; BOD 26-04:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
-
-  ; Forensics Triage Requirements:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
-
-  ;
-
-  https://nvd.nist.gov/vuln/detail/CVE-2026-83549
-
-  SonicWall | SMA1000 Appliances
-
-  CVE-2026-83548
-
-  SonicWall SMA1000 Appliances Server-Side Request Forgery Vulnerability:
-
-  SonicWall SMA1000 Appliances contains a server-side request forgery vulnerability that could allow a
-  remote unauthenticated attacker to gain unauthorized access to sensitive functionality and perform unauthorized
-  operations.
+  Fortinet FortiOS, FortiSwitchManager, and FortiSASE contain a heap-based buffer overflow vulnerability
+  that allows an attacker to execute unauthorized code or commands via specially crafted packets.
 
   Related CWEs:
 
-  CWE-918
+  CWE-122
 
   |
 
-  CWE-441
+  CWE-787
 
   Known To Be Used in Ransomware Campaigns?
 
@@ -838,11 +1170,11 @@ content: 'Skip to main content
 
   Date Added:
 
-  2026-09-02
+  2026-09-09
 
   Due Date:
 
-  2026-09-05
+  2026-09-12
 
   Action:
 
@@ -854,7 +1186,7 @@ content: 'Skip to main content
 
   Additional Notes
 
-  https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2026-0016
+  https://fortiguard.fortinet.com/psirt/FG-IR-25-084
 
   ; BOD 26-04:
 
@@ -866,21 +1198,22 @@ content: 'Skip to main content
 
   ;
 
-  https://nvd.nist.gov/vuln/detail/CVE-2026-83548
+  https://nvd.nist.gov/vuln/detail/CVE-2025-25249
 
-  Sangoma | Switchvox
+  Citrix | NetScaler
 
-  CVE-2026-9586
+  CVE-2026-19490
 
-  Sangoma Switchvox SQL Injection Vulnerability:
+  Citrix NetScaler Authentication Bypass Using an Alternate Path or Channel Vulnerability:
 
-  Sangoma Switchvox contains a SQL injection vulnerability which allows an unauthenticated remote attacker
-  to execute arbitrary SQL statements against the backend PostgreSQL database using a single crafted request,
-  including database operations and remote code execution.
+  Citrix NetScaler ADC and NetScaler Gateway contain an authentication-bypass vulnerability involving
+  an alternate path or channel. When the NetScaler appliance is configured as an AAA virtual server or
+  as a Gateway (SSL VPN, ICA Proxy, CVPN, or RDP Proxy), an unauthenticated remote threat actor may be
+  able to bypass authentication.
 
   Related CWE:
 
-  CWE-89
+  CWE-288
 
   Known To Be Used in Ransomware Campaigns?
 
@@ -892,11 +1225,11 @@ content: 'Skip to main content
 
   Date Added:
 
-  2026-09-02
+  2026-09-09
 
   Due Date:
 
-  2026-09-05
+  2026-09-12
 
   Action:
 
@@ -908,7 +1241,7 @@ content: 'Skip to main content
 
   Additional Notes
 
-  https://sangomakb.atlassian.net/wiki/spaces/Switchvox/pages/1802371073/Switchvox+-+Release+Notes+Version+8.4.0.2+July+14+2026
+  https://support.citrix.com/external/article/CTX696939/netscaler-adc-and-netscaler-gateway-secu.html
 
   ; BOD 26-04:
 
@@ -920,147 +1253,24 @@ content: 'Skip to main content
 
   ;
 
-  https://nvd.nist.gov/vuln/detail/CVE-2026-9586
+  https://nvd.nist.gov/vuln/detail/CVE-2026-19490
 
-  JFrog | Artifactory
+  Microsoft | Windows
 
-  CVE-2026-82329
+  CVE-2026-85880
 
-  JFrog Artifactory Improper Authentication Vulnerability:
+  Microsoft Windows Heap-Based Buffer Overflow Vulnerability:
 
-  JFrog Artifactory contains an improper authentication vulnerability that under default configuration
-  can allow an unauthenticated attacker with network access to obtain administrative privileges.
-
-  Related CWE:
-
-  CWE-287
-
-  Known To Be Used in Ransomware Campaigns?
-
-  Unknown
-
-  Forensic triage required per BOD-26-04:
-
-  Yes
-
-  Date Added:
-
-  2026-09-02
-
-  Due Date:
-
-  2026-09-05
-
-  Action:
-
-  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
-  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
-  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
-  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
-  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-
-  Additional Notes
-
-  https://docs.jfrog.com/releases/docs/jfrog-security-advisories
-
-  ;
-
-  https://docs.jfrog.com/releases/docs/artifactory-self-managed-releases
-
-  ; BOD 26-04:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
-
-  ; Forensics Triage Requirements:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
-
-  ;
-
-  https://nvd.nist.gov/vuln/detail/CVE-2026-82329
-
-  Kestra | Kestra OSS
-
-  CVE-2026-49869
-
-  Kestra OSS OS Command Injection Vulnerability:
-
-  Kestra OSS contains an OS command injection vulnerability that could allow an unauthenticated remote
-  attacker to create and execute arbitrary workflows without credentials.
+  Microsoft Windows Advanced Local Procedure Call contains a heap-based buffer overflow vulnerability
+  that allows an attacker to elevate privileges locally.
 
   Related CWEs:
 
-  CWE-78
+  CWE-122
 
   |
 
-  CWE-184
-
-  |
-
-  CWE-287
-
-  |
-
-  CWE-918
-
-  Known To Be Used in Ransomware Campaigns?
-
-  Unknown
-
-  Forensic triage required per BOD-26-04:
-
-  Yes
-
-  Date Added:
-
-  2026-09-02
-
-  Due Date:
-
-  2026-09-05
-
-  Action:
-
-  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
-  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
-  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
-  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
-  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-
-  Additional Notes
-
-  This vulnerability affects an open-source component, third-party library, protocol, or proprietary implementation
-  that could be used by different products. For more information, please see:
-
-  https://github.com/kestra-io/kestra/security/advisories/GHSA-5vc5-wxxq-3fjx
-
-  ; BOD 26-04:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
-
-  ; Forensics Triage Requirements:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
-
-  ;
-
-  https://nvd.nist.gov/vuln/detail/CVE-2026-49869
-
-  Kludex | Starlette
-
-  CVE-2026-48710
-
-  Kludex Starlette HTTP Request/Response Smuggling Vulnerability:
-
-  Kludex Starlette contains a HTTP request/response smuggling vulnerability that could allow attackers
-  to inject paths into the host part, prepending the actual path leading to issues such as authentication
-  bypass when the authentication depends on the reconstructed URL’s path. This vulnerability could be
-  chaned with CVE-2026-42271.
-
-  Related CWE:
-
-  CWE-444
+  CWE-908
 
   Known To Be Used in Ransomware Campaigns?
 
@@ -1072,11 +1282,11 @@ content: 'Skip to main content
 
   Date Added:
 
-  2026-09-02
+  2026-09-08
 
   Due Date:
 
-  2026-09-16
+  2026-09-22
 
   Action:
 
@@ -1088,10 +1298,7 @@ content: 'Skip to main content
 
   Additional Notes
 
-  This vulnerability affects an open-source component, third-party library, protocol, or proprietary implementation
-  that could be used by different products. For more information, please see:
-
-  https://github.com/Kludex/starlette/security/advisories/GHSA-86qp-5c8j-p5mr
+  https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2026-85880
 
   ; BOD 26-04:
 
@@ -1103,25 +1310,81 @@ content: 'Skip to main content
 
   ;
 
-  https://nvd.nist.gov/vuln/detail/CVE-2026-48710
+  https://nvd.nist.gov/vuln/detail/CVE-2026-85880
 
-  BerriAI | LiteLLM
+  N-able | N-central
 
-  CVE-2026-59822
+  CVE-2026-86218
 
-  BerriAI LiteLLM Improper Authentication Vulnerability:
+  N-able N-central Static Code Injection Vulnerability:
 
-  BerriAI LiteLLM contains an improper authentication vulnerability in the MCP Streamable HTTP endpoint
-  that could allow an unauthenticated attacker to establish an authenticated MCP session using an arbitrary
-  Bearer token.
+  N-able N-central contains a static code injection vulnerability that could allow for pre-authentication
+  remote code execution.
+
+  Related CWE:
+
+  CWE-96
+
+  Known To Be Used in Ransomware Campaigns?
+
+  Unknown
+
+  Forensic triage required per BOD-26-04:
+
+  Yes
+
+  Date Added:
+
+  2026-09-08
+
+  Due Date:
+
+  2026-09-11
+
+  Action:
+
+  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
+  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
+  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
+  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
+  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
+
+  Additional Notes
+
+  https://status.n-able.com/2026/09/06/n-central-2026-3-hotfix-4-cve-2026-86218/
+
+  ;
+
+  https://me.n-able.com/s/security-advisory/aArVy0000002Ld3KAE/cve202686218-preauthentication-remote-code-execution
+
+  ; BOD 26-04:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
+
+  ; Forensics Triage Requirements:
+
+  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
+
+  ;
+
+  https://nvd.nist.gov/vuln/detail/CVE-2026-86218
+
+  Microsoft | Windows
+
+  CVE-2026-81963
+
+  Microsoft Windows Link Following Vulnerability:
+
+  Microsoft Windows Update Stack contains a link following vulnerability that allows a local attacker
+  to escalate privileges locally up to SYSTEM.
 
   Related CWEs:
 
-  CWE-287
+  CWE-59
 
   |
 
-  CWE-306
+  CWE-284
 
   Known To Be Used in Ransomware Campaigns?
 
@@ -1133,11 +1396,11 @@ content: 'Skip to main content
 
   Date Added:
 
-  2026-09-02
+  2026-09-08
 
   Due Date:
 
-  2026-09-16
+  2026-09-22
 
   Action:
 
@@ -1149,7 +1412,7 @@ content: 'Skip to main content
 
   Additional Notes
 
-  https://github.com/BerriAI/litellm/security/advisories/GHSA-7488-6r32-c95q
+  https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2026-81963
 
   ; BOD 26-04:
 
@@ -1161,183 +1424,20 @@ content: 'Skip to main content
 
   ;
 
-  https://nvd.nist.gov/vuln/detail/CVE-2026-59822
+  https://nvd.nist.gov/vuln/detail/CVE-2026-81963
 
-  PaperCut | NG/MF
+  Adobe | Commerce and Magento
 
-  CVE-2026-81578
+  CVE-2026-75650
 
-  PaperCut NG/MF Missing Authentication for Critical Function Vulnerability:
+  Adobe Commerce and Magento Improper Neutralization of Special Elements Used in a Template Engine Vulnerability:
 
-  PaperCut NG/MF contains a missing authentication for critical function vulnerability which allows an
-  unauthenticated remote attacker to modify certain system configurations. This vulnerability can be chained
-  with CVE-2026-82078.
+  Adobe Commerce and Magento Open Source contain an improper neutralization of special elements used in
+  a template engine vulnerability that could allow an attacker to execute arbitrary code.
 
   Related CWE:
 
-  CWE-306
-
-  Known To Be Used in Ransomware Campaigns?
-
-  Unknown
-
-  Forensic triage required per BOD-26-04:
-
-  No
-
-  Date Added:
-
-  2026-08-31
-
-  Due Date:
-
-  2026-09-14
-
-  Action:
-
-  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
-  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
-  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
-  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
-  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-
-  Additional Notes
-
-  https://www.papercut.com/kb/Main/security-bulletin-27-aug-2026-urgent-security-advisory/
-
-  ; BOD 26-04:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
-
-  ; Forensics Triage Requirements:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
-
-  ;
-
-  https://nvd.nist.gov/vuln/detail/CVE-2026-81578
-
-  PaperCut | NG/MF
-
-  CVE-2026-82078
-
-  PaperCut NG/MF Unsafe Reflection Vulnerability:
-
-  PaperCut NG/MF contains an unsafe reflection vulnerability that allows an attacker to manipulate system
-  configuration parameters and execute arbitrary Java bytecode residing on the application classpath under
-  the security context of the PaperCut server process. This vulnerability can be chained with CVE-2026-81578.
-
-  Related CWE:
-
-  CWE-470
-
-  Known To Be Used in Ransomware Campaigns?
-
-  Unknown
-
-  Forensic triage required per BOD-26-04:
-
-  No
-
-  Date Added:
-
-  2026-08-31
-
-  Due Date:
-
-  2026-09-14
-
-  Action:
-
-  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
-  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
-  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
-  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
-  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-
-  Additional Notes
-
-  https://www.papercut.com/kb/Main/security-bulletin-27-aug-2026-urgent-security-advisory/?lid=2oneu2wt0ct4
-
-  ; BOD 26-04:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
-
-  ; Forensics Triage Requirements:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
-
-  ;
-
-  https://nvd.nist.gov/vuln/detail/CVE-2026-82078
-
-  JFrog | Artifactory
-
-  CVE-2026-66384
-
-  JFrog Artifactory Improper Limitation of a Pathname to a Restricted Directory Vulnerability:
-
-  JFrog Artifactory contains an improper limitation of a pathname to a restricted directory vulnerability.
-  This can allow an authenticated user to write data outside the intended Docker cache path under specific
-  remote-repository conditions.
-
-  Related CWE:
-
-  CWE-22
-
-  Known To Be Used in Ransomware Campaigns?
-
-  Unknown
-
-  Forensic triage required per BOD-26-04:
-
-  No
-
-  Date Added:
-
-  2026-08-27
-
-  Due Date:
-
-  2026-09-10
-
-  Action:
-
-  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
-  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
-  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
-  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
-  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-
-  Additional Notes
-
-  https://docs.jfrog.com/releases/docs/jfrog-security-advisories
-
-  ;
-
-  https://docs.jfrog.com/releases/docs/artifactory-self-managed-releases
-
-  ; BOD 26-04:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
-
-  ; Forensics Triage Requirements:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
-
-  ;
-
-  https://nvd.nist.gov/vuln/detail/CVE-2026-66384
-
-  Linux | Kernel
-
-  CVE-2026-53362
-
-  Linux Kernel Unspecified Vulnerability:
-
-  Linux Kernel contains an unspecified vulnerability that can allow for privilege escalation via IPv6
-  networking subsystem. This vulnerability can impact multiple products, including but not limited to
-  Suse, Red Hat, and other products using Linux.
+  CWE-1336
 
   Known To Be Used in Ransomware Campaigns?
 
@@ -1349,11 +1449,11 @@ content: 'Skip to main content
 
   Date Added:
 
-  2026-08-27
+  2026-09-08
 
   Due Date:
 
-  2026-08-30
+  2026-09-11
 
   Action:
 
@@ -1365,30 +1465,7 @@ content: 'Skip to main content
 
   Additional Notes
 
-  This vulnerability affects an open-source component, third-party library, protocol, or proprietary implementation
-  that could be used by different products. For more information, please see: ;
-
-  https://git.kernel.org/stable/c/14200d435af9a9eeb444f529fc2f689a236b7962
-
-  ;
-
-  https://git.kernel.org/stable/c/65fb14cbebb0cd0eff903a22d33537ddc8b95769
-
-  ;
-
-  https://git.kernel.org/stable/c/46f201f8b4c39633a1fa3dc12459f506d470993d
-
-  ;
-
-  https://git.kernel.org/stable/c/6374fb9edf72c67a118a2c214a0dddd04c921e0a
-
-  ;
-
-  https://git.kernel.org/stable/c/e9eacf19281ea2498b36291b56c9606118c2d74e
-
-  ;
-
-  https://git.kernel.org/stable/c/736b380e28d0480c7bc3e022f1950f31fe53a7c5
+  https://helpx.adobe.com/security/products/magento/apsb26-146.html
 
   ; BOD 26-04:
 
@@ -1400,92 +1477,10 @@ content: 'Skip to main content
 
   ;
 
-  https://nvd.nist.gov/vuln/detail/CVE-2026-53362
+  https://nvd.nist.gov/vuln/detail/CVE-2026-75650
 
-  ownCloud | ownCloud
+  Google | Chromium V8
 
-  CVE-2023-49105
+  CVE-2026-85046
 
-  ownCloud Improper Authentication Vulnerability:
-
-  ownCloud contains an improper authentication vulnerability that allows an attacker to access, modify,
-  or delete any file without authentication if the username of a victim is known, and the victim has no
-  signing-key configured.
-
-  Related CWE:
-
-  CWE-287
-
-  Known To Be Used in Ransomware Campaigns?
-
-  Unknown
-
-  Forensic triage required per BOD-26-04:
-
-  Yes
-
-  Date Added:
-
-  2026-08-27
-
-  Due Date:
-
-  2026-08-30
-
-  Action:
-
-  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
-  Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage
-  Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue
-  use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each
-  asset''s internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-
-  Additional Notes
-
-  https://owncloud.org/security
-
-  ;
-
-  https://owncloud.com/security-advisories/webdav-api-authentication-bypass-using-pre-signed-urls/
-
-  ; BOD 26-04:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk
-
-  ; Forensics Triage Requirements:
-
-  https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk
-
-  ;
-
-  https://nvd.nist.gov/vuln/detail/CVE-2023-49105
-
-  Microsoft | SQL Server
-
-  CVE-2019-1068
-
-  Microsoft SQL Server Remote Code Execution Vulnerability:
-
-  Microsoft SQL Server contains a remote code execution vulnerability that could allow an attacker to
-  execute code in the context of the SQL Server Database Engine service account.
-
-  Known To Be Used in Ransomware Campaigns?
-
-  Unknown
-
-  Forensic triage required per BOD-26-04:
-
-  Yes
-
-  Date Added:
-
-  2026-08-26
-
-  Due Date:
-
-  2026-08-29
-
-  Action:
-
-  Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04
-  Prioriti'
+  Google '

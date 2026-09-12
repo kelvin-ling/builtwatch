@@ -1,3 +1,17 @@
+# Verified source-coverage and demo-export release — 12 September 2026
+
+The watched registry now contains 21 official sources across 8 categories. Added
+Microsoft's Azure OpenAI What’s New feed and CISA Cybersecurity Advisories; both were
+retrieved successfully and committed as replay evidence, bringing the capture to 21/21
+sources. The public demo now includes the historical replay findings again after quality
+rule changes had made the private workspace correctly start with zero current-generation
+findings. Demo text is provider-neutral and does not imply a particular model account.
+
+The demo exporter now preserves historical replay material for anonymous visitors while
+the signed-in workspace continues to show only current-generation, verified findings.
+147 Python tests and 45 Node/runtime tests pass; JavaScript syntax and the production web
+build pass. Ruff still reports 13 pre-existing style findings outside this release.
+
 # Canonical-host and crawler-policy release — 12 September 2026
 
 Sites version 78 is live at `https://builtwatch.org/`. The generated
