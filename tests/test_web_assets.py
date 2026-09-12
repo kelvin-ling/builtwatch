@@ -95,6 +95,21 @@ def test_bulk_import_keeps_export_when_returning_from_review():
     assert "if(e.target.id==='bulk-json')bulkInput=e.target.value" in app
 
 
+def test_imported_systems_show_freshness_and_can_start_a_first_check():
+    app = (ROOT / "web/app.js").read_text()
+    css = (ROOT / "web/style.css").read_text()
+
+    assert "function systemFreshness(s)" in app
+    assert "Profile updated" in app
+    assert "Waiting for first check" in app
+    assert "First check in progress" in app
+    assert 'data-action="scan"' in app
+    assert "Apps imported. Your first check is starting." in app
+    assert "button[data-action=\"save-bulk\"]" in app
+    assert ".system-watch-status" in css
+    assert ".system-freshness" in css
+
+
 def test_agent_import_is_primary_and_profiles_show_their_source():
     app = (ROOT / "web/app.js").read_text()
     css = (ROOT / "web/style.css").read_text()
