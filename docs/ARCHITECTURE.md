@@ -1,5 +1,9 @@
 # BuiltWatch architecture
 
+> For a competition-ready summary of the current user journey, deployed topology,
+> agent boundary, cost controls, and browser audit evidence, see
+> [COMPETITION_ARCHITECTURE.md](COMPETITION_ARCHITECTURE.md).
+
 ## Deployed web product
 
 ```mermaid
