@@ -1,5 +1,26 @@
 {
-  "quality": [],
+  "quality": [
+    {
+      "system_id": "inbox-triage",
+      "source_id": "ftc-business-blog",
+      "message": "An assessment could not be verified and was withheld. No action is requested."
+    },
+    {
+      "system_id": "inbox-triage",
+      "source_id": "cisa-cybersecurity-advisories",
+      "message": "An assessment could not be verified and was withheld. No action is requested."
+    },
+    {
+      "system_id": "inbox-triage",
+      "source_id": "edpb-news",
+      "message": "An assessment could not be verified and was withheld. No action is requested."
+    },
+    {
+      "system_id": "inbox-triage",
+      "source_id": "eu-ai-act-article-50",
+      "message": "An assessment could not be verified and was withheld. No action is requested."
+    }
+  ],
   "systems": [
     {
       "schema_version": 1,
@@ -13,7 +34,7 @@
       ],
       "services": [
         "Gmail API",
-        "the model via Amazon Bedrock",
+        "Amazon Bedrock",
         "SendGrid"
       ],
       "consequential_actions": [
@@ -52,9 +73,9 @@
         "services": "user_stated",
         "jurisdictions": "user_stated"
       },
-      "source_agent": null,
-      "created_at": "2026-09-08T05:41:41.397025Z",
-      "updated_at": "2026-09-08T05:41:41.397417Z"
+      "source_agent": "Client operations workspace",
+      "created_at": "2026-09-12T19:39:53.867352Z",
+      "updated_at": "2026-09-12T19:39:53.867476Z"
     },
     {
       "schema_version": 1,
@@ -86,9 +107,9 @@
         "purpose": "user_stated",
         "services": "user_stated"
       },
-      "source_agent": null,
-      "created_at": "2026-09-08T05:41:41.694495Z",
-      "updated_at": "2026-09-08T05:41:41.694648Z"
+      "source_agent": "Personal site workspace",
+      "created_at": "2026-09-12T19:39:54.158358Z",
+      "updated_at": "2026-09-12T19:39:54.158499Z"
     },
     {
       "schema_version": 1,
@@ -125,683 +146,1180 @@
         "purpose": "user_stated",
         "services": "user_stated"
       },
-      "source_agent": null,
-      "created_at": "2026-09-08T05:41:41.983821Z",
-      "updated_at": "2026-09-08T05:41:41.983965Z"
+      "source_agent": "Support product workspace",
+      "created_at": "2026-09-12T19:39:54.442060Z",
+      "updated_at": "2026-09-12T19:39:54.442202Z"
     }
   ],
   "findings": [
     {
-      "id": "find_08e0fadcd2f5",
-      "scan_run_id": "run_9cab3777af54",
+      "id": "find_de4654fedf49",
+      "scan_run_id": "run_a6cebb81a767",
       "system_id": "support-widget",
-      "source_id": "nist-ai-rmf",
-      "relevance": "not_relevant",
-      "title": "NIST AI Risk Management Framework not relevant to 'support-widget'",
-      "development_key": "nist-ai-rmf",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services[0]",
-          "value": "Amazon Bedrock"
-        }
-      ],
-      "facts": [
-        "The NIST AI Risk Management Framework is a voluntary framework intended to improve the ability to incorporate trustworthiness considerations into the design, development, use, and evaluation of AI products, services, and systems."
-      ],
-      "inferences": [
-        "The 'support-widget' system uses Amazon Bedrock, which is an AI service, but the framework is voluntary and not mandatory, and the system does not depend on the framework for its operation."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:45:13.614648Z",
-      "revision_hash": "a450ec330fcb0aed8b201ff7a26cfb003fe4252b67d530a504268e4950cc3d36",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_9fae1b19afa2",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "support-widget",
-      "source_id": "cisa-kev",
+      "source_id": "ftc-business-blog",
       "relevance": "insufficient_information",
-      "title": "Assessment of 'support-widget' against CISA Known Exploited Vulnerabilities Catalog",
-      "development_key": "cisa-kev-catalog",
-      "evidence": [],
-      "system_facts": [],
-      "facts": [],
-      "inferences": [],
-      "unknowns": [
-        "Whether Amazon Bedrock or Cloudflare Workers are affected by any vulnerabilities in the CISA Known Exploited Vulnerabilities Catalog"
-      ],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:45:06.492475Z",
-      "revision_hash": "f4d51896222d95f8e27a5ffe4137aebc967754c57480c7f97e6b2cf495d72850",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_50d77b0b895a",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "support-widget",
-      "source_id": "gmail-sender-guidelines",
-      "relevance": "not_relevant",
-      "title": "Gmail Email Sender Guidelines do not affect Website Support Chat Widget",
-      "development_key": "gmail-email-sender-guidelines",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services[0]",
-          "value": "Amazon Bedrock"
-        }
-      ],
-      "facts": [
-        "No passage in this document contains 'Amazon Bedrock'."
-      ],
-      "inferences": [
-        "The Gmail Email Sender Guidelines do not mention Amazon Bedrock, which is a service used by the 'support-widget' system."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:45:00.413859Z",
-      "revision_hash": "9754c005e6818482322e9f6c848d7a3a16594b11d7a5ec4e6e5b5c4786635d80",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_2c5d32030429",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "support-widget",
-      "source_id": "ico-ai-guidance",
-      "relevance": "not_relevant",
-      "title": "UK ICO AI and Data Protection Guidance",
-      "development_key": "uk-ico-ai-data-protection",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "purpose",
-          "value": "A chat widget embedded on the company marketing site that answers visitor questions using a language model."
-        },
-        {
-          "key": "services[0]",
-          "value": "Amazon Bedrock"
-        }
-      ],
-      "facts": [
-        "The UK ICO provides guidance on artificial intelligence and data protection."
-      ],
-      "inferences": [
-        "The guidance does not specifically address the 'support-widget' system or its use of Amazon Bedrock."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "adopted",
-      "created_at": "2026-09-08T05:44:53.569434Z",
-      "revision_hash": "ecad39f52e2e6f6fc43aa2795e5b50532854f06d67b9201a284a56dba3316f19",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_5dac45274b29",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "support-widget",
-      "source_id": "edpb-news",
-      "relevance": "not_relevant",
-      "title": "EDPB News does not affect support-widget",
-      "development_key": "edpb-news-2026-09-08",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "purpose",
-          "value": "A chat widget embedded on the company marketing site that answers visitor questions using a language model."
-        },
-        {
-          "key": "services[0]",
-          "value": "Amazon Bedrock"
-        }
-      ],
-      "facts": [],
-      "inferences": [
-        "The EDPB News document contains general updates and does not mention any specific changes or requirements that would affect the 'support-widget' system."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:44:46.951530Z",
-      "revision_hash": "51a1fc42066c712a0dfe9fd42e28d720c0eee0c12cc977d213b9d897db62dadd",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_b350babe58e2",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "support-widget",
-      "source_id": "eu-ai-act-article-50",
-      "relevance": "insufficient_information",
-      "title": "EU AI Act Article 50 \u2014 Transparency Obligations",
-      "development_key": "eu-ai-act-article-50-transparency-obligations",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "purpose",
-          "value": "A chat widget embedded on the company marketing site that answers visitor questions using a language model."
-        }
-      ],
-      "facts": [
-        "Providers shall ensure that AI systems intended to interact directly with natural persons are designed and developed in such a way that the natural persons concerned are informed that they are interacting with an AI system."
-      ],
-      "inferences": [
-        "The 'support-widget' system falls under the category of AI systems intended to interact directly with natural persons, as it is a chat widget that answers visitor questions using a language model."
-      ],
-      "unknowns": [
-        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
-      ],
-      "review_suggestions": [
-        "Review the transparency obligations outlined in the EU AI Act Article 50 and ensure that the 'support-widget' system complies with these requirements."
-      ],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "in_effect",
-      "created_at": "2026-09-08T05:44:40.705358Z",
-      "revision_hash": "e67cae0b01f7227e0402144baf9c59cb5a4db02666fe03ca1e1bf1d5df57db30",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_a80d233628f8",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "support-widget",
-      "source_id": "twilio-changelog",
-      "relevance": "not_relevant",
-      "title": "Twilio Changelog is not relevant to 'support-widget'",
-      "development_key": "twilio-changelog",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services[0]",
-          "value": "Amazon Bedrock"
-        }
-      ],
-      "facts": [
-        "The Twilio Changelog contains updates and changes specific to Twilio's products and services."
-      ],
-      "inferences": [
-        "The 'support-widget' system uses Amazon Bedrock as an external service, not Twilio.",
-        "The changes in the Twilio Changelog do not affect the 'support-widget' system."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:44:33.398139Z",
-      "revision_hash": "0235ce7ee2ed3dbafc3fdb62fa6870bb9b7b2ad051bb00d69411518af19292fd",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_43b98d35ed74",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "support-widget",
-      "source_id": "aws-bedrock-history",
-      "relevance": "insufficient_information",
-      "title": "Amazon Bedrock Updates",
-      "development_key": "amazon-bedrock-updates",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services[0]",
-          "value": "Amazon Bedrock"
-        }
-      ],
-      "facts": [
-        "Added a Bedrock model and a Bedrock model",
-        "Corrected the Bedrock model thinking guidance",
-        "Fixed Messages API code samples",
-        "Updated endpoint guidance to recommend the bedrock-runtime endpoint"
-      ],
-      "inferences": [
-        "The updates to Amazon Bedrock, including the addition of new models and corrections to model guidance, could impact the 'support-widget' system since it uses Amazon Bedrock."
-      ],
-      "unknowns": [
-        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
-      ],
-      "review_suggestions": [
-        "Review the changes to Amazon Bedrock to ensure the 'support-widget' system remains compatible and up-to-date.",
-        "Consider testing the 'support-widget' system with the new models and updated API guidance."
-      ],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "adopted",
-      "created_at": "2026-09-08T05:44:25.400293Z",
-      "revision_hash": "6299ede6834da004959d5ff18a13779c0b6771fefa09fe9f2946fce494fbcdd8",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_0d4113ee94a4",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "support-widget",
-      "source_id": "github-rest-breaking",
-      "relevance": "not_relevant",
-      "title": "GitHub REST API Breaking Changes not relevant to support-widget",
-      "development_key": "github-rest-api-breaking-changes",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services[0]",
-          "value": "Amazon Bedrock"
-        }
-      ],
-      "facts": [
-        "The GitHub REST API is versioned and breaking changes are introduced in new API versions."
-      ],
-      "inferences": [
-        "The support-widget system does not use the GitHub REST API, so the breaking changes are not relevant."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:44:18.231916Z",
-      "revision_hash": "2d69e0958e2c4fa2853396ae87596631ba978224d3f6369d5e75da3651887f04",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_d027d859e188",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "support-widget",
-      "source_id": "stripe-upgrades",
-      "relevance": "not_relevant",
-      "title": "Stripe API Upgrades and Versioning",
-      "development_key": "stripe-api-upgrades-and-versioning",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services[0]",
-          "value": "Amazon Bedrock"
-        }
-      ],
-      "facts": [],
-      "inferences": [
-        "The evidence document is about Stripe API upgrades and versioning, which is not relevant to the 'support-widget' system that uses Amazon Bedrock."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:44:11.487316Z",
-      "revision_hash": "78d3bf7fbd3218f072ce4a68b9436564899d1b6a9b332c65b1c2e2e61f8f8d84",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_84daad5a3f1f",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "support-widget",
-      "source_id": "anthropic-aup",
-      "relevance": "insufficient_information",
-      "title": "Assessing relevance of Anthropic Usage Policy to 'support-widget'",
-      "development_key": "anthropic-usage-policy",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services[0]",
-          "value": "Amazon Bedrock"
-        }
-      ],
-      "facts": [],
-      "inferences": [],
-      "unknowns": [
-        "Whether the 'support-widget' system accepts inputs that could potentially violate the Anthropic Usage Policy."
-      ],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:44:05.522740Z",
-      "revision_hash": "7574f069923cc1b5909ef4dfdc48c5c1da9e8f03aa20db7e386d2609c9a8b762",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_a59a441cfd7d",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "recipe-site",
-      "source_id": "nist-ai-rmf",
-      "relevance": "not_relevant",
-      "title": "NIST AI Risk Management Framework not relevant to Static Recipe Archive",
-      "development_key": "nist-ai-rmf",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "purpose",
-          "value": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code."
-        },
-        {
-          "key": "technologies[0]",
-          "value": "Hugo"
-        },
-        {
-          "key": "technologies[1]",
-          "value": "HTML"
-        },
-        {
-          "key": "technologies[2]",
-          "value": "CSS"
-        },
-        {
-          "key": "technologies[3]",
-          "value": "GitHub Pages"
-        },
-        {
-          "key": "assumptions[0]",
-          "value": "All recipe content is authored by the owner"
-        },
-        {
-          "key": "assumptions[1]",
-          "value": "No visitor information is collected or stored"
-        },
-        {
-          "key": "constraints[0]",
-          "value": "No third-party scripts of any kind on the published pages"
-        },
-        {
-          "key": "jurisdictions[0]",
-          "value": "United Kingdom"
-        }
-      ],
-      "facts": [
-        "The NIST AI Risk Management Framework is a voluntary framework for managing risks associated with artificial intelligence."
-      ],
-      "inferences": [
-        "The 'recipe-site' system is a static website with no AI capabilities, databases, user accounts, forms, analytics, or server-side code. It also does not use any third-party scripts. Therefore, the NIST AI Risk Management Framework is not relevant to this system."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:43:57.640631Z",
-      "revision_hash": "b9c2487d8053b880e9698ae23922c5b0492c2e745b0464c3f1348101d04acdfb",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_5adc4c20eda6",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "recipe-site",
-      "source_id": "cisa-kev",
-      "relevance": "not_relevant",
-      "title": "Assessment of 'recipe-site' against CISA Known Exploited Vulnerabilities Catalog",
-      "development_key": "cisa-kev-catalog",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "constraints[0]",
-          "value": "No third-party scripts of any kind on the published pages"
-        }
-      ],
-      "facts": [
-        "The system is a statically generated website with no server-side code or third-party scripts."
-      ],
-      "inferences": [
-        "The system is not directly affected by the vulnerabilities listed in the CISA Known Exploited Vulnerabilities Catalog."
-      ],
-      "unknowns": [],
-      "review_suggestions": [
-        "Periodically review the CISA Known Exploited Vulnerabilities Catalog for any changes that may affect the system."
-      ],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "adopted",
-      "created_at": "2026-09-08T05:43:49.208823Z",
-      "revision_hash": "bf49706314d1b4efeb9b0a42a5a6a91a7fdec01952cfc29bb6ca23aa50567b32",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_ba6e49239742",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "recipe-site",
-      "source_id": "gmail-sender-guidelines",
-      "relevance": "not_relevant",
-      "title": "Gmail Email Sender Guidelines do not affect Static Recipe Archive",
-      "development_key": "gmail-email-sender-guidelines",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "purpose",
-          "value": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code."
-        },
-        {
-          "key": "services",
-          "value": "[]"
-        },
-        {
-          "key": "constraints[0]",
-          "value": "No third-party scripts of any kind on the published pages"
-        }
-      ],
-      "facts": [
-        "Gmail requires email senders to meet certain guidelines to send email to Gmail accounts.",
-        "The guidelines include requirements for email authentication, spam rates, and message formatting."
-      ],
-      "inferences": [
-        "The 'recipe-site' is a static site with no email sending functionality.",
-        "The changes in Gmail's guidelines do not affect the system."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:43:41.864224Z",
-      "revision_hash": "0fbbdda87e2598b2d919ab0420946343e1baffbb81355f83ac15b8eb0e68c4ca",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_a3a6abb61767",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "recipe-site",
-      "source_id": "ico-ai-guidance",
-      "relevance": "not_relevant",
-      "title": "UK ICO AI and Data Protection Guidance",
-      "development_key": "uk-ico-ai-data-protection",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "purpose",
-          "value": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code."
-        },
-        {
-          "key": "technologies[0]",
-          "value": "Hugo"
-        },
-        {
-          "key": "technologies[1]",
-          "value": "HTML"
-        },
-        {
-          "key": "technologies[2]",
-          "value": "CSS"
-        },
-        {
-          "key": "technologies[3]",
-          "value": "GitHub Pages"
-        },
-        {
-          "key": "assumptions[0]",
-          "value": "All recipe content is authored by the owner"
-        },
-        {
-          "key": "assumptions[1]",
-          "value": "No visitor information is collected or stored"
-        },
-        {
-          "key": "constraints[0]",
-          "value": "No third-party scripts of any kind on the published pages"
-        },
-        {
-          "key": "jurisdictions[0]",
-          "value": "United Kingdom"
-        }
-      ],
-      "facts": [
-        "The guidance is about applying data protection principles to AI systems, explaining decisions made with AI, and processing biometric data."
-      ],
-      "inferences": [
-        "The system does not use AI, collect or process personal data, or use biometric data.",
-        "The guidance does not directly apply to the system."
-      ],
-      "unknowns": [],
-      "review_suggestions": [
-        "Review the system's constraints and assumptions to ensure they remain appropriate."
-      ],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "adopted",
-      "created_at": "2026-09-08T05:43:35.030173Z",
-      "revision_hash": "8ac9510929d7fafa1300df26f5c37a2d4f4c668d852ab9f41c257108cbbc5e87",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_01d41104c768",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "recipe-site",
-      "source_id": "eu-ai-act-article-50",
-      "relevance": "not_relevant",
-      "title": "EU AI Act Article 50 \u2014 Transparency Obligations for 'recipe-site'",
-      "development_key": "eu-ai-act-article-50-transparency-obligations",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "purpose",
-          "value": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code."
-        },
-        {
-          "key": "services",
-          "value": "[]"
-        },
-        {
-          "key": "constraints[0]",
-          "value": "No third-party scripts of any kind on the published pages"
-        }
-      ],
-      "facts": [
-        "The 'recipe-site' system is a static website with no AI systems, no interaction with users, and no collection of visitor information."
-      ],
-      "inferences": [
-        "The transparency obligations outlined in the EU AI Act do not apply to the 'recipe-site' system because it does not use AI systems, interact with users, or collect visitor information."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:43:24.536082Z",
-      "revision_hash": "fa620f6ba5d5f51059cd07dd750ab87fbcbd0397c56e049d222d56d004a1620a",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_d1204e200d74",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "recipe-site",
-      "source_id": "twilio-changelog",
-      "relevance": "not_relevant",
-      "title": "Twilio Changelog Updates",
-      "development_key": "twilio-changelog-updates",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services",
-          "value": "[]"
-        }
-      ],
-      "facts": [
-        "The Twilio Changelog contains updates and changes related to Twilio services."
-      ],
-      "inferences": [
-        "The 'Static Recipe Archive' system does not use any external services or APIs, so the changes in the Twilio Changelog are not relevant to this system."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:43:17.626753Z",
-      "revision_hash": "99223e57d618c504c73059ec650e0a1fa19dca2f7bdb50acea0cc37d0f030662",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_a01aeef26285",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "inbox-triage",
-      "source_id": "nist-ai-rmf",
-      "relevance": "relevant",
-      "title": "NIST AI Risk Management Framework relevance to inbox-triage",
-      "development_key": "nist-ai-rmf",
+      "title": "FTC Business Blog Updates",
+      "development_key": "ftc-business-blog-updates",
       "evidence": [
         {
-          "snapshot_id": "snap_393921b4d6a0",
+          "snapshot_id": "snap_1966277a09a7",
+          "source_id": "ftc-business-blog",
+          "passage": "Skip to main content\nThe .gov means it\u2019s official.\nFederal government websites often end in .gov or .mil. Before sharing sensitive information, make sure you\u2019re on a federal government site.\nThe site is secure.\nThe\nhttps://\nensures that you are connecting to the official website and that any information you provide is encrypted and transmitted securely.\nEspa\u00f1ol\nReport Fraud\nSubmit Public Comments\nSearch the Legal Library\nBusiness Blog\nBusiness Guidance Menu\nBusiness Guidance\nAdvertising and Marketing\nCredit and Finance\nPrivacy and Security\nBy Industry\nBrowse Business Guidance Resources\nBusiness Blog\nGet Business Blog updates\nTopics\nAdvertising and Marketing\n(420)\nAdvertising and Marketing Ba",
+          "published_at": "2026-02-13",
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_1966277a09a7",
+          "source_id": "ftc-business-blog",
+          "passage": "sics\n(176)\nChildren\n(31)\nChildren's Privacy\n(45)\nConsumer Privacy\n(81)\nCredit and Finance\n(177)\nCredit and Loans\n(55)\nCredit Reporting\n(50)\nData Privacy Framework\n(6)\nData Security\n(150)\nDebt\n(28)\nDebt Collection\n(37)\nEndorsements, Influencers, and Reviews\n(90)\nEnvironmental Marketing\n(29)\nFinTech\n(30)\nGramm-Leach-Bliley Act\n(20)\nHealth Claims\n(122)\nHealth Privacy\n(7)\nMade in USA\n(22)\nMortgages\n(12)\nOnline Advertising and Marketing\n(148)\nPayments and Billing\n(75)\nPrivacy and Security\n(270)\nPrivacy Shield\n(11)\nRed Flags Rule\n(2)\nSelf-Regulation\n(1)\nSmall Business\n(125)\nTech\n(44)\nTelemarketing\n(66)\nU.S.-EU Safe Harbor Framework\n(2)\nSelected Industries\nAlcohol\n(2)\nAppliances\n(11)\nAutomobiles\n(4",
+          "published_at": "2026-02-13",
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_1966277a09a7",
+          "source_id": "ftc-business-blog",
+          "passage": "0)\nClothing and Textiles\n(21)\nFinance\n(33)\nFranchises, Business Opportunities, and Investments\n(55)\nFunerals\n(6)\nHuman Resources\n(36)\nJewelry\n(6)\nReal Estate and Mortgages\n(13)\nTobacco\n(4)\nArchives\nJuly 2026\n(2)\nJune 2026\n(1)\nMay 2026\n(2)\nApril 2026\n(2)\nMarch 2026\n(4)\nFebruary 2026\n(1)\nJanuary 2026\n(2)\nDecember 2025\n(2)\nSeptember 2025\n(10)\nAugust 2025\n(5)\nView More\nDisplaying 1 - 20 of 808\nBusiness Blog\nAnnouncing the Bureau of Consumer Protection\u2019s New Guidance Program\nDate\nSeptember 10, 2026\nThe Bureau of Consumer Protection under Chairman Ferguson\u2019s and my leadership has worked to provide clear, accessible, and timely guidance that helps the public understand \u2014 and comply with \u2014 the law..",
+          "published_at": "2026-02-13",
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_1966277a09a7",
+          "source_id": "ftc-business-blog",
+          "passage": ".\nBusiness Blog\nVeterans: Here\u2019s help to protect your small business\nDate\nJuly 20, 2026\nAs a veteran, you\u2019ve worked hard to protect our country. And if you\u2019re a veteran-run small business, you know how important it is to have protections against scammers and cybercriminals. Your best...\nBusiness Blog\nBack up those earnings claims \u2014 and other lessons from the FTC\u2019s Labor Task Force work\nDate\nJune 16, 2026\nA healthy labor market is critical to the country\u2019s success. That\u2019s why last year, FTC Chairman Andrew N. Ferguson formed a Labor Task Force to maximize the agency\u2019s broad-based jurisdiction and...\nBusiness Blog\nTake It Down Act enforcement starts now: What to know about the FTC and TIDA\nDat",
+          "published_at": "2026-02-13",
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_1966277a09a7",
+          "source_id": "ftc-business-blog",
+          "passage": "e\nMay 19, 2026\nOn May 19, 2025, President Donald J. Trump signed the TAKE IT DOWN Act (\u201cAct\u201d) into law. Championed by First Lady Melania Trump, the Act represents a significant step in combating harmful digital...\nBusiness Blog\nProtect your business from scams and online threats this National Small Business Week\nDate\nMay 4, 2026\nAll week long, learn how the FTC can help you protect your small business from scams and online threats. Run a small business or want to support the small businesses in your community? Here\u2019s how you...\nBusiness Blog\nProtecting kids from deceptive and unsubstantiated health claims: the FTC\u2019s case against TruHeight\nDate\nApril 16, 2026\nParents and kids (like all consum",
+          "published_at": "2026-02-13",
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_1966277a09a7",
+          "source_id": "ftc-business-blog",
+          "passage": "ers) need clear, truthful information to make informed decisions \u2014 especially when those decisions affect their children\u2019s health and physical safety. With that in...\nBusiness Blog\nHow to best engage with BCP and BE on economic analysis in BCP investigations\nDate\nApril 8, 2026\nThe FTC\u2019s Bureau of Consumer Protection (BCP) is committed to providing legal clarity to legitimate businesses that wish to deal honestly with their customers and comply with the law. Last year, I...\nBusiness Blog\nDo you have thoughts on negative option-related regulations? Share them with the FTC\nDate\nMarch 24, 2026\nThe FTC recently published an Advanced Notice of Proposed Rulemaking to request input on whether it nee",
+          "published_at": "2026-02-13",
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_1966277a09a7",
+          "source_id": "ftc-business-blog",
+          "passage": "ds to update the Negative Option Rule from 1973. The comment period is open until April 13, so...\nBusiness Blog\nDo you have thoughts on rental fee-related regulations? Share them with the FTC\nDate\nMarch 23, 2026\nMany of us use or work with rental housing in some way. Maybe you have been \u2014 or are currently \u2014 a renter. Or maybe you own a rental property, operate a property management company, or otherwise work...\nBusiness Blog\nProtecting franchisees: The FTC\u2019s case against Xponential Fitness\nDate\nMarch 18, 2026\nIf you\u2019re thinking about opening a franchise, you\u2019re probably looking for things like",
+          "published_at": "2026-02-13",
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "A chat widget embedded on the company marketing site that answers visitor questions using a language model."
+        },
+        {
+          "key": "technologies[0]",
+          "value": "TypeScript"
+        },
+        {
+          "key": "technologies[1]",
+          "value": "Cloudflare Workers"
+        },
+        {
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        },
+        {
+          "key": "consequential_actions[0]",
+          "value": "Responds to website visitors in natural language on behalf of the company"
+        },
+        {
+          "key": "data_categories[0]",
+          "value": "chat message content"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The provided evidence consists of general announcements and guidance from the FTC, which do not mention any specific changes to technologies or services used by the 'support-widget' system."
+      ],
+      "unknowns": [
+        "There is no specific information about changes or developments that would directly affect the 'support-widget' system."
+      ],
+      "review_suggestions": [
+        "Monitor future updates from the FTC for any specific changes that may affect the system."
+      ],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:43:12.334248Z",
+      "revision_hash": "ae4607ed93af8140ee21d84969415e5962e0d3ef9365ffd5867ef66e58cdc505",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_846c2ad033aa",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "nist-ai-rmf",
+      "relevance": "not_relevant",
+      "title": "NIST AI Risk Management Framework Updates",
+      "development_key": "nist-ai-rmf-updates",
+      "evidence": [
+        {
+          "snapshot_id": "snap_80dd2cc681b4",
           "source_id": "nist-ai-rmf",
-          "passage": "NIST has developed a framework to better manage risks to individuals, organizations, and society associated with artificial intelligence (AI). The NIST AI Risk Management Framework (AI RMF) is intended for voluntary use and to improve the ability to incorporate trustworthiness considerations into the design, development, use, and evaluation of AI products, services, and systems.",
+          "passage": "ow other organizations are building on and using the AI RMF can be found via the\nAIRC\u2019s Use Case page\n.\nOn July 26, 2024, NIST released\nNIST-AI-\n600-1, Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile\n. The profile \u00a0can help organizations identify unique risks posed by generative AI and\u00a0proposes\u00a0actions for generative AI risk management that best aligns with their goals and priorities.\nOn April 7, 2026, NIST released a\nconcept note for an AI RMF Profile on Trustworthy AI in Critical Infrastructure\n. The profile will guide critical infrastructure operators towards specific risk management practices to consider when engaging AI-enabled capabilities.",
           "published_at": "2021-07-12",
           "effective_at": null
         }
       ],
       "system_facts": [
         {
-          "key": "services[1]",
-          "value": "the model via Amazon Bedrock"
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        },
+        {
+          "key": "purpose",
+          "value": "A chat widget embedded on the company marketing site that answers visitor questions using a language model."
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The evidence provided is about the NIST AI Risk Management Framework and its updates, which is a guidance document rather than a change that directly affects the 'support-widget' system."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:43:06.894557Z",
+      "revision_hash": "b49980e4cb0c8f88784855f3197dadad1c9ea6276c2ad46aa85bdfdcce8353d9",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_c12aec720b81",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "cisa-cybersecurity-advisories",
+      "relevance": "not_relevant",
+      "title": "Assessment of CISA Cybersecurity Advisories on 'support-widget'",
+      "development_key": "cisa-cybersecurity-advisories",
+      "evidence": [
+        {
+          "snapshot_id": "snap_98a2414a636c",
+          "source_id": "cisa-cybersecurity-advisories",
+          "passage": "ntrol Systems Advisories\nSep 11, 2026\nAlert\nCISA Adds One Known Exploited Vulnerability to Catalog\nSep 11, 2026\nAlert\nCISA Adds Three Known Exploited Vulnerabilities to Catalog\nSep 10, 2026\nAlert\nCISA Adds Two Known Exploited Vulnerabilities to Catalog\nSep 09, 2026\nAlert\nCISA Adds Four Known Exploited Vulnerabilities to Catalog\nSep 08, 2026\nAlert\nCISA Adds Four Known Exploited Vulnerabilities to Catalog\nSep 08, 2026\nCybersecurity Advisory | AA26-251A\nChina-Based Artificial Intelligence Companies Conducting Industrial-Scale Distillation Campaigns Against U.S. AI Companies\nSep 04, 2026\nAlert\nCIS",
+          "published_at": "2026-09-11",
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "A chat widget embedded on the company marketing site that answers visitor questions using a language model."
+        },
+        {
+          "key": "technologies[0]",
+          "value": "TypeScript"
+        },
+        {
+          "key": "technologies[1]",
+          "value": "Cloudflare Workers"
+        },
+        {
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        },
+        {
+          "key": "consequential_actions[0]",
+          "value": "Responds to website visitors in natural language on behalf of the company"
+        },
+        {
+          "key": "data_categories[0]",
+          "value": "chat message content"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The affected product is not a recorded dependency of this system."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:43:02.650242Z",
+      "revision_hash": "9e0f83b62dc6f4964f3e745678e7e27b20f0bc144c78ce483dc685f94c772b83",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_6651989e529d",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "github-advisories",
+      "relevance": "not_relevant",
+      "title": "Security vulnerabilities in various packages do not impact support-widget",
+      "development_key": "github-advisory-database-updates",
+      "evidence": [],
+      "system_facts": [
+        {
+          "key": "technologies[0]",
+          "value": "TypeScript"
+        },
+        {
+          "key": "technologies[1]",
+          "value": "Cloudflare Workers"
+        },
+        {
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        }
+      ],
+      "facts": [],
+      "inferences": [],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": {
+        "fact_key": "technologies[0]",
+        "consequence": "The security vulnerabilities mentioned do not affect the TypeScript technology used by the support-widget.",
+        "review_question": "Are there any other security vulnerabilities that could affect the technologies used by the support-widget?"
+      },
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:42:57.665310Z",
+      "revision_hash": "487bcad9d9cf7a4e856b15fe65445569967ccff11b14d4f0d6aae20bb3da4449",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_70154c7f5ad7",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "aws-security-bulletins",
+      "relevance": "not_relevant",
+      "title": "AWS Security Bulletins - Not Relevant to Support Widget",
+      "development_key": "aws-security-bulletins",
+      "evidence": [
+        {
+          "snapshot_id": "snap_7710b98b9795",
+          "source_id": "aws-security-bulletins",
+          "passage": "Skip to main content\nSecurity Bulletins\nNo matter how carefully engineered the services are, from time to time it may be necessary to notify customers of security and privacy events with AWS services.\nSubscribe to our Security Bulletin RSS Feed\nto keep abreast of security announcements.",
+          "published_at": null,
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "A chat widget embedded on the company marketing site that answers visitor questions using a language model."
+        },
+        {
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The affected product is not a recorded dependency of this system."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:42:51.555610Z",
+      "revision_hash": "5742eef4f1fc2e9d765bca7be7915f4a3697ac02f936c415d58049a8dabb6b73",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_66fc18367293",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "cisa-kev",
+      "relevance": "not_relevant",
+      "title": "CISA Known Exploited Vulnerabilities Catalog update",
+      "development_key": "cisa-kev-catalog-update",
+      "evidence": [],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "A chat widget embedded on the company marketing site that answers visitor questions using a language model."
+        },
+        {
+          "key": "technologies[0]",
+          "value": "TypeScript"
+        },
+        {
+          "key": "technologies[1]",
+          "value": "Cloudflare Workers"
+        },
+        {
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The CISA Known Exploited Vulnerabilities Catalog update does not mention any specific vulnerability related to the technologies or services used by the 'support-widget'."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:42:47.564534Z",
+      "revision_hash": "e26c8fc89e9abd1ffcd040dd662d32f92fdcf72cce00a3344a26c0cbd1d1e59d",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_47105725c2bf",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "ico-ai-guidance",
+      "relevance": "not_relevant",
+      "title": "UK ICO AI and Data Protection Guidance",
+      "development_key": "uk-ico-ai-data-protection-guidance",
+      "evidence": [
+        {
+          "snapshot_id": "snap_b647cb136160",
+          "source_id": "ico-ai-guidance",
+          "passage": "Skip to main content\nArtificial intelligence\nThe guidance on this page is suitable for businesses in the public, private and third sectors.\nDetailed guidance\nArtificial\nintelligence (AI) and data protection\nA detailed overview of how to apply the principles of the UK GDPR to the use of information in AI systems.\nExplaining decisions made with AI\nPractical advice to help explain the processes, services and decisions delivered or assisted by AI to the individuals affected.\nBiometric data guidance: Biometric recognition\nWhat is biometric data, what is meant by \"biometric recognition\", demonstrating compliance with data protection obligations and processing biometric data fairly and lawfully.\nRe",
+          "published_at": null,
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "A chat widget embedded on the company marketing site that answers visitor questions using a language model."
+        },
+        {
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        },
+        {
+          "key": "consequential_actions[0]",
+          "value": "Responds to website visitors in natural language on behalf of the company"
+        },
+        {
+          "key": "data_categories[0]",
+          "value": "chat message content"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The provided evidence is existing guidance and does not indicate any new changes or specific requirements that would directly affect the 'support-widget'."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:42:41.802585Z",
+      "revision_hash": "58fc9557c584ea21f72044a1bec77df32a4176ac0887763283386749fd0f744e",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_0e567f4c453c",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "edpb-news",
+      "relevance": "not_relevant",
+      "title": "EDPB News Updates",
+      "development_key": "edpb-news-updates",
+      "evidence": [
+        {
+          "snapshot_id": "snap_10aee2ce8841",
+          "source_id": "edpb-news",
+          "passage": "interplay between data protection and competition law: save the date\n23 July 2026\nEDPB News\nEDPB calls for legal basis for cross-regulatory information sharing\n17 July 2026\nEDPB News\nEDPB requires Belgian DPA to handle the merits of NOYB cookie banner complaint\n14 July 2026\nEDPB News\nEDPB sheds light on anonymisation and web scraping for generative AI and adopts final version of guidelines on blockchain\n08 July 2026\nEDPB News\nEDPB and AMLA to develop Joint Guidelines on partnerships for information sharing\n01 July 2026\nEDPB News\nOne-Stop-Shop case digest on right to object and right to erasure updated\n25 June 2026\nEDPB News\nSupporting GDPR consistency: EDPB launches dedicated form\n24 June 20",
+          "published_at": "2026-09-11",
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "A chat widget embedded on the company marketing site that answers visitor questions using a language model."
+        },
+        {
+          "key": "technologies[0]",
+          "value": "TypeScript"
+        },
+        {
+          "key": "technologies[1]",
+          "value": "Cloudflare Workers"
+        },
+        {
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        },
+        {
+          "key": "consequential_actions[0]",
+          "value": "Responds to website visitors in natural language on behalf of the company"
+        },
+        {
+          "key": "data_categories[0]",
+          "value": "chat message content"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The provided evidence consists of general news updates and does not indicate any new requirements or changes that would impact the 'support-widget' system."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:42:37.474002Z",
+      "revision_hash": "86afb1740384f1dd02e1b603f2a70b144b5002d1341f83c2506c3fa2f9839bb2",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_bcf145d32987",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "eu-ai-act-article-50",
+      "relevance": "relevant",
+      "title": "EU AI Act Transparency Obligations for Support-Widget",
+      "development_key": "eu-ai-act-transparency-obligations",
+      "evidence": [
+        {
+          "snapshot_id": "snap_2867c5d01968",
+          "source_id": "eu-ai-act-article-50",
+          "passage": "AI Act Explorer\nChapter IV\nTransparency Obligations for Providers and Deployers of Certain AI Systems\nArticle 50\n: Transparency Obligations for Providers and Deployers of Certain AI Systems\nComes into force 2 August 2026, according to\nArticle 113\nRelated recitals:\n120\n136\n137\n1.\nProviders shall ensure that AI systems intended to interact directly with natural persons are designed and developed in such a way that the natural persons concerned are informed that they are interacting with an\nAI system\nAI system\nmeans a machine-based system that is designed to operate with varying levels of autonomy and that may exhibit adaptiveness after deployment, and that, for explicit or implicit objectives,",
+          "published_at": null,
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "consequential_actions[0]",
+          "value": "Responds to website visitors in natural language on behalf of the company"
         }
       ],
       "facts": [
-        "NIST has developed a framework to better manage risks to individuals, organizations, and society associated with artificial intelligence (AI)."
+        "Providers shall ensure that AI systems intended to interact directly with natural persons are designed and developed in such a way that the natural persons concerned are informed that they are interacting with an AI system."
       ],
       "inferences": [
-        "The inbox-triage system uses AI to draft replies to client emails, so it would be beneficial for the system owner to review the NIST AI Risk Management Framework to ensure the system is managing AI risks appropriately."
+        "The support-widget interacts directly with natural persons, making it subject to the EU AI Act's transparency obligations."
       ],
       "unknowns": [],
       "review_suggestions": [
-        "The system owner should review the NIST AI Risk Management Framework to ensure the system is managing AI risks appropriately."
+        "Review the support-widget's compliance with the EU AI Act's transparency obligations, ensuring that users are informed they are interacting with an AI system."
+      ],
+      "app_impact": {
+        "fact_key": "consequential_actions[0]",
+        "consequence": "The support-widget must inform users that they are interacting with an AI system to comply with the EU AI Act.",
+        "review_question": "Is the support-widget currently informing users that they are interacting with an AI system?"
+      },
+      "validation_issues": [],
+      "adoption_status": "proposed",
+      "created_at": "2026-09-12T19:42:32.896526Z",
+      "revision_hash": "a0fab206e1c9a298a20dca5b924f0449658ff483906dd2829eee0743f6b1a3e9",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_cd06ef6825f0",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "azure-openai-whats-new",
+      "relevance": "not_relevant",
+      "title": "Azure OpenAI Updates Not Relevant to Support Widget",
+      "development_key": "azure-openai-updates",
+      "evidence": [
+        {
+          "snapshot_id": "snap_72f8ddd420e6",
+          "source_id": "azure-openai-whats-new",
+          "passage": "re viewing now.\nThis article provides a summary of the latest releases and major documentation updates for Azure OpenAI.\nMay 2026\nGPT Realtime 2.0 concept articles\nNew concept articles describe the capabilities and key concepts for the latest realtime model:\nGPT Realtime 2.0 (preview) overview\n\u2014 covers reasoning support, response phases (preamble and final answer), and stricter instruction following.\nGPT Realtime Translate and GPT Realtime Whisper\nNew concept articles describe the capabilities and use cases for the latest real-time translation and transcription models:\nGPT Realtime Translate\n\u2014 covers continuous stream-based audio translation for live multilingual events, customer support, an",
+          "published_at": null,
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The evidence discusses updates to Azure OpenAI, which is not used by the 'support-widget' system."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "adopted",
+      "created_at": "2026-09-12T19:42:27.581335Z",
+      "revision_hash": "36b0a34f43174fb7e8bd5e74f41821bffd9f962f41f1370e5b194ba1b97d314c",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_5982fa61cf12",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "nodejs-releases",
+      "relevance": "not_relevant",
+      "title": "Node.js updates are not relevant to support-widget",
+      "development_key": "nodejs-updates",
+      "evidence": [],
+      "system_facts": [
+        {
+          "key": "technologies[0]",
+          "value": "TypeScript"
+        },
+        {
+          "key": "technologies[1]",
+          "value": "Cloudflare Workers"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The system does not use Node.js as per the system facts."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": {
+        "fact_key": "technologies[0]",
+        "consequence": "Node.js updates do not affect the support-widget as it does not use Node.js.",
+        "review_question": "Confirm that the support-widget does not use Node.js."
+      },
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:42:22.811445Z",
+      "revision_hash": "365fa1e51fb6952d80ba06ef3af54abb4fe2b0c47bbecdd021d07ccdb7aa3d83",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_06fb38059f32",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "cloudflare-changelog",
+      "relevance": "not_relevant",
+      "title": "Cloudflare Worker Updates Not Relevant to Support Widget",
+      "development_key": "cloudflare-worker-updates",
+      "evidence": [
+        {
+          "snapshot_id": "snap_475557e453dc",
+          "source_id": "cloudflare-changelog",
+          "passage": "6\nInspect Voice Agent turn latency and outcomes\nAgents\n@cloudflare/voice\nv0.4.0 now lets you inspect where each Voice Agent turn spends time and how it ends.\nclient.\naddEventListener\n(\n\"turnmetrics\"\n, (\nturn\n)\n=>\n{\nconsole.\nlog\n(turn.outcome, turn.turnTotalMs);\n});\nAbout the Voice package\nThe\n@cloudflare/voice\npackage lets you build real-time voice agents with Cloudflare Agents. It streams microphone audio to an Agent over WebSocket, transcribes speech, runs your model through\nonTurn()\n, converts the response to speech, and streams audio back to the caller.\nA turn moves through several stages:\nUser speaks -> speech-to-text -> model -> text-to-speech -> audio\nPreviously, the package's four ag",
+          "published_at": "2026-09-11",
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "technologies[1]",
+          "value": "Cloudflare Workers"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The updates mentioned in the evidence are related to Cloudflare products other than Workers or are enhancements that do not impact the 'support-widget'."
+      ],
+      "unknowns": [],
+      "review_suggestions": [
+        "Monitor future updates to Cloudflare Workers for any changes that may affect the 'support-widget'."
+      ],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "adopted",
+      "created_at": "2026-09-12T19:42:16.985600Z",
+      "revision_hash": "7377670cbf65c7cdd73b426574750040340f3a47001c005c082664f0f9b7fbca",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_601869741540",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "aws-bedrock-history",
+      "relevance": "not_relevant",
+      "title": "Amazon Bedrock Documentation Updates",
+      "development_key": "amazon-bedrock-documentation-updates",
+      "evidence": [
+        {
+          "snapshot_id": "snap_b1fb1476188f",
+          "source_id": "aws-bedrock-history",
+          "passage": "le\nURLs.\nAugust 19, 2026\nUpdated endpoint guidance to recommend the bedrock-runtime endpoint\nUpdated the endpoint and API guidance across the Amazon Bedrock User Guide to recommend the\nbedrock-runtime\nendpoint for new applications, including for OpenAI- and Anthropic-compatible workloads. Changes include reordered quickstart tabs and code samples on the\nOverview\nand\nQuickstart\npages, reordered endpoint and API guidance on the\nEndpoints\n,\nAPIs\n, and\nBuild\npages, reordered Programmatic Access sections in model cards, retitled the\nResponses API\nand\nChat Completions API\npages that document the\nbedrock-mantle\nvariants, and added cross-reference tips on the\nProjects\nand\nWorkspaces\npages. The\nbedro",
+          "published_at": null,
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The updates to the Amazon Bedrock documentation recommend the use of the bedrock-runtime endpoint but do not introduce any breaking changes or new obligations."
+      ],
+      "unknowns": [],
+      "review_suggestions": [
+        "Review the Amazon Bedrock documentation for any future changes that may impact the system."
+      ],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "adopted",
+      "created_at": "2026-09-12T19:42:12.877257Z",
+      "revision_hash": "4913045e51de396383382f2c95bc374e51d82d0b56847692e6e60c7baced13d6",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_863e71bddd03",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "google-gemini-changelog",
+      "relevance": "not_relevant",
+      "title": "Gemini API updates are not relevant to support-widget",
+      "development_key": "gemini-api-updates",
+      "evidence": [],
+      "system_facts": [
+        {
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The system uses Amazon Bedrock, not Google's Gemini API."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:42:08.823533Z",
+      "revision_hash": "82a15ce284d61ab935aafc154a9a7060197e58a38f53f66a8333998cc8397c22",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_fb816d733c2f",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "support-widget",
+      "source_id": "openai-api-changelog",
+      "relevance": "not_relevant",
+      "title": "OpenAI API Changelog Not Relevant to Support Widget",
+      "development_key": "openai-api-changelog",
+      "evidence": [
+        {
+          "snapshot_id": "snap_b2f21718e615",
+          "source_id": "openai-api-changelog",
+          "passage": "\nSafety checks\nSafety classifiers\nCybersecurity checks\nMisalignment monitoring\nUnder-18 guidance\nCSAM guidance\nContent provenance\nYour data\nPermissions\nInfrastructure and access\nTerraform provider\nOverview\nProjects and access\nService accounts\nRate limits and spend\nModel, tool, and data controls\nImport and reconciliation\nPrivate Link\nIP allowlist\nMutual TLS\nWorkload identity federation\nCodex setup\nFederation rules\nAdmin API\nX.509 certificates\nKubernetes\nAWS\nMicrosoft Azure\nGoogle Cloud\nOracle Cloud Infrastructure\nGitHub Actions\nSPIFFE\nIP egress ranges\nAmazon Bedrock\nOperations\nRate limits\nSpend limits\nAdmin APIs\nError codes\nDocs\nUse cases\nDocs\nUse cases\nDocs\nDocs\nPlugins\nWorkspace Agents\nComm",
+          "published_at": null,
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "A chat widget embedded on the company marketing site that answers visitor questions using a language model."
+        },
+        {
+          "key": "technologies[0]",
+          "value": "TypeScript"
+        },
+        {
+          "key": "technologies[1]",
+          "value": "Cloudflare Workers"
+        },
+        {
+          "key": "services[0]",
+          "value": "Amazon Bedrock"
+        },
+        {
+          "key": "consequential_actions[0]",
+          "value": "Responds to website visitors in natural language on behalf of the company"
+        },
+        {
+          "key": "data_categories[0]",
+          "value": "chat message content"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The evidence provided does not mention any changes or developments directly related to the 'support-widget' system."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:42:05.504297Z",
+      "revision_hash": "345b7e726cea16b310d5de594bf0d77befb3fa47b15b2c8f05a80ed3c2903030",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_8bdfbaa04a6e",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "recipe-site",
+      "source_id": "ftc-business-blog",
+      "relevance": "not_relevant",
+      "title": "FTC Business Blog Updates Not Relevant to Static Recipe Archive",
+      "development_key": "ftc-business-blog-updates",
+      "evidence": [
+        {
+          "snapshot_id": "snap_1966277a09a7",
+          "source_id": "ftc-business-blog",
+          "passage": "Skip to main content\nThe .gov means it\u2019s official.\nFederal government websites often end in .gov or .mil. Before sharing sensitive information, make sure you\u2019re on a federal government site.\nThe site is secure.\nThe\nhttps://\nensures that you are connecting to the official website and that any information you provide is encrypted and transmitted securely.\nEspa\u00f1ol\nReport Fraud\nSubmit Public Comments\nSearch the Legal Library\nBusiness Blog\nBusiness Guidance Menu\nBusiness Guidance\nAdvertising and Marketing\nCredit and Finance\nPrivacy and Security\nBy Industry\nBrowse Business Guidance Resources\nBusiness Blog\nGet Business Blog updates\nTopics\nAdvertising and Marketing\n(420)\nAdvertising and Marketing Ba",
+          "published_at": "2026-02-13",
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code."
+        },
+        {
+          "key": "assumptions[0]",
+          "value": "All recipe content is authored by the owner"
+        },
+        {
+          "key": "assumptions[1]",
+          "value": "No visitor information is collected or stored"
+        },
+        {
+          "key": "constraints[0]",
+          "value": "No third-party scripts of any kind on the published pages"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The FTC Business Blog updates do not directly affect the 'recipe-site' system due to its static nature and constraints."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:42:01.058864Z",
+      "revision_hash": "7941a4214b246588560663812bd80f79fb86bffad6b276817fd1386f55485c87",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_592e310b6afa",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "recipe-site",
+      "source_id": "aws-security-bulletins",
+      "relevance": "not_relevant",
+      "title": "AWS Security Bulletins are not relevant to the 'recipe-site'",
+      "development_key": "aws-security-bulletins",
+      "evidence": [
+        {
+          "snapshot_id": "snap_7710b98b9795",
+          "source_id": "aws-security-bulletins",
+          "passage": "Skip to main content\nSecurity Bulletins\nNo matter how carefully engineered the services are, from time to time it may be necessary to notify customers of security and privacy events with AWS services.\nSubscribe to our Security Bulletin RSS Feed\nto keep abreast of security announcements.",
+          "published_at": null,
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code."
+        },
+        {
+          "key": "technologies[0]",
+          "value": "Hugo"
+        },
+        {
+          "key": "technologies[1]",
+          "value": "HTML"
+        },
+        {
+          "key": "technologies[2]",
+          "value": "CSS"
+        },
+        {
+          "key": "technologies[3]",
+          "value": "GitHub Pages"
+        },
+        {
+          "key": "assumptions[0]",
+          "value": "All recipe content is authored by the owner"
+        },
+        {
+          "key": "assumptions[1]",
+          "value": "No visitor information is collected or stored"
+        },
+        {
+          "key": "constraints[0]",
+          "value": "No third-party scripts of any kind on the published pages"
+        },
+        {
+          "key": "jurisdictions[0]",
+          "value": "United Kingdom"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The affected product is not a recorded dependency of this system."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:41:52.304955Z",
+      "revision_hash": "66a4bb6f17c8ef0823835d3b3d4df952af2124765ffce07cf3212a392d6d5c89",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_cc986b8b7ef5",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "recipe-site",
+      "source_id": "cisa-kev",
+      "relevance": "not_relevant",
+      "title": "GitLab Path Traversal Vulnerability (CVE-2026-85706) Not Relevant to Static Recipe Archive",
+      "development_key": "gitlab-path-traversal-cve-2026-85706",
+      "evidence": [],
+      "system_facts": [
+        {
+          "key": "technologies[0]",
+          "value": "Hugo"
+        },
+        {
+          "key": "technologies[1]",
+          "value": "HTML"
+        },
+        {
+          "key": "technologies[2]",
+          "value": "CSS"
+        },
+        {
+          "key": "technologies[3]",
+          "value": "GitHub Pages"
+        },
+        {
+          "key": "assumptions[0]",
+          "value": "All recipe content is authored by the owner"
+        },
+        {
+          "key": "assumptions[1]",
+          "value": "No visitor information is collected or stored"
+        },
+        {
+          "key": "constraints[0]",
+          "value": "No third-party scripts of any kind on the published pages"
+        },
+        {
+          "key": "jurisdictions[0]",
+          "value": "United Kingdom"
+        }
+      ],
+      "facts": [
+        "The system uses Hugo, HTML, CSS, and GitHub Pages.",
+        "The system does not use GitLab or any server-side code.",
+        "There are no third-party scripts on the published pages."
+      ],
+      "inferences": [
+        "The path traversal vulnerability in GitLab does not affect the statically generated recipe site."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:41:45.638034Z",
+      "revision_hash": "895e09feba8c331ad6ae291ff8b0784bad14b16d59452f28ce822df8f2ea2876",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_798646718818",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "recipe-site",
+      "source_id": "ico-ai-guidance",
+      "relevance": "not_relevant",
+      "title": "UK ICO AI and Data Protection Guidance Not Relevant to Static Recipe Archive",
+      "development_key": "uk-ico-ai-data-protection-guidance",
+      "evidence": [
+        {
+          "snapshot_id": "snap_b647cb136160",
+          "source_id": "ico-ai-guidance",
+          "passage": "Skip to main content\nArtificial intelligence\nThe guidance on this page is suitable for businesses in the public, private and third sectors.\nDetailed guidance\nArtificial\nintelligence (AI) and data protection\nA detailed overview of how to apply the principles of the UK GDPR to the use of information in AI systems.\nExplaining decisions made with AI\nPractical advice to help explain the processes, services and decisions delivered or assisted by AI to the individuals affected.\nBiometric data guidance: Biometric recognition\nWhat is biometric data, what is meant by \"biometric recognition\", demonstrating compliance with data protection obligations and processing biometric data fairly and lawfully.\nRe",
+          "published_at": null,
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_b647cb136160",
+          "source_id": "ico-ai-guidance",
+          "passage": "sources\nAI and data protection risk toolkit\nPractical support for organisations assessing the risks to individual rights and freedoms caused by their own AI systems.\nData analytics toolkit\nCreate tailored advice for your project to help you recognise some of the central risks to the rights and freedoms of individuals created by the use of data analytics.\nHelp us improve our website\nWas this page helpful?\n(optional)\nYes\nNo\nPlease tell us more about your experience.\n(optional)\nHoneypot\nBack to top",
+          "published_at": null,
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code."
+        },
+        {
+          "key": "assumptions[0]",
+          "value": "All recipe content is authored by the owner"
+        },
+        {
+          "key": "assumptions[1]",
+          "value": "No visitor information is collected or stored"
+        },
+        {
+          "key": "constraints[0]",
+          "value": "No third-party scripts of any kind on the published pages"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The evidence provided is general guidance on AI and data protection, which does not directly affect the 'recipe-site' as it operates under different assumptions and constraints."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "adopted",
+      "created_at": "2026-09-12T19:41:38.825778Z",
+      "revision_hash": "a36a5c9302a71e7e29c67a3644fa282f754270003d488222a2dc953bcc106519",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_d863e6ac2dc9",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "recipe-site",
+      "source_id": "edpb-news",
+      "relevance": "not_relevant",
+      "title": "EDPB Data Protection News Not Relevant to Static Recipe Archive",
+      "development_key": "edpb-data-protection-news",
+      "evidence": [
+        {
+          "snapshot_id": "snap_10aee2ce8841",
+          "source_id": "edpb-news",
+          "passage": " strictly for informational purposes. They appear as originally published by the authorities, only available in English. Questions regarding these national news releases should be directed to the relevant data protection authority.\n\u00d7\nWe use cookies\nWhen you visit our website, if you give your consent, we will use cookies to allow us to collect data for aggregated statistics to improve our services and remember your choice for future visits.\nIf you don't want this, we will only use cookies to remember your choice for future visits (i.e., essential cookies).\nIf you don't select any of the two options, no cookies will be deployed, but the banner will re-appear every time you enter our website.\n",
+          "published_at": "2026-09-11",
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "assumptions[1]",
+          "value": "No visitor information is collected or stored"
+        },
+        {
+          "key": "constraints[0]",
+          "value": "No third-party scripts of any kind on the published pages"
+        }
+      ],
+      "facts": [
+        "The EDPB news and guidelines are about data protection and do not directly affect systems that do not collect or store personal data."
+      ],
+      "inferences": [
+        "The 'recipe-site' system does not collect or store visitor information and does not use any third-party scripts, making it unaffected by the provided data protection news and guidelines."
+      ],
+      "unknowns": [],
+      "review_suggestions": [
+        "Review the system's constraints and assumptions to ensure they remain valid."
       ],
       "app_impact": null,
       "validation_issues": [],
       "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:43:04.621809Z",
-      "revision_hash": "19e8df415638aaa1fcf18cf3da577b1acf89ac3eb86a4edaacff6523aacb3eec",
-      "quality_version": 0,
+      "created_at": "2026-09-12T19:41:32.673313Z",
+      "revision_hash": "0a133769dc8ede850569ec356a9b855622dff91d46ddb7c1e04f01e7edd6ba4a",
+      "quality_version": 4,
       "disposition": "open"
     },
     {
-      "id": "find_455934ea8260",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "inbox-triage",
-      "source_id": "cisa-kev",
+      "id": "find_87ebb0d00749",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "recipe-site",
+      "source_id": "vercel-changelog",
       "relevance": "not_relevant",
-      "title": "Assessment of 'inbox-triage' against CISA Known Exploited Vulnerabilities Catalog",
-      "development_key": "cisa-kev-catalog",
+      "title": "Vercel Changes September 2023 - Not Relevant to Recipe Site",
+      "development_key": "vercel-changes-september-2023",
+      "evidence": [
+        {
+          "snapshot_id": "snap_835127d589b6",
+          "source_id": "vercel-changelog",
+          "passage": "Skip to content\nChangelog\n11 September\n11 Sep\nVercel Sandbox now provides 64 GB of storage\nVercel Sandbox now provides 64 GB of storage per sandbox, up from 32 GB, by default on the latest SDK and CLI versions and when created with an image.\nAndy Waller, Luke Phillips-Sheard\nControl who can manage connectors in Vercel Connect\nVercel Connect now lets teams on Pro and Enterprise plans restrict who can create and manage connectors.\nMark Roberts, Allen Zhou\n10 September\n10 Sep\nGitHub Copilot is now available in the AI SDK harness layer\nGitHub Copilot now runs through the AI SDK harness layer via @ai-sdk/harness-github-copilot, using the same HarnessAgent interface as every other supported harnes",
+          "published_at": "2026-09-11",
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_835127d589b6",
+          "source_id": "vercel-changelog",
+          "passage": "s.\nFelix Arntz\nSoftware Engineer\nFastAPI frontends and static files served from the CDN\nFastAPI frontends and static files are now promoted to the Vercel CDN at build time and served without invoking your Vercel Function.\nDaniel Park\nSoftware Engineer\nBuild with OpenAI Agents API on Vercel\nBuild and deploy an OpenAI Agents API app on Vercel with Next.js, Functions, Queues, and Sandbox for isolated, persistent code execution.\nAnshuman Bhardwaj, Allen Zhou\nTako Search is free on AI Gateway through September 30\nTako Search search tool is live on AI Gateway and provides live web search for any AI Gateway model. The tool is free through September 30th.\nWalter Korman, Zachary Chen, and 1 other\nVer",
+          "published_at": "2026-09-11",
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_835127d589b6",
+          "source_id": "vercel-changelog",
+          "passage": "cel Sandbox is now available in all regions\nVercel Sandbox now runs in all Vercel compute regions. Choose a region per sandbox, set a project default, and configure failover regions.\nMarc Codina Segura, Rob Herley\n9 September\n9 Sep\nPassword Protection is now available per project on Pro\nPassword Protection is now $20 per month per protected project on Pro. Enterprise includes it at the team level.\n+2\nKit Foster, Caleb Boyd, and 2 others\nShow more\nLoading status\u2026\nSelect a display theme:\nsystem\nlight\ndark",
+          "published_at": "2026-09-11",
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "technologies[3]",
+          "value": "GitHub Pages"
+        },
+        {
+          "key": "constraints[0]",
+          "value": "No third-party scripts of any kind on the published pages"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The changes in Vercel's services do not affect the 'recipe-site' system, which uses GitHub Pages and does not rely on Vercel."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "adopted",
+      "created_at": "2026-09-12T19:41:24.277436Z",
+      "revision_hash": "130d2d44ba9209942c7989b36bef05cb725c25c328c91a1d878e6eac6285c326",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_0f97b66cdc55",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "recipe-site",
+      "source_id": "cloudflare-changelog",
+      "relevance": "not_relevant",
+      "title": "Cloudflare Voice Agent Updates Not Relevant to Static Recipe Archive",
+      "development_key": "cloudflare-voice-agent-updates",
+      "evidence": [
+        {
+          "snapshot_id": "snap_475557e453dc",
+          "source_id": "cloudflare-changelog",
+          "passage": "6\nInspect Voice Agent turn latency and outcomes\nAgents\n@cloudflare/voice\nv0.4.0 now lets you inspect where each Voice Agent turn spends time and how it ends.\nclient.\naddEventListener\n(\n\"turnmetrics\"\n, (\nturn\n)\n=>\n{\nconsole.\nlog\n(turn.outcome, turn.turnTotalMs);\n});\nAbout the Voice package\nThe\n@cloudflare/voice\npackage lets you build real-time voice agents with Cloudflare Agents. It streams microphone audio to an Agent over WebSocket, transcribes speech, runs your model through\nonTurn()\n, converts the response to speech, and streams audio back to the caller.\nA turn moves through several stages:\nUser speaks -> speech-to-text -> model -> text-to-speech -> audio\nPreviously, the package's four ag",
+          "published_at": "2026-09-11",
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "A personal, statically generated website of the owner's own recipes. Markdown files are rendered to HTML at build time and served as static files. There is no database, no user accounts, no forms, no analytics, and no server-side code."
+        },
+        {
+          "key": "technologies[0]",
+          "value": "Hugo"
+        },
+        {
+          "key": "technologies[1]",
+          "value": "HTML"
+        },
+        {
+          "key": "technologies[2]",
+          "value": "CSS"
+        },
+        {
+          "key": "technologies[3]",
+          "value": "GitHub Pages"
+        },
+        {
+          "key": "assumptions[0]",
+          "value": "All recipe content is authored by the owner"
+        },
+        {
+          "key": "assumptions[1]",
+          "value": "No visitor information is collected or stored"
+        },
+        {
+          "key": "constraints[0]",
+          "value": "No third-party scripts of any kind on the published pages"
+        },
+        {
+          "key": "jurisdictions[0]",
+          "value": "United Kingdom"
+        }
+      ],
+      "facts": [
+        "Cloudflare has updated the @cloudflare/voice package to allow inspection of Voice Agent turn latency and outcomes."
+      ],
+      "inferences": [
+        "The 'recipe-site' system does not use any Cloudflare products or services."
+      ],
+      "unknowns": [],
+      "review_suggestions": [
+        "Confirm that no Cloudflare products or services are being used in the 'recipe-site' system."
+      ],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "adopted",
+      "created_at": "2026-09-12T19:41:17.603222Z",
+      "revision_hash": "c15831c455412bbe6c503c8126890b865a2ac0596b49f1349b8974083836879d",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_34f48991afdd",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "inbox-triage",
+      "source_id": "nist-ai-rmf",
+      "relevance": "not_relevant",
+      "title": "NIST AI Risk Management Framework not relevant to inbox-triage system",
+      "development_key": "nist-ai-rmf-guidance",
+      "evidence": [
+        {
+          "snapshot_id": "snap_80dd2cc681b4",
+          "source_id": "nist-ai-rmf",
+          "passage": " AI RMF 1.0 is being revised as part of the White House AI Action Plan.\nQuick Links\nDownload the AI RMF 1.0\nView the AI RMF Playbook\nVisit the AI Resource Center\nOverview of the AI RMF\nLed by the Information Technology Laboratory (ITL) AI Program, and in collaboration with the private and public sectors, NIST has developed a framework to better manage risks to individuals, organizations, and society associated with artificial intelligence (AI). The\nNIST AI Risk Management Framework (AI RMF)\nis intended for voluntary use and to improve the ability to incorporate trustworthiness considerations into the design, development, use, and evaluation of AI products, services, and systems.\nReleased on ",
+          "published_at": "2021-07-12",
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "purpose",
+          "value": "Reads the owner's shared client inbox each morning, drafts replies with a large language model, and sends the approved drafts to clients as email from the business domain."
+        },
+        {
+          "key": "services[1]",
+          "value": "Amazon Bedrock"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The evidence discusses the NIST AI Risk Management Framework, but it does not specify any new changes or requirements that would directly affect the 'inbox-triage' system."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:41:02.266276Z",
+      "revision_hash": "e1392479cc958de2bb5823ba42545546192da44b5340bb37f99bbea1a9bbebda",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_6b051a80a38c",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "inbox-triage",
+      "source_id": "github-advisories",
+      "relevance": "not_relevant",
+      "title": "No direct impact on inbox-triage system",
+      "development_key": "github-advisory-database-2026-09-11",
       "evidence": [],
       "system_facts": [
         {
@@ -822,7 +1340,46 @@
         },
         {
           "key": "services[1]",
-          "value": "the model via Amazon Bedrock"
+          "value": "Amazon Bedrock"
+        },
+        {
+          "key": "services[2]",
+          "value": "SendGrid"
+        }
+      ],
+      "facts": [],
+      "inferences": [],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": {
+        "fact_key": "technologies[0]",
+        "consequence": "The evidence does not mention any vulnerabilities or issues related to Python 3.12, which is one of the technologies used by the inbox-triage system.",
+        "review_question": "No review question is necessary as the evidence does not impact the system."
+      },
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:40:53.662299Z",
+      "revision_hash": "11a37bc783976341a01bd511600e7e74742217d76cca65bd6c7bdcd3ddc337b2",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_2c5e892c6ef0",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "inbox-triage",
+      "source_id": "aws-security-bulletins",
+      "relevance": "not_relevant",
+      "title": "AWS Security Bulletins - No New Changes",
+      "development_key": "aws-security-bulletins-standing-policy",
+      "evidence": [],
+      "system_facts": [
+        {
+          "key": "services[0]",
+          "value": "Gmail API"
+        },
+        {
+          "key": "services[1]",
+          "value": "Amazon Bedrock"
         },
         {
           "key": "services[2]",
@@ -831,75 +1388,141 @@
       ],
       "facts": [],
       "inferences": [
-        "None of the technologies or services used by the system are mentioned in the vulnerabilities listed in the evidence document."
+        "The evidence provided is a general statement about AWS Security Bulletins and does not indicate any specific change or event that would affect the 'inbox-triage' system."
       ],
       "unknowns": [],
       "review_suggestions": [],
       "app_impact": null,
       "validation_issues": [],
       "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:42:57.636112Z",
-      "revision_hash": "e0c08ca012cb52a3d7bcc65aa9a11d52460c90d8a0ffac3f4152ed2b8bdfaaa0",
-      "quality_version": 0,
+      "created_at": "2026-09-12T19:40:45.538631Z",
+      "revision_hash": "67a1187296f6c9e2269647878edb049797cc8f2f92d70d894522115ae1c180b8",
+      "quality_version": 4,
       "disposition": "open"
     },
     {
-      "id": "find_7dee8ca0c136",
-      "scan_run_id": "run_9cab3777af54",
+      "id": "find_52093a575803",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "inbox-triage",
+      "source_id": "cisa-kev",
+      "relevance": "insufficient_information",
+      "title": "Assessment of GitLab Path Traversal Vulnerability Impact on inbox-triage System",
+      "development_key": "gitlab-path-traversal-vulnerability",
+      "evidence": [],
+      "system_facts": [],
+      "facts": [],
+      "inferences": [],
+      "unknowns": [
+        "Does the system 'inbox-triage' indirectly depend on GitLab in a way that could be affected by the path traversal vulnerability?"
+      ],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:40:42.055645Z",
+      "revision_hash": "21f73351c815452761914a83bb1e5e2c0b5723edb1090d1e0f4d4982928f8652",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_1bba0e400411",
+      "scan_run_id": "run_a6cebb81a767",
       "system_id": "inbox-triage",
       "source_id": "gmail-sender-guidelines",
-      "relevance": "insufficient_information",
+      "relevance": "relevant",
       "title": "Gmail Sender Guidelines Update",
-      "development_key": "gmail-sender-guidelines-update",
-      "evidence": [],
+      "development_key": "gmail-sender-guidelines-2024",
+      "evidence": [
+        {
+          "snapshot_id": "snap_b809c504fa3f",
+          "source_id": "gmail-sender-guidelines",
+          "passage": "he sender guidelines and requirements:\nSender requirement\nDate added\nUse a TLS connection for transmitting email\nDec. 2023\nSender requirements and guidelines\nFollow these guidelines to help ensure messages are delivered to Gmail accounts as expected, and to help prevent Gmail from limiting sending rates, blocking messages, or marking messages as spam.\nRequirements for all senders\nStarting February 1, 2024, all email senders who send email to Gmail accounts must meet the requirements in this section.\nImportant:\nIf you send more than 5,000 messages per day to Gmail accounts, follow the\nRequirements for sending 5,000 or more messages per day\n.\nSet up SPF or DKIM email authentication for your se",
+          "published_at": null,
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_b809c504fa3f",
+          "source_id": "gmail-sender-guidelines",
+          "passage": "nding domains.\nEnsure that sending domains or IPs have valid forward and reverse DNS records, also referred to as PTR records.\nLearn more\nUse a TLS connection for transmitting email. For steps to set up TLS in Google Workspace, visit\nRequire a secure connection for email\n.\nKeep spam rates reported in\nPostmaster Tools\nbelow 0.3%.\nLearn more about spam rates\nFormat messages according to the Internet Message Format standard,\nRFC 5322\n.\nDon\u2019t impersonate Gmail From: headers. Gmail will begin using a DMARC quarantine\nenforcement policy\n, and impersonating Gmail From: headers might impact your email delivery.\nRequirements for sending 5,000 or more messages per day\nStarting February 1, 2024, email ",
+          "published_at": null,
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_b809c504fa3f",
+          "source_id": "gmail-sender-guidelines",
+          "passage": "senders who send more than 5,000 messages per day to Gmail accounts must meet the requirements in this section.\nSet up SPF and DKIM email authentication for your domain.\nSet up DMARC email authentication for your sending domain. Your DMARC\nenforcement policy\ncan be set to none.\nLearn more\nEnsure that sending domains or IPs have valid forward and reverse DNS records, also referred to as PTR records.\nLearn more\nUse a TLS connection for transmitting email. For steps to set up TLS in Google Workspace, visit\nRequire a secure connection for email\n.\nKeep spam rates reported in\nPostmaster Tools\nbelow 0.30%.\nLearn more about spam rates\nFormat messages according to the Internet Message Format standard",
+          "published_at": null,
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_b809c504fa3f",
+          "source_id": "gmail-sender-guidelines",
+          "passage": ",\nRFC 5322\n.\nDon\u2019t impersonate Gmail From: headers. Gmail will begin using a DMARC quarantine\nenforcement policy\n, and impersonating Gmail From: headers might impact your email delivery.\nFor direct email, the domain in the sender's From: header must be aligned with either the SPF domain or the DKIM domain. This is required to pass\nDMARC alignment\n.\nMarketing messages and subscribed messages must support one-click unsubscribe, and include a clearly visible unsubscribe link in the message body.\nLearn more\nIf you send more than 5,000 emails per day before February 1, 2024, follow the guidelines in this article as soon as possible. Meeting the sender requirements before the deadline may improve ",
+          "published_at": null,
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_b809c504fa3f",
+          "source_id": "gmail-sender-guidelines",
+          "passage": "your email delivery. If you don\u2019t meet the requirements described in this article, your email might not be delivered as expected, or might be marked as spam. To get help with email delivery issues, go to\nTroubleshooting\n.\nEmail authentication requirements & guidelines\nWe require that you set up these email authentication methods for your domain:\nAll senders: SPF or DKIM\nBulk senders: SPF, DKIM, and DMARC\nAuthenticated messages:\nHelp protect recipients from malicious messages, such as spoofing and phishing messages.\nHelp protect you and your organization from being impersonated.\nAre less likely to be rejected or marked as spam by Gmail.\nSet up email authentication for each of your sending dom",
+          "published_at": null,
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_b809c504fa3f",
+          "source_id": "gmail-sender-guidelines",
+          "passage": "ains at your domain provider. You can use instructions Google provides and our domain provider's email authentication support information.\nTo verify messages are authenticated, Google performs checks on messages sent to Gmail accounts. To improve email delivery, we recommend that you always set up SPF, DKIM, and DMARC for your domains. Make sure you're meeting the minimum authentication requirements described on this page. Messages that aren\u2019t authenticated with these methods might be marked as spam or rejected with a\n5.7.26 error\n.\nIf you use an email service provider, verify that they authen",
+          "published_at": null,
+          "effective_at": null
+        }
+      ],
       "system_facts": [
         {
           "key": "services[0]",
           "value": "Gmail API"
+        },
+        {
+          "key": "consequential_actions[0]",
+          "value": "Sends email to external clients from the business domain"
         }
       ],
       "facts": [
-        "Starting February 1, 2024, all email senders who send email to Gmail accounts must meet the requirements in this section.",
-        "Set up SPF or DKIM email authentication for your sending domains.",
-        "Use a TLS connection for transmitting email.",
-        "Keep spam rates reported in Postmaster Tools below 0.3%.",
-        "Format messages according to the Internet Message Format standard, RFC 5322.",
-        "Don\u2019t impersonate Gmail From: headers."
+        "Starting February 1, 2024, all email senders who send email to Gmail accounts must meet the requirements in this section."
       ],
       "inferences": [
-        "The system must ensure it meets these new requirements to continue sending emails to Gmail accounts."
+        "The system must comply with Gmail's sender guidelines to ensure successful email delivery."
       ],
-      "unknowns": [
-        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
-      ],
+      "unknowns": [],
       "review_suggestions": [
-        "Review the system's email sending configuration to ensure it complies with the new Gmail sender guidelines.",
-        "Implement SPF, DKIM, and DMARC authentication for the sending domain.",
-        "Ensure the system uses a TLS connection for transmitting email.",
-        "Monitor spam rates and ensure they stay below 0.3%.",
-        "Verify that email messages comply with the Internet Message Format standard."
+        "Review the system's email sending configuration to ensure it meets Gmail's sender guidelines.",
+        "Verify that the system's sending domains have valid SPF, DKIM, and DMARC records.",
+        "Ensure that the system uses a TLS connection for transmitting email."
       ],
-      "app_impact": null,
+      "app_impact": {
+        "fact_key": "services[0]",
+        "consequence": "Failure to comply with Gmail's sender guidelines may result in emails being marked as spam or rejected, impacting the system's ability to send emails to clients.",
+        "review_question": "Has the system's email sending configuration been updated to meet Gmail's sender guidelines?"
+      },
       "validation_issues": [],
       "adoption_status": "in_effect",
-      "created_at": "2026-09-08T05:42:48.072767Z",
-      "revision_hash": "e163ef488fe514fb5f0fcb9226c24d32bee441b0b6a0cf73aae5e22d88e82dce",
-      "quality_version": 0,
+      "created_at": "2026-09-12T19:40:35.063489Z",
+      "revision_hash": "7cd51231f107a7c5bc3e8273ac307676a0635a40d4f1d0e122ca8d98e4561cb3",
+      "quality_version": 4,
       "disposition": "open"
     },
     {
-      "id": "find_b5c8b481e0c9",
-      "scan_run_id": "run_9cab3777af54",
+      "id": "find_e15332f51162",
+      "scan_run_id": "run_a6cebb81a767",
       "system_id": "inbox-triage",
       "source_id": "ico-ai-guidance",
       "relevance": "not_relevant",
-      "title": "Assessing relevance of UK ICO AI and Data Protection guidance to inbox-triage",
+      "title": "UK ICO AI and Data Protection Guidance",
       "development_key": "uk-ico-ai-data-protection-guidance",
       "evidence": [
         {
-          "snapshot_id": "snap_2fbadf5fe808",
+          "snapshot_id": "snap_b647cb136160",
           "source_id": "ico-ai-guidance",
-          "passage": "A detailed overview of how to apply the principles of the UK GDPR to the use of information in AI systems.",
+          "passage": "Skip to main content\nArtificial intelligence\nThe guidance on this page is suitable for businesses in the public, private and third sectors.\nDetailed guidance\nArtificial\nintelligence (AI) and data protection\nA detailed overview of how to apply the principles of the UK GDPR to the use of information in AI systems.\nExplaining decisions made with AI\nPractical advice to help explain the processes, services and decisions delivered or assisted by AI to the individuals affected.\nBiometric data guidance: Biometric recognition\nWhat is biometric data, what is meant by \"biometric recognition\", demonstrating compliance with data protection obligations and processing biometric data fairly and lawfully.\nRe",
           "published_at": null,
           "effective_at": null
         }
@@ -907,259 +1530,110 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "the model via Amazon Bedrock"
+          "value": "Amazon Bedrock"
         }
       ],
       "facts": [
-        "The guidance provides an overview of how to apply the principles of the UK GDPR to the use of information in AI systems."
+        "The guidance on this page is suitable for businesses in the public, private and third sectors."
       ],
       "inferences": [
-        "The guidance is general and does not introduce any new obligations, restrictions, or deadlines that would specifically affect the 'inbox-triage' system."
+        "The guidance provided is existing and not a new change."
       ],
       "unknowns": [],
       "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "adopted",
-      "created_at": "2026-09-08T05:42:41.141109Z",
-      "revision_hash": "b54870191ec3d66e8525ed568dde5b3b07b265d1cd2ab48d283a9d301b93ecc4",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_1769971fc6af",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "inbox-triage",
-      "source_id": "edpb-news",
-      "relevance": "not_relevant",
-      "title": "EDPB guidelines on blockchain not relevant to inbox-triage",
-      "development_key": "edpb-guidelines-blockchain",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services[0]",
-          "value": "Gmail API"
-        },
-        {
-          "key": "services[1]",
-          "value": "the model via Amazon Bedrock"
-        },
-        {
-          "key": "services[2]",
-          "value": "SendGrid"
-        }
-      ],
-      "facts": [
-        "The EDPB has adopted final version of guidelines on blockchain."
-      ],
-      "inferences": [
-        "The 'inbox-triage' system does not use blockchain technology.",
-        "The external development is not relevant to the system."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:42:33.311126Z",
-      "revision_hash": "ad593a1800b611808251b49dbf8be1e3116dc4e8a63308c94e5388cfabcaac2c",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_b8c5cef459b0",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "inbox-triage",
-      "source_id": "eu-ai-act-article-50",
-      "relevance": "insufficient_information",
-      "title": "EU AI Act Article 50 \u2014 Transparency Obligations",
-      "development_key": "eu-ai-act-article-50-transparency-obligations",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services[1]",
-          "value": "the model via Amazon Bedrock"
-        }
-      ],
-      "facts": [
-        "Providers shall ensure that AI systems intended to interact directly with natural persons are designed and developed in such a way that the natural persons concerned are informed that they are interacting with an AI system."
-      ],
-      "inferences": [
-        "The 'inbox-triage' system uses a large language model to draft replies, which could be considered an AI system under the Act."
-      ],
-      "unknowns": [
-        "Downgraded automatically: the relevance claim was not grounded (relevant finding has no evidence passage)."
-      ],
-      "review_suggestions": [
-        "Review the system's compliance with the transparency obligations outlined in the EU AI Act Article 50."
-      ],
       "app_impact": null,
       "validation_issues": [],
       "adoption_status": "in_effect",
-      "created_at": "2026-09-08T05:42:26.633000Z",
-      "revision_hash": "273bf16fb32315ce230eca4322fbe4a055fa2593dadde822f5ca7b20f453370e",
-      "quality_version": 0,
+      "created_at": "2026-09-12T19:40:29.025812Z",
+      "revision_hash": "a12596b607c470b4e0a096dca7774b901235a0ee2ae6191610e838cf8801a4c9",
+      "quality_version": 4,
       "disposition": "open"
     },
     {
-      "id": "find_24a3659578a1",
-      "scan_run_id": "run_9cab3777af54",
+      "id": "find_a5c3f4c7c3a0",
+      "scan_run_id": "run_a6cebb81a767",
       "system_id": "inbox-triage",
-      "source_id": "twilio-changelog",
+      "source_id": "vercel-changelog",
       "relevance": "not_relevant",
-      "title": "Twilio Changelog Update for inbox-triage",
-      "development_key": "twilio-changelog-update",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services[2]",
-          "value": "SendGrid"
-        }
-      ],
-      "facts": [
-        "Twilio SendGrid has added automatic SSL certificate provisioning as a toggle within the standard link branding setup flow."
-      ],
-      "inferences": [
-        "The system uses SendGrid, but the update is not directly relevant as it does not affect the core functionality of sending emails."
-      ],
-      "unknowns": [],
-      "review_suggestions": [
-        "Monitor SendGrid updates for any future changes that might impact email delivery."
-      ],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "adopted",
-      "created_at": "2026-09-08T05:42:18.873897Z",
-      "revision_hash": "f525a0a2e2d98a702096baaff5d5f2d00600e6761e831a148330843996f1525f",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_8f315ab10af4",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "inbox-triage",
-      "source_id": "aws-bedrock-history",
-      "relevance": "relevant",
-      "title": "Amazon Bedrock updates relevant to inbox-triage",
-      "development_key": "amazon-bedrock-updates",
+      "title": "Vercel updates do not affect inbox-triage system",
+      "development_key": "vercel-updates",
       "evidence": [
         {
-          "snapshot_id": "snap_710e684a3090",
-          "source_id": "aws-bedrock-history",
-          "passage": "Added a Bedrock model and a Bedrock model\nAdded model cards for\na Bedrock model\nand\na Bedrock model\n. Updated the Adaptive thinking, Extended thinking, Tool use, and Prompt caching pages. Added a new\nThinking block binding (beta)\ntopic.",
-          "published_at": null,
+          "snapshot_id": "snap_835127d589b6",
+          "source_id": "vercel-changelog",
+          "passage": "Skip to content\nChangelog\n11 September\n11 Sep\nVercel Sandbox now provides 64 GB of storage\nVercel Sandbox now provides 64 GB of storage per sandbox, up from 32 GB, by default on the latest SDK and CLI versions and when created with an image.\nAndy Waller, Luke Phillips-Sheard\nControl who can manage connectors in Vercel Connect\nVercel Connect now lets teams on Pro and Enterprise plans restrict who can create and manage connectors.\nMark Roberts, Allen Zhou\n10 September\n10 Sep\nGitHub Copilot is now available in the AI SDK harness layer\nGitHub Copilot now runs through the AI SDK harness layer via @ai-sdk/harness-github-copilot, using the same HarnessAgent interface as every other supported harnes",
+          "published_at": "2026-09-11",
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_835127d589b6",
+          "source_id": "vercel-changelog",
+          "passage": "s.\nFelix Arntz\nSoftware Engineer\nFastAPI frontends and static files served from the CDN\nFastAPI frontends and static files are now promoted to the Vercel CDN at build time and served without invoking your Vercel Function.\nDaniel Park\nSoftware Engineer\nBuild with OpenAI Agents API on Vercel\nBuild and deploy an OpenAI Agents API app on Vercel with Next.js, Functions, Queues, and Sandbox for isolated, persistent code execution.\nAnshuman Bhardwaj, Allen Zhou\nTako Search is free on AI Gateway through September 30\nTako Search search tool is live on AI Gateway and provides live web search for any AI Gateway model. The tool is free through September 30th.\nWalter Korman, Zachary Chen, and 1 other\nVer",
+          "published_at": "2026-09-11",
+          "effective_at": null
+        },
+        {
+          "snapshot_id": "snap_835127d589b6",
+          "source_id": "vercel-changelog",
+          "passage": "cel Sandbox is now available in all regions\nVercel Sandbox now runs in all Vercel compute regions. Choose a region per sandbox, set a project default, and configure failover regions.\nMarc Codina Segura, Rob Herley\n9 September\n9 Sep\nPassword Protection is now available per project on Pro\nPassword Protection is now $20 per month per protected project on Pro. Enterprise includes it at the team level.\n+2\nKit Foster, Caleb Boyd, and 2 others\nShow more\nLoading status\u2026\nSelect a display theme:\nsystem\nlight\ndark",
+          "published_at": "2026-09-11",
           "effective_at": null
         }
       ],
       "system_facts": [
         {
-          "key": "services[1]",
-          "value": "the model via Amazon Bedrock"
-        }
-      ],
-      "facts": [
-        "Added a Bedrock model and a Bedrock model",
-        "Added model cards for a Bedrock model and a Bedrock model",
-        "Updated the Adaptive thinking, Extended thinking, Tool use, and Prompt caching pages",
-        "Added a new Thinking block binding (beta) topic"
-      ],
-      "inferences": [
-        "The system uses the the model via Amazon Bedrock, and there have been updates to the model cards and thinking guidance."
-      ],
-      "unknowns": [],
-      "review_suggestions": [
-        "Review the updated model cards and thinking guidance to ensure the system is using the latest features and configurations."
-      ],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:42:11.349884Z",
-      "revision_hash": "38cfd7266b1475a29e41799d42828c5f28cde03a9db21c5e27c80d09cfda8a02",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_f44de9321e9f",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "inbox-triage",
-      "source_id": "github-rest-breaking",
-      "relevance": "not_relevant",
-      "title": "GitHub REST API Breaking Changes",
-      "development_key": "github-rest-api-breaking-changes",
-      "evidence": [],
-      "system_facts": [
+          "key": "technologies[0]",
+          "value": "Python 3.12"
+        },
+        {
+          "key": "technologies[1]",
+          "value": "AWS Lambda"
+        },
+        {
+          "key": "technologies[2]",
+          "value": "EventBridge Scheduler"
+        },
         {
           "key": "services[0]",
           "value": "Gmail API"
+        },
+        {
+          "key": "services[1]",
+          "value": "Amazon Bedrock"
+        },
+        {
+          "key": "services[2]",
+          "value": "SendGrid"
         }
       ],
       "facts": [],
       "inferences": [
-        "The breaking changes in the GitHub REST API do not affect the Gmail API used by the system."
+        "The evidence discusses updates to Vercel, which is not a dependency of the inbox-triage system.",
+        "No material changes to the system's dependencies or services were identified in the evidence."
       ],
       "unknowns": [],
       "review_suggestions": [],
       "app_impact": null,
       "validation_issues": [],
       "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:42:03.628214Z",
-      "revision_hash": "32ff6201f777f18bcdc6b8caed516e9dc1fc55c02b0b31dd7f41b7d0f1129971",
-      "quality_version": 0,
+      "created_at": "2026-09-12T19:40:14.643853Z",
+      "revision_hash": "34a940910d128812790533b9478930da0b07cb8628b49fe660fcec434593eebd",
+      "quality_version": 4,
       "disposition": "open"
     },
     {
-      "id": "find_8fc5c6bcdfb7",
-      "scan_run_id": "run_9cab3777af54",
+      "id": "find_3708d2d84086",
+      "scan_run_id": "run_a6cebb81a767",
       "system_id": "inbox-triage",
-      "source_id": "stripe-upgrades",
+      "source_id": "aws-bedrock-history",
       "relevance": "not_relevant",
-      "title": "Stripe API Upgrades and Versioning",
-      "development_key": "stripe-api-upgrades-versioning",
-      "evidence": [],
-      "system_facts": [
-        {
-          "key": "services[0]",
-          "value": "Gmail API"
-        },
-        {
-          "key": "services[1]",
-          "value": "the model via Amazon Bedrock"
-        },
-        {
-          "key": "services[2]",
-          "value": "SendGrid"
-        }
-      ],
-      "facts": [
-        "The evidence document discusses Stripe API upgrades and versioning."
-      ],
-      "inferences": [
-        "The 'inbox-triage' system does not use Stripe as an external service.",
-        "The changes discussed in the evidence document are not relevant to the 'inbox-triage' system."
-      ],
-      "unknowns": [],
-      "review_suggestions": [],
-      "app_impact": null,
-      "validation_issues": [],
-      "adoption_status": "unknown",
-      "created_at": "2026-09-08T05:41:57.428185Z",
-      "revision_hash": "08982c0a6325eebe52b8adce2d40b5d314cac90ad5182ce10917adf21e6f7e5f",
-      "quality_version": 0,
-      "disposition": "open"
-    },
-    {
-      "id": "find_8bc1e318c18b",
-      "scan_run_id": "run_9cab3777af54",
-      "system_id": "inbox-triage",
-      "source_id": "anthropic-aup",
-      "relevance": "relevant",
-      "title": "Anthropic Usage Policy relevance to inbox-triage",
-      "development_key": "anthropic-usage-policy",
+      "title": "Amazon Bedrock User Guide Updates",
+      "development_key": "amazon-bedrock-guide-updates",
       "evidence": [
         {
-          "snapshot_id": "snap_1a03b908a523",
-          "source_id": "anthropic-aup",
-          "passage": "Our Usage Policy (also referred to as our \u201cAcceptable Use Policy\u201d or \u201cAUP\u201d) applies to anyone who can submit inputs to Anthropic\u2019s products and/or services, including via any authorized resellers or passthrough access, all of whom we refer to as \u201cusers.\u201d The Usage Policy is intended to help our users stay safe and promote the responsible use of our products and services.",
+          "snapshot_id": "snap_b1fb1476188f",
+          "source_id": "aws-bedrock-history",
+          "passage": "le\nURLs.\nAugust 19, 2026\nUpdated endpoint guidance to recommend the bedrock-runtime endpoint\nUpdated the endpoint and API guidance across the Amazon Bedrock User Guide to recommend the\nbedrock-runtime\nendpoint for new applications, including for OpenAI- and Anthropic-compatible workloads. Changes include reordered quickstart tabs and code samples on the\nOverview\nand\nQuickstart\npages, reordered endpoint and API guidance on the\nEndpoints\n,\nAPIs\n, and\nBuild\npages, reordered Programmatic Access sections in model cards, retitled the\nResponses API\nand\nChat Completions API\npages that document the\nbedrock-mantle\nvariants, and added cross-reference tips on the\nProjects\nand\nWorkspaces\npages. The\nbedro",
           "published_at": null,
           "effective_at": null
         }
@@ -1167,25 +1641,99 @@
       "system_facts": [
         {
           "key": "services[1]",
-          "value": "the model via Amazon Bedrock"
+          "value": "Amazon Bedrock"
         }
       ],
       "facts": [
-        "The Anthropic Usage Policy applies to all users and use cases of Anthropic's products and services."
+        "Updated endpoint guidance to recommend the bedrock-runtime endpoint"
       ],
       "inferences": [
-        "The inbox-triage system uses the the model via Amazon Bedrock, which is subject to the Anthropic Usage Policy."
+        "The updates to the Amazon Bedrock User Guide recommend using the 'bedrock-runtime' endpoint for new applications but do not require existing applications to change."
       ],
       "unknowns": [],
       "review_suggestions": [
-        "Review the Anthropic Usage Policy to ensure compliance with the guidelines and restrictions."
+        "Review the Amazon Bedrock User Guide for any future changes that may affect the system."
       ],
       "app_impact": null,
       "validation_issues": [],
       "adoption_status": "adopted",
-      "created_at": "2026-09-08T05:41:50.664670Z",
-      "revision_hash": "40f5d930701b30d6b5d35058ee2722000b50756092debd1404288e4c553be768",
-      "quality_version": 0,
+      "created_at": "2026-09-12T19:40:07.126996Z",
+      "revision_hash": "be12c5cd27b86f420f1e6aa2c5230cbaf24d23e1e2d0c0f20d242390c132f62b",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_c3b6475e0dca",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "inbox-triage",
+      "source_id": "google-gemini-changelog",
+      "relevance": "not_relevant",
+      "title": "Gemini API updates are not relevant to 'inbox-triage' system",
+      "development_key": "gemini-api-updates",
+      "evidence": [
+        {
+          "snapshot_id": "snap_7a2df2b7b1c1",
+          "source_id": "google-gemini-changelog",
+          "passage": "Skip to main content\n/\nEnglish\nDeutsch\nEspa\u00f1ol \u2013 Am\u00e9rica Latina\nFran\u00e7ais\nIndonesia\nItaliano\nPolski\nPortugu\u00eas \u2013 Brasil\nShqip\nTi\u00ea\u0301ng Vi\u00ea\u0323t\nT\u00fcrk\u00e7e\n\u0420\u0443\u0441\u0441\u043a\u0438\u0439\n\u05e2\u05d1\u05e8\u05d9\u05ea\n\u0627\u0644\u0639\u0631\u0628\u064a\u0651\u0629\n\u0641\u0627\u0631\u0633\u06cc\n\u0939\u093f\u0902\u0926\u0940\n\u09ac\u09be\u0982\u09b2\u09be\n\u0e20\u0e32\u0e29\u0e32\u0e44\u0e17\u0e22\n\u4e2d\u6587 \u2013 \u7b80\u4f53\n\u4e2d\u6587 \u2013 \u7e41\u9ad4\n\u65e5\u672c\u8a9e\n\ud55c\uad6d\uc5b4\nGet API key\nCookbook\nCommunity\nSign in\nGemini 3.8 Flash is now available.\nTry it out\n.\nHome\nGemini API\nDocs\nSend feedback\nRelease notes\nThis page documents updates to the Gemini API.\nSeptember 3, 2026\nLyria 3.5 in public preview\n: Released the next generation of Google's music\ngeneration model:\nlyria-3.5\n:\nFull-length song generation with improved musical coherence, natural vocals,\nand fine-grained duration and structural control.\nThe model supports text and image inputs and gen",
+          "published_at": null,
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "services[1]",
+          "value": "Amazon Bedrock"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The Gemini API updates are not relevant to the 'inbox-triage' system as it uses Amazon Bedrock, not the Gemini API."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:40:02.397074Z",
+      "revision_hash": "897f361b4eba33589b26819bc7986315954fe817b2768eb30831c5054f53f43e",
+      "quality_version": 4,
+      "disposition": "open"
+    },
+    {
+      "id": "find_ec32e13a45d7",
+      "scan_run_id": "run_a6cebb81a767",
+      "system_id": "inbox-triage",
+      "source_id": "openai-api-changelog",
+      "relevance": "not_relevant",
+      "title": "OpenAI API Changelog Review for inbox-triage",
+      "development_key": "openai-api-changelog",
+      "evidence": [
+        {
+          "snapshot_id": "snap_b2f21718e615",
+          "source_id": "openai-api-changelog",
+          "passage": "\nSafety checks\nSafety classifiers\nCybersecurity checks\nMisalignment monitoring\nUnder-18 guidance\nCSAM guidance\nContent provenance\nYour data\nPermissions\nInfrastructure and access\nTerraform provider\nOverview\nProjects and access\nService accounts\nRate limits and spend\nModel, tool, and data controls\nImport and reconciliation\nPrivate Link\nIP allowlist\nMutual TLS\nWorkload identity federation\nCodex setup\nFederation rules\nAdmin API\nX.509 certificates\nKubernetes\nAWS\nMicrosoft Azure\nGoogle Cloud\nOracle Cloud Infrastructure\nGitHub Actions\nSPIFFE\nIP egress ranges\nAmazon Bedrock\nOperations\nRate limits\nSpend limits\nAdmin APIs\nError codes\nDocs\nUse cases\nDocs\nUse cases\nDocs\nDocs\nPlugins\nWorkspace Agents\nComm",
+          "published_at": null,
+          "effective_at": null
+        }
+      ],
+      "system_facts": [
+        {
+          "key": "services[1]",
+          "value": "Amazon Bedrock"
+        }
+      ],
+      "facts": [],
+      "inferences": [
+        "The evidence provided does not indicate any new changes or developments that would directly affect the system."
+      ],
+      "unknowns": [],
+      "review_suggestions": [],
+      "app_impact": null,
+      "validation_issues": [],
+      "adoption_status": "unknown",
+      "created_at": "2026-09-12T19:39:58.709396Z",
+      "revision_hash": "96118eb9425639493de87b3ec2060c659f339ca2593fb2b6308ef9266684039b",
+      "quality_version": 4,
       "disposition": "open"
     }
   ],
@@ -1383,120 +1931,9 @@
   ],
   "runs": [
     {
-      "id": "run_c539609c1cc5",
-      "started_at": "2026-09-08T05:45:33.158754Z",
-      "finished_at": "2026-09-08T05:45:33.265488Z",
-      "mode": "replay",
-      "status": "complete",
-      "source_health": [
-        {
-          "source_id": "anthropic-aup",
-          "fetch_status": "ok",
-          "http_status": null,
-          "error": null,
-          "changed": false,
-          "snapshot_id": "snap_93ae39e63a92"
-        },
-        {
-          "source_id": "stripe-upgrades",
-          "fetch_status": "ok",
-          "http_status": null,
-          "error": null,
-          "changed": false,
-          "snapshot_id": "snap_5e7770aecead"
-        },
-        {
-          "source_id": "github-rest-breaking",
-          "fetch_status": "ok",
-          "http_status": null,
-          "error": null,
-          "changed": false,
-          "snapshot_id": "snap_46a804597f42"
-        },
-        {
-          "source_id": "aws-bedrock-history",
-          "fetch_status": "ok",
-          "http_status": null,
-          "error": null,
-          "changed": false,
-          "snapshot_id": "snap_540ebd068ba3"
-        },
-        {
-          "source_id": "twilio-changelog",
-          "fetch_status": "ok",
-          "http_status": null,
-          "error": null,
-          "changed": false,
-          "snapshot_id": "snap_0d9488d1eda0"
-        },
-        {
-          "source_id": "eu-ai-act-article-50",
-          "fetch_status": "ok",
-          "http_status": null,
-          "error": null,
-          "changed": false,
-          "snapshot_id": "snap_67b01e47757a"
-        },
-        {
-          "source_id": "edpb-news",
-          "fetch_status": "ok",
-          "http_status": null,
-          "error": null,
-          "changed": false,
-          "snapshot_id": "snap_e87c3ada39c4"
-        },
-        {
-          "source_id": "ico-ai-guidance",
-          "fetch_status": "ok",
-          "http_status": null,
-          "error": null,
-          "changed": false,
-          "snapshot_id": "snap_0038eb41e809"
-        },
-        {
-          "source_id": "gmail-sender-guidelines",
-          "fetch_status": "ok",
-          "http_status": null,
-          "error": null,
-          "changed": false,
-          "snapshot_id": "snap_8012c183e97f"
-        },
-        {
-          "source_id": "cisa-kev",
-          "fetch_status": "ok",
-          "http_status": null,
-          "error": null,
-          "changed": false,
-          "snapshot_id": "snap_a709b62c4e02"
-        },
-        {
-          "source_id": "nist-ai-rmf",
-          "fetch_status": "ok",
-          "http_status": null,
-          "error": null,
-          "changed": false,
-          "snapshot_id": "snap_ea0b8b5c6528"
-        }
-      ],
-      "systems_evaluated": [
-        "inbox-triage",
-        "recipe-site",
-        "support-widget"
-      ],
-      "evaluations_performed": 0,
-      "review_events_created": 0,
-      "no_action_evaluations": 0,
-      "detail_needed_evaluations": 0,
-      "model_id": "us.amazon.nova-pro-v1:0",
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "abort_reason": null,
-      "validation_failures": 0
-    },
-    {
-      "id": "run_9cab3777af54",
-      "started_at": "2026-09-08T05:41:42.284532Z",
-      "finished_at": "2026-09-08T05:45:13.619333Z",
+      "id": "run_a6cebb81a767",
+      "started_at": "2026-09-12T19:39:54.742441Z",
+      "finished_at": "2026-09-12T19:43:12.336002Z",
       "mode": "replay",
       "status": "complete",
       "source_health": [
@@ -1506,7 +1943,15 @@
           "http_status": null,
           "error": null,
           "changed": true,
-          "snapshot_id": "snap_1a03b908a523"
+          "snapshot_id": "snap_6ec97c486d4c"
+        },
+        {
+          "source_id": "openai-api-changelog",
+          "fetch_status": "ok",
+          "http_status": null,
+          "error": null,
+          "changed": true,
+          "snapshot_id": "snap_b2f21718e615"
         },
         {
           "source_id": "stripe-upgrades",
@@ -1514,7 +1959,7 @@
           "http_status": null,
           "error": null,
           "changed": true,
-          "snapshot_id": "snap_5d71854ec610"
+          "snapshot_id": "snap_64b79760bb79"
         },
         {
           "source_id": "github-rest-breaking",
@@ -1522,7 +1967,15 @@
           "http_status": null,
           "error": null,
           "changed": true,
-          "snapshot_id": "snap_bc72ae8d949b"
+          "snapshot_id": "snap_7197d5818227"
+        },
+        {
+          "source_id": "google-gemini-changelog",
+          "fetch_status": "ok",
+          "http_status": null,
+          "error": null,
+          "changed": true,
+          "snapshot_id": "snap_7a2df2b7b1c1"
         },
         {
           "source_id": "aws-bedrock-history",
@@ -1530,7 +1983,7 @@
           "http_status": null,
           "error": null,
           "changed": true,
-          "snapshot_id": "snap_710e684a3090"
+          "snapshot_id": "snap_b1fb1476188f"
         },
         {
           "source_id": "twilio-changelog",
@@ -1538,7 +1991,39 @@
           "http_status": null,
           "error": null,
           "changed": true,
-          "snapshot_id": "snap_8eff915823e8"
+          "snapshot_id": "snap_280532815130"
+        },
+        {
+          "source_id": "cloudflare-changelog",
+          "fetch_status": "ok",
+          "http_status": null,
+          "error": null,
+          "changed": true,
+          "snapshot_id": "snap_475557e453dc"
+        },
+        {
+          "source_id": "nodejs-releases",
+          "fetch_status": "ok",
+          "http_status": null,
+          "error": null,
+          "changed": true,
+          "snapshot_id": "snap_01bd7b59d9e4"
+        },
+        {
+          "source_id": "vercel-changelog",
+          "fetch_status": "ok",
+          "http_status": null,
+          "error": null,
+          "changed": true,
+          "snapshot_id": "snap_835127d589b6"
+        },
+        {
+          "source_id": "azure-openai-whats-new",
+          "fetch_status": "ok",
+          "http_status": null,
+          "error": null,
+          "changed": true,
+          "snapshot_id": "snap_72f8ddd420e6"
         },
         {
           "source_id": "eu-ai-act-article-50",
@@ -1546,7 +2031,7 @@
           "http_status": null,
           "error": null,
           "changed": true,
-          "snapshot_id": "snap_9f528cd03621"
+          "snapshot_id": "snap_2867c5d01968"
         },
         {
           "source_id": "edpb-news",
@@ -1554,7 +2039,7 @@
           "http_status": null,
           "error": null,
           "changed": true,
-          "snapshot_id": "snap_64bdad3ac537"
+          "snapshot_id": "snap_10aee2ce8841"
         },
         {
           "source_id": "ico-ai-guidance",
@@ -1562,7 +2047,7 @@
           "http_status": null,
           "error": null,
           "changed": true,
-          "snapshot_id": "snap_2fbadf5fe808"
+          "snapshot_id": "snap_b647cb136160"
         },
         {
           "source_id": "gmail-sender-guidelines",
@@ -1570,7 +2055,7 @@
           "http_status": null,
           "error": null,
           "changed": true,
-          "snapshot_id": "snap_e02039ed2fb7"
+          "snapshot_id": "snap_b809c504fa3f"
         },
         {
           "source_id": "cisa-kev",
@@ -1578,7 +2063,31 @@
           "http_status": null,
           "error": null,
           "changed": true,
-          "snapshot_id": "snap_db35222196ef"
+          "snapshot_id": "snap_6d3e2eb58e18"
+        },
+        {
+          "source_id": "aws-security-bulletins",
+          "fetch_status": "ok",
+          "http_status": null,
+          "error": null,
+          "changed": true,
+          "snapshot_id": "snap_7710b98b9795"
+        },
+        {
+          "source_id": "github-advisories",
+          "fetch_status": "ok",
+          "http_status": null,
+          "error": null,
+          "changed": true,
+          "snapshot_id": "snap_c7989ca36465"
+        },
+        {
+          "source_id": "cisa-cybersecurity-advisories",
+          "fetch_status": "ok",
+          "http_status": null,
+          "error": null,
+          "changed": true,
+          "snapshot_id": "snap_98a2414a636c"
         },
         {
           "source_id": "nist-ai-rmf",
@@ -1586,25 +2095,57 @@
           "http_status": null,
           "error": null,
           "changed": true,
-          "snapshot_id": "snap_393921b4d6a0"
+          "snapshot_id": "snap_80dd2cc681b4"
+        },
+        {
+          "source_id": "ftc-business-blog",
+          "fetch_status": "ok",
+          "http_status": null,
+          "error": null,
+          "changed": true,
+          "snapshot_id": "snap_1966277a09a7"
         }
+      ],
+      "sources_at_start": [
+        "anthropic-aup",
+        "openai-api-changelog",
+        "stripe-upgrades",
+        "github-rest-breaking",
+        "google-gemini-changelog",
+        "aws-bedrock-history",
+        "twilio-changelog",
+        "cloudflare-changelog",
+        "nodejs-releases",
+        "vercel-changelog",
+        "azure-openai-whats-new",
+        "eu-ai-act-article-50",
+        "edpb-news",
+        "ico-ai-guidance",
+        "gmail-sender-guidelines",
+        "cisa-kev",
+        "aws-security-bulletins",
+        "github-advisories",
+        "cisa-cybersecurity-advisories",
+        "nist-ai-rmf",
+        "ftc-business-blog"
       ],
       "systems_evaluated": [
         "inbox-triage",
         "recipe-site",
         "support-widget"
       ],
-      "evaluations_performed": 0,
-      "review_events_created": 0,
-      "no_action_evaluations": 0,
-      "detail_needed_evaluations": 0,
+      "evaluations_performed": 63,
+      "review_events_created": 2,
+      "no_action_evaluations": 58,
+      "detail_needed_evaluations": 3,
       "model_id": "us.amazon.nova-pro-v1:0",
-      "input_tokens": 308046,
-      "output_tokens": 17842,
+      "input_tokens": 249671,
+      "output_tokens": 20778,
       "abort_reason": null,
-      "validation_failures": 0
+      "validation_failures": 6
     }
   ],
   "demo": true,
-  "demo_note": "Saved results from a real source replay. Historical material; not a live change alert."
+  "replay_date": "12 September 2026",
+  "demo_note": "Saved results from a real source replay run on 12 September 2026. Historical material; not a live change alert."
 }
