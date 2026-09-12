@@ -90,9 +90,23 @@ def test_bulk_import_keeps_export_when_returning_from_review():
     app = (ROOT / "web/app.js").read_text()
 
     assert "let adminData=null,bulkProfiles=[],bulkInput=''" in app
-    assert 'textarea id="bulk-json" required maxlength="24000" placeholder=\'{"systems":[...]}\' spellcheck="false">${esc(bulkInput)}</textarea>' in app
+    assert 'textarea id="bulk-json" required maxlength="24000"' in app
+    assert '${esc(bulkInput)}' in app
     assert "bulkInput=$('#bulk-json').value" in app
-    assert "if(e.target.id==='bulk-json')bulkInput=e.target.value" in app
+    assert "if(e.target.id==='bulk-json'){bulkInput=e.target.value;updateBulkValidation();}" in app
+
+
+def test_bulk_import_validates_json_as_it_is_typed():
+    app = (ROOT / "web/app.js").read_text()
+    css = (ROOT / "web/style.css").read_text()
+
+    assert "function bulkInputState(raw)" in app
+    assert "Not valid JSON yet" in app
+    assert "profiles.length===1?'app':'apps'" in app
+    assert "detected" in app
+    assert 'id="bulk-validation"' in app
+    assert "updateBulkValidation()" in app
+    assert ".json-validation.invalid" in css
 
 
 def test_imported_systems_show_freshness_and_can_start_a_first_check():
