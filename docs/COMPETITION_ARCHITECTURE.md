@@ -113,6 +113,11 @@ can still incur provider charges, so the product does not promise a zero-dollar 
 
 ## End-to-end audit evidence
 
+The public Docs section includes a product-native, interactive version of this map:
+choose Import, Watch, Triage, Handoff, or Outcome to see the data boundary for that
+stage. It is intentionally a diagram rather than a screenshot gallery so the same
+explanation stays readable on desktop and mobile.
+
 The workflow was exercised in the browser with a disposable `Audit Test App` profile:
 
 | Checkpoint | Result |

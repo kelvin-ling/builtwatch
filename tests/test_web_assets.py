@@ -225,6 +225,21 @@ def test_public_demo_offers_multiple_safe_example_inputs():
     assert "items.map(normalizeSystem)" in demo
 
 
+def test_docs_include_interactive_architecture_map():
+    app = (ROOT / "web/app.js").read_text()
+    css = (ROOT / "web/style.css").read_text()
+
+    assert "function architectureDocs()" in app
+    assert "How data moves through BuiltWatch" in app
+    assert "import:{eyebrow:'1 · IMPORT'" in app
+    assert "outcome:{eyebrow:'5 · OUTCOME'" in app
+    assert 'data-architecture="${key}"' in app
+    assert "NEVER SHARED" in app
+    assert "No stage starts a paid check unless you choose a live check." in app
+    assert ".architecture-stage-tabs" in css
+    assert "@media(max-width:600px)" in css
+
+
 def test_every_registry_category_has_a_display_name_and_blurb():
     """A source in an unnamed category would render under a blank heading.
 
