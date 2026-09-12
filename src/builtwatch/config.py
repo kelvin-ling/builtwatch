@@ -67,7 +67,9 @@ class Limits:
     max_sources_per_run: int = field(default_factory=lambda: _env_int("BW_MAX_SOURCES", 20))
     max_systems_per_run: int = field(default_factory=lambda: _env_int("BW_MAX_SYSTEMS", 25))
     max_agent_iterations: int = field(default_factory=lambda: _env_int("BW_MAX_ITERATIONS", 12))
-    max_output_tokens: int = field(default_factory=lambda: _env_int("BW_MAX_OUTPUT_TOKENS", 2000))
+    # Structured assessments need a little headroom when a workspace has many changed
+    # sources. SpendGuard still caps the run; this only avoids truncating a valid result.
+    max_output_tokens: int = field(default_factory=lambda: _env_int("BW_MAX_OUTPUT_TOKENS", 3000))
 
     # Truncation — a huge page must never turn into a huge bill.
     max_snapshot_chars: int = field(
