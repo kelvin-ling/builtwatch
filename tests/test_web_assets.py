@@ -124,6 +124,13 @@ def test_imported_systems_show_freshness_and_can_start_a_first_check():
     assert ".system-freshness" in css
 
 
+def test_returning_users_get_fresh_review_data_across_core_views():
+    app = (ROOT / "web/app.js").read_text()
+
+    assert "['overview','impact','history','systems','findings','sources']" in app
+    assert "Last check ${when(latest.finished_at||latest.completed_at||latest.started_at)}." in app
+
+
 def test_feedback_is_available_to_users_and_owner_dashboard():
     app = (ROOT / "web/app.js").read_text()
     html = (ROOT / "web/index.html").read_text()
