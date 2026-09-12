@@ -80,6 +80,8 @@ def test_clean_scan_reports_complete_coverage(tmp_path, store, passport, monkeyp
     assert result.coverage_failures == []
     assert result.run.coverage_complete is True
     assert result.screened_out == 1
+    assert result.run.evaluations_performed == 1
+    assert result.run.no_action_evaluations == 1
     assert "COULD NOT BE CHECKED" not in result.summary_line()
 
 
@@ -134,6 +136,8 @@ def test_rewritten_source_does_not_re_notify_the_same_development(
     first = pipeline.run_scan(store, settings, mode="replay")
     assert len(first.new_findings) == 1
     assert first.new_findings[0].relevance is Relevance.RELEVANT
+    assert first.run.evaluations_performed == 1
+    assert first.run.review_events_created == 1
 
     # The page is edited around the substance. Hash changes; the news does not.
     (settings.replay_dir / "gmail-sender-guidelines.yaml").write_text(
@@ -144,6 +148,8 @@ def test_rewritten_source_does_not_re_notify_the_same_development(
     second = pipeline.run_scan(store, settings, mode="replay")
     assert second.new_findings == [], "a rewritten page re-notified an unchanged development"
     assert len(second.suppressed_duplicates) == 1
+    assert second.run.evaluations_performed == 1
+    assert second.run.review_events_created == 0
     assert len(store.list_findings(current_only=True)) == 1
 
 

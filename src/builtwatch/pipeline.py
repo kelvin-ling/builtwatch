@@ -176,10 +176,12 @@ def run_scan(
                 )
                 if store.assessed(pair_key) and not force_reassess:
                     continue
+                run.evaluations_performed += 1
                 verdict = screen(passport, snapshot, source, settings, meter)
                 if verdict.plausible == "no":
                     store.mark_assessed(pair_key)
                     result.screened_out += 1
+                    run.no_action_evaluations += 1
                     logger.debug("screened out %s x %s: %s", passport.id, source.id, verdict.reason)
                     continue
 
@@ -206,10 +208,13 @@ def run_scan(
                     result.suppressed_duplicates.append(stored)
                 elif stored.relevance is Relevance.RELEVANT:
                     result.new_findings.append(stored)
+                    run.review_events_created += 1
                 elif stored.relevance is Relevance.INSUFFICIENT_INFORMATION:
                     result.insufficient.append(stored)
+                    run.detail_needed_evaluations += 1
                 else:
                     result.not_relevant.append(stored)
+                    run.no_action_evaluations += 1
 
         run.status = "complete"
     except BudgetExceeded as exc:

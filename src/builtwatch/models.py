@@ -211,6 +211,11 @@ class ScanRun(BaseModel):
 
     source_health: list[SourceHealth] = Field(default_factory=list)
     systems_evaluated: list[str] = Field(default_factory=list)
+    # Counts used by the live Impact view. Defaults keep older saved runs readable.
+    evaluations_performed: int = 0
+    review_events_created: int = 0
+    no_action_evaluations: int = 0
+    detail_needed_evaluations: int = 0
 
     model_id: str | None = None
     input_tokens: int = 0
