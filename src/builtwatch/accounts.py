@@ -127,6 +127,14 @@ def public_impact(table: Any) -> dict[str, Any]:
 
     if last_activity <= 0:
         last_activity = now
+    # Older runs may contain findings but not the explicit outcome counters. Keep
+    # the public breakdown conservative and internally consistent in that case.
+    remaining = max(0, evaluations)
+    reviews = min(reviews, remaining)
+    remaining -= reviews
+    no_action = min(no_action, remaining)
+    remaining -= no_action
+    detail_needed = min(detail_needed, remaining)
     payload = {
         "scope": "all_participating_workspaces",
         "workspaces": len(directories),
