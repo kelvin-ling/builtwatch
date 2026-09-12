@@ -1,3 +1,12 @@
+# Canonical-host and crawler-policy release — 12 September 2026
+
+Sites version 78 is live at `https://builtwatch.org/`. The generated
+`builtwatch.kelvinlingac.chatgpt.site` hostname now returns a 301 to the custom domain,
+preserving paths and query strings. The public HTML emits one canonical URL and
+`/robots.txt` allows the public demo while excluding `/api/`. Worker and asset tests
+cover the redirect and policy; 147 Python tests and 45 Node/runtime tests pass. No AWS
+backend code or paid scan changed in this release.
+
 # Verified categorized-sources and modal-layout release — 10 September 2026
 
 Public Sites version 21 deployed successfully from

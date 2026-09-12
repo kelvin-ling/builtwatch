@@ -299,12 +299,12 @@ Cloudflare access for this zone.
 ---
 
 ## BW-14 · The old host still serves a full copy of the site
-**Severity:** MED · **Owner:** AGENT (with Sites access) · **Status:** ✅ FIXED IN SOURCE — pending next Sites deployment
+**Severity:** MED · **Owner:** AGENT (with Sites access) · **Status:** ✅ FIXED AND LIVE 12 Sep 2026 — Sites version 78
 
 The Worker now redirects `https://builtwatch.kelvinlingac.chatgpt.site` to the canonical
 `https://builtwatch.org`, preserving paths and query strings. The same release adds
-`robots.txt` and a canonical link in the HTML. The redirect is not live until the next
-Sites deployment completes.
+`robots.txt` and a canonical link in the HTML. Live verification returned 301 from the
+old host and 200 from the custom domain.
 
 Before this fix, three consequences mattered:
 
@@ -315,8 +315,7 @@ Before this fix, three consequences mattered:
    whatever it last received.
 3. Duplicate content across two hosts, with no `rel=canonical` on either.
 
-**Fix:** complete the next Sites deployment and verify the old host returns a 301.
-The implementation is covered by a Worker regression test.
+**Fix:** shipped in Sites version 78 and covered by a Worker regression test.
 
 Related and cheap while there: `https://builtwatch.org/robots.txt` now disallows only
 `/api/`, and `<link rel="canonical">` points at the apex.
@@ -366,7 +365,6 @@ The backend corrections and the pending frontend work are now live. Use
 
 1. **BW-3** — one click, and the submission is invalid without it (HUMAN)
 2. **BW-6** — one click; confirmation email re-sent 10 Sep (HUMAN)
-3. **BW-14** — deploy and verify the canonical-host redirect (AGENT)
-4. **BW-10** — sample only after the re-scan; see the note in that section (AGENT)
-5. **BW-9** — orphaned stack; destructive, so confirm before deleting (AGENT)
-6. **Demo video** — the only remaining submission artefact (HUMAN)
+3. **BW-10** — sample only after the re-scan; see the note in that section (AGENT)
+4. **BW-9** — orphaned stack; destructive, so confirm before deleting (AGENT)
+5. **Demo video** — the only remaining submission artefact (HUMAN)

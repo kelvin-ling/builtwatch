@@ -8,6 +8,10 @@
 > separate product decision. The live registry currently has 19 sources across 8
 > categories; do not repeat the old “12 sources” count below.
 
+> **12 September 2026:** Sites version 78 also canonicalizes the generated host to
+> `builtwatch.org`, adds `robots.txt`, and emits a canonical link. Verify those live
+> behaviors before reopening BW-14.
+
 Paste everything below the line into a fresh ChatGPT session once usage resets.
 
 ---
