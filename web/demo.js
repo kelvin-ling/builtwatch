@@ -29,7 +29,7 @@
    const items=body?.systems;if(!Array.isArray(items)||!items.length||items.length>10)throw Error('Import between one and ten apps.');
    const normalized=items.map(normalizeSystem);if(new Set(normalized.map(x=>x.id)).size!==normalized.length)throw Error('Each app needs a different ID.');
    if(new Set([...desk.systems.map(x=>x.id),...normalized.map(x=>x.id)]).size>10)throw Error('Import up to ten apps in total.');
-   const ids=new Set(normalized.map(x=>x.id));desk.systems=desk.systems.filter(x=>!ids.has(x.id)).concat(normalized);return {imported:normalized.length};
+   const ids=new Set(normalized.map(x=>x.id)),existing=new Set(desk.systems.map(x=>x.id));desk.systems=desk.systems.filter(x=>!ids.has(x.id)).concat(normalized);return {imported:normalized.length,updated:[...ids].filter(id=>existing.has(id)).length};
   }
   if(path==='/api/systems'){
    const normalized=normalizeSystem(body);

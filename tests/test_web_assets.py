@@ -104,10 +104,25 @@ def test_imported_systems_show_freshness_and_can_start_a_first_check():
     assert "Waiting for first check" in app
     assert "First check in progress" in app
     assert 'data-action="scan"' in app
-    assert "Apps imported. Your first check is starting." in app
+    assert "Import complete · ${importSummary}. Your first check is starting." in app
     assert "button[data-action=\"save-bulk\"]" in app
     assert ".system-watch-status" in css
     assert ".system-freshness" in css
+
+
+def test_outcomes_and_repeat_imports_do_not_force_agent_round_trips():
+    app = (ROOT / "web/app.js").read_text()
+    demo = (ROOT / "web/demo.js").read_text()
+    css = (ROOT / "web/style.css").read_text()
+
+    assert 'data-app-updated="${esc(id)}"' in app
+    assert "no profile details supplied" in app
+    assert "A follow-up check is queued." in app
+    assert "import-match-summary" in app
+    assert "Matched existing" in app
+    assert "const result=await api('/api/systems/bulk'" in app
+    assert "updated:[...ids].filter(id=>existing.has(id)).length" in demo
+    assert ".import-match-summary" in css
 
 
 def test_agent_import_is_primary_and_profiles_show_their_source():
