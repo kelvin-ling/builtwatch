@@ -54,6 +54,8 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
     runs = [r.model_dump(mode="json") for r in store.list_runs()]
     for run in runs:
         run["abort_reason"] = friendly_failure(run["abort_reason"])
+        # Internal cost estimates are for owner operations only, not workspace users.
+        run.pop("estimated_cost_usd", None)
         for health in run["source_health"]:
             if health.get("error"):
                 health["error"] = "This source could not be retrieved. Coverage is incomplete."
@@ -71,11 +73,6 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
         "agent_reviews": agent_reviews,
         "sources": [s.model_dump(mode="json") for s in load_registry(settings.registry_path)],
         "runs": runs,
-        "spend": {
-            "month": store.spent_this_month(),
-            "day": store.spent_today(),
-            "limit": settings.limits.max_cost_per_month_usd,
-        },
         "demo": False,
     }
 
@@ -164,10 +161,10 @@ def dispatch(
             if not store.list_systems():
                 return response(409, {"error": "Add a system before checking sources."})
             if store.spent_this_month() >= settings.limits.max_cost_per_month_usd:
-                return response(429, {"error": "Monthly model allowance reached."})
+                return response(429, {"error": "The workspace check limit has been reached. Try again later."})
             if store.spent_today() >= settings.limits.max_cost_per_day_usd:
                 return response(
-                    429, {"error": "Daily model allowance reached. Try again tomorrow."}
+                    429, {"error": "Today’s check limit has been reached. Try again tomorrow."}
                 )
             now = datetime.now(timezone.utc).timestamp()
             if not store.reserve_scan(now, SCAN_COOLDOWN_SECONDS):

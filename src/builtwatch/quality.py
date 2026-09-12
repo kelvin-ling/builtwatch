@@ -152,8 +152,8 @@ def friendly_failure(reason: str | None) -> str | None:
         return reason
     if any(x in reason.lower() for x in ("ceiling", "allowance", "budget")):
         return (
-            "The paid-check allowance was reached. "
-            "Completed results are saved; the demo remains available."
+            "The workspace check limit was reached. "
+            "Completed results are saved; try again when the limit resets."
         )
     return (
         "This check could not finish reliably. Completed results are saved; coverage is incomplete."

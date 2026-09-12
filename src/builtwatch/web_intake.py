@@ -62,7 +62,7 @@ def queue_intake(store: Any, settings: Any, body: dict, invoke: Any) -> dict:
     ):
         return response(
             429,
-            {"error": "Model allowance used. Use the optional editor or import a profile."},
+            {"error": "The assisted-drafting limit was reached. Use the optional editor or import a profile."},
         )
     if not allow_request(store.table, store.tenant, DAILY_DRAFTS, "intake"):
         return response(

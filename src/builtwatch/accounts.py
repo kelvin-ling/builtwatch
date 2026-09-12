@@ -421,8 +421,8 @@ def work(event: dict, store: DynamoStore, settings: Any, scan: Any) -> dict:
                     **job,
                     "status": "paused",
                     "message": (
-                        "The shared pilot model allowance is used or reserved. "
-                        "Try later, or next month."
+                        "The workspace check limit is temporarily full. "
+                        "Try again later."
                     ),
                 },
             )

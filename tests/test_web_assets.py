@@ -309,7 +309,7 @@ def test_docs_include_interactive_architecture_map():
     assert "outcome:{eyebrow:'5 · OUTCOME'" in app
     assert 'data-architecture="${key}"' in app
     assert "NEVER SHARED" in app
-    assert "No stage starts a paid check unless you choose a live check." in app
+    assert "No stage starts a live check unless you choose one." in app
     assert ".architecture-stage-tabs" in css
     assert "@media(max-width:600px)" in css
 
