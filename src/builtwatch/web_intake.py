@@ -118,7 +118,7 @@ def draft_profile(event: dict, store: Any, settings: Any, extract: Any = from_te
                 {
                     **job,
                     "status": "paused",
-                    "message": "Allowance unavailable. Use the optional editor or try later.",
+                    "message": "The assisted-drafting limit is temporarily full. Use the optional editor or try again later.",
                 },
             )
             return {"status": "paused"}
