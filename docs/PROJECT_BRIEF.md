@@ -74,7 +74,7 @@ Re-run 8 September 2026. Supersedes the earlier provisional audit.
   all callable.
 - All 11 registry sources fetch successfully over the production fetch path.
 - AWS Budget `builtwatch-monthly-20usd` created: $20/month, alerts at 50/80/100% actual and
-  100% forecasted to [owner-email-redacted].
+  100% forecasted to the owner-configured alert address.
 
 **Blocked:**
 

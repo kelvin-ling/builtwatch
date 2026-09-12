@@ -4,7 +4,7 @@ Creates a monthly cost budget with email alerts. This is a backstop, not the pri
 control — the in-app ceilings in builtwatch/config.py abort a run *before* spending.
 AWS Budgets alert after the fact.
 
-    python infra/budget.py --email you@example.com --limit 20
+    python infra/budget.py --email OWNER_EMAIL --limit 20
 
 Budgets are free for the first two per account.
 """

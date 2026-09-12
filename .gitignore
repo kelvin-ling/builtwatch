@@ -31,3 +31,9 @@ node_modules/
 .builtwatch/
 private-setup*.txt
 deploy-prompt.txt
+
+# Competition recording artifacts stay on the author's laptop
+BuiltWatch-private-demo/
+**/BuiltWatch-demo*.mov
+**/BuiltWatch-demo*.mp4
+**/DEMO_TRANSCRIPT.md

@@ -14,7 +14,7 @@ Judging: 15 September – 8 October 2026. Winners: 14 October 2026.
 |---|---|---|
 | Built with Strands Agents SDK | ✅ | `strands-agents 1.54.0`; two agent stages, custom tools, hook-based budget guards |
 | AWS account | ✅ | `[aws-account-redacted]`, AdministratorAccess via IAM Identity Center (SSO profile `[aws-profile-redacted]`). *Superseded `561217459367`; nothing runs there.* |
-| AWS Builder ID | ✅ | Kelvin Ling / `[owner-email-redacted]` |
+| AWS Builder ID | ✅ | Kelvin Ling |
 | $50 AWS credits requested | ✅ | Submitted before the 11 Sep 12:00 PT cutoff |
 | Public code repository | ⛔ **BLOCKER** | Still private — re-verified `api.github.com` → 404 on **11 Sep 2026**. Rules require public with an OSI licence. **3 days left. Flip before 14 Sep 17:00 PT or the submission is invalid.** |
 | MIT or Apache license | ✅ | [MIT](../LICENSE) + [NOTICE](../NOTICE) |
@@ -85,8 +85,12 @@ Trust it over `ListFoundationModels`, which lists models the account cannot invo
 ### Repository must become public
 
 Rules require a public repo. Flip it in **Settings → General → Danger Zone → Change
-visibility** before 14 Sep. Nothing in the repo contains credentials — `.gitignore`
-excludes `data/`, `*.db` and `.env*`, and no AWS keys are committed.
+visibility** before 14 Sep. The working tree contains no credentials, private databases,
+recordings, or personal owner addresses — `.gitignore` excludes `data/`, `*.db`, `.env*`,
+and competition recordings. Before changing visibility, review the complete commit history:
+older pre-sanitization commits contain owner email references and must be scrubbed or
+replaced with a clean public history. Do not force-push that rewrite until the repository
+has been backed up.
 
 ### Demo video
 

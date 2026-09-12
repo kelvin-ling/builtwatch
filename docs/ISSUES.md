@@ -148,15 +148,16 @@ Two independent alerting paths exist. One works, one does not:
 
 | Path | Destination | Needs opt-in? | Status |
 |---|---|---|---|
-| **AWS Budgets** — 50% / 80% / 100% of `builtwatch-monthly-20usd` | `[owner-email-redacted]` | No | ✅ **Working** |
-| **SNS** `builtwatch-owner-cost-alerts` — operational warnings from the daily monitor | `[owner-email-redacted]` | Yes | ✅ Confirmed |
+| **AWS Budgets** — 50% / 80% / 100% of `builtwatch-monthly-20usd` | Owner-configured email | No | ✅ **Working** |
+| **SNS** `builtwatch-owner-cost-alerts` — operational warnings from the daily monitor | Owner-configured email | Yes | ✅ Confirmed |
 
 Spend threshold alerts and the daily monitor's richer operational warnings — unusual-spend
 detection, "approaching allowance", "paid checks paused", and "shared reserve nearly used"
 — can now be delivered.
 
-**Verification.** AWS now reports a real subscription ARN for `[owner-email-redacted]`
-under account `[aws-account-redacted]`; it is no longer `PendingConfirmation`.
+**Verification.** AWS reports a confirmed subscription for the owner-configured alert
+address under the production account; the address is intentionally not stored in this
+public repository.
 
 ```bash
 aws sns list-subscriptions-by-topic --topic-arn \

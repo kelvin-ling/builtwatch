@@ -3,6 +3,7 @@
 import contextlib
 import io
 import json
+import os
 import zipfile
 from pathlib import Path
 
@@ -15,8 +16,9 @@ assert account == "[aws-account-redacted]"
 name = "builtwatch-cost-monitor"
 topic = s.client("sns").create_topic(Name="builtwatch-owner-cost-alerts")["TopicArn"]
 subs = s.client("sns").list_subscriptions_by_topic(TopicArn=topic)["Subscriptions"]
-if not any(x.get("Endpoint") == "[owner-email-redacted]" for x in subs):
-    s.client("sns").subscribe(TopicArn=topic, Protocol="email", Endpoint="[owner-email-redacted]")
+owner_email = os.environ.get("BW_OWNER_EMAIL", "").strip()
+if owner_email and not any(x.get("Endpoint") == owner_email for x in subs):
+    s.client("sns").subscribe(TopicArn=topic, Protocol="email", Endpoint=owner_email)
 cfg = json.loads(Path("data/cognito-access.json").read_text())
 policy = {
     "Version": "2012-10-17",
