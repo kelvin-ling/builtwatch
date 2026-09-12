@@ -24,6 +24,9 @@ def test_frontend_does_not_embed_owner_secret():
             assert "workspace-access.json" not in text
     assert "prefers-reduced-motion" in (ROOT / "web/style.css").read_text()
     assert 'aria-labelledby="modal-title"' in (ROOT / "web/index.html").read_text()
+    styles = (ROOT / "web/style.css").read_text()
+    assert "Scroll for more" in styles
+    assert "#bulk-json" in styles
 
 
 def test_frontend_copy_does_not_reference_chat_accounts_or_model_brands():

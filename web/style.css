@@ -120,3 +120,14 @@
 .source-group:not([open]) .source-group-chevron{transform:rotate(-90deg)}
 .source-group-body{background:#fff}
 @media(max-width:760px){.source-filter{padding:16px}.source-filter-options{overflow-x:auto;flex-wrap:nowrap;padding:2px 1px 5px;margin-right:-4px}.source-filter-button{flex:0 0 auto}.source-group>summary{flex-direction:column;gap:12px;padding:18px}.source-group-status{justify-content:flex-start}.source-group-chevron{position:absolute;right:18px;top:18px}.source-group>summary{position:relative;padding-right:48px}}
+
+/* Dialogs make their scroll state explicit instead of relying on users to discover it. */
+.modal-body{position:relative}
+.modal-body.has-more::after{content:'Scroll for more ↓';position:absolute;left:50%;bottom:12px;transform:translateX(-50%);padding:6px 11px;border:1px solid #c8dbce;border-radius:999px;background:#f2f8f3;color:#466557;font-size:11px;font-weight:700;line-height:1;box-shadow:0 4px 12px #17332e18;pointer-events:none;white-space:nowrap}
+.modal-body.has-more{scrollbar-color:#8cab98 #eef3ef}
+.modal-body.has-more::before{content:'';position:absolute;z-index:1;left:0;right:0;bottom:0;height:42px;background:linear-gradient(to bottom,transparent,#fff);pointer-events:none}
+.modal-body .error:not(:empty){display:block;margin:14px 0 0;padding:11px 13px;border:1px solid #e7c2bb;border-left:4px solid #b45143;border-radius:10px;background:#fff4f1;color:#8b3d33;font-weight:600;line-height:1.45}
+.modal-body .error.visible:not(:empty){animation:error-pulse .35s ease-out}
+#bulk-json{height:220px;min-height:160px;max-height:32vh;resize:vertical}
+@keyframes error-pulse{from{transform:translateY(-3px);box-shadow:0 0 0 4px #e7c2bb55}to{transform:none;box-shadow:none}}
+@media(max-width:600px){.modal-body.has-more::after{bottom:10px}.modal-body.has-more::before{height:48px}#bulk-json{height:190px;max-height:34vh}}
