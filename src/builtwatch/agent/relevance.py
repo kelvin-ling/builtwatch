@@ -94,11 +94,13 @@ class FindingDraft(BaseModel):
     )
 
 
-def _bedrock(settings: Settings, model_id: str) -> BedrockModel:
+def _bedrock(
+    settings: Settings, model_id: str, max_tokens: int | None = None
+) -> BedrockModel:
     return BedrockModel(
         model_id=model_id,
         region_name=settings.region,
-        max_tokens=settings.limits.max_output_tokens,
+        max_tokens=max_tokens or settings.limits.max_output_tokens,
         temperature=0.2,
     )
 
@@ -117,7 +119,7 @@ def screen(
         return ScreenVerdict(plausible="no", reason="This vendor is not a recorded dependency.")
     guard = BudgetGuard(meter, settings.screen_model_id, max_iterations=2)
     agent = Agent(
-        model=_bedrock(settings, settings.screen_model_id),
+        model=_bedrock(settings, settings.screen_model_id, settings.limits.screen_output_tokens),
         system_prompt=SCREEN_SYSTEM_PROMPT,
         hooks=[guard],
         callback_handler=None,
@@ -188,7 +190,7 @@ def assess(
     evidence_blocks = []
     for snap in snapshots.values():
         source = sources.get(snap.source_id)
-        excerpt = snap.content[: settings.limits.max_passage_chars * 10]
+        excerpt = snap.content[: settings.limits.max_assessment_excerpt_chars]
         evidence_blocks.append(
             f'<evidence snapshot_id="{snap.id}" '
             f'publisher="{source.publisher if source else "unknown"}" '

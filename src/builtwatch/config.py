@@ -70,6 +70,18 @@ class Limits:
     # Structured assessments need headroom when a workspace has many changed sources.
     # SpendGuard still caps the run; this only avoids truncating a valid result.
     max_output_tokens: int = field(default_factory=lambda: _env_int("BW_MAX_OUTPUT_TOKENS", 4000))
+    # Screening returns only a small verdict and reason. Keep its response budget
+    # separate from the deeper assessment so a verbose screen cannot consume the
+    # same output allowance as a finding.
+    screen_output_tokens: int = field(
+        default_factory=lambda: _env_int("BW_SCREEN_OUTPUT_TOKENS", 800)
+    )
+    # The assessor can request more evidence through its read-only tools. The initial
+    # context therefore needs only the same four-chunk window exposed by read_evidence,
+    # rather than embedding an entire long source in every assessment prompt.
+    max_assessment_excerpt_chars: int = field(
+        default_factory=lambda: _env_int("BW_ASSESSMENT_EXCERPT_CHARS", 4800)
+    )
 
     # Truncation — a huge page must never turn into a huge bill.
     max_snapshot_chars: int = field(

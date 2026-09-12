@@ -140,6 +140,11 @@
 @keyframes error-pulse{from{transform:translateY(-3px);box-shadow:0 0 0 4px #e7c2bb55}to{transform:none;box-shadow:none}}
 @media(max-width:600px){.modal-body.has-more::after{bottom:10px}.modal-body.has-more::before{height:48px}#bulk-json{height:190px;max-height:34vh}}
 
+/* Keep the scroll hint in its own row so it never covers source evidence or buttons. */
+.modal-body.has-more::before,.modal-body.has-more::after{display:none!important}
+.modal-scroll-cue{display:none;flex:none;align-self:center;margin:-2px auto 8px;padding:6px 12px;border:1px solid #c8dbce;border-radius:999px;background:#f2f8f3;color:#466557;font-size:11px;font-weight:700;line-height:1;box-shadow:0 4px 12px #17332e18;pointer-events:none;white-space:nowrap}
+.modal-scroll-cue.visible{display:block}
+
 /* Feedback: visible from every screen, quick to complete, and easy to scan in the owner view. */
 .feedback-trigger{min-height:36px;padding:7px 12px;border:1px solid #cbdad0;border-radius:999px;background:#f5f9f5;color:#466557;font-size:12px;font-weight:700;transition:background .18s,border-color .18s,transform .18s}.feedback-trigger:hover{background:#eaf3eb;border-color:#91b49f;transform:translateY(-1px)}
 .json-validation{display:flex;align-items:flex-start;gap:8px;min-height:20px;margin:8px 2px 0;color:#6b7d74;font-size:12px;line-height:1.45}.json-validation::before{content:'○';flex:0 0 auto;font-size:15px;line-height:1.1}.json-validation.valid{color:#3f7150}.json-validation.valid::before{content:'✓';font-weight:800}.json-validation.invalid{color:#9b4639}.json-validation.invalid::before{content:'!';display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#fff0ed;font-size:11px;font-weight:800}.json-validation.empty{color:#6b7d74}
