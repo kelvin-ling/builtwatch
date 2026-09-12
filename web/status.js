@@ -30,7 +30,15 @@ globalThis.BuiltWatchStatus = (() => {
     if (updated > started) return {...result,key:'stale',label:'Profile changed · check again'};
     if (latest.status === 'running') return {...result,key:'checking',label:'Check in progress'};
     if (latest.status !== 'complete') return {...result,key:'incomplete',label:'Last check did not finish'};
-    if (!result.coverage.complete) return {...result,key:'partial',label:'Limited check coverage'};
+    if (!result.coverage.complete) {
+      // A newly registered source is not a failed check. Make that distinction
+      // visible on each affected profile so users know exactly why a refresh is
+      // needed instead of reading this as an unreliable result.
+      const label = result.coverage.added
+        ? `${result.coverage.added} new source${result.coverage.added === 1 ? '' : 's'} · check again`
+        : 'Limited check coverage';
+      return {...result,key:'partial',label};
+    }
     return {...result,key:'checked',label:'Checked against listed sources'};
   }
   function workspace(data, attentionCount = 0) {

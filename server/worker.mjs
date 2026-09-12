@@ -218,10 +218,14 @@ async function publicImpact(request, env, url, ctx) {
     if (upstream.status >= 300 && upstream.status < 400) return json({error:'Public impact service returned an unexpected redirect.'},502);
     const body=await upstream.text();
     const headers={...security,'Cache-Control':'public, max-age=60, s-maxage=60','Content-Type':'application/json'};
-    const cached=new Response(body,{status:upstream.status,headers});
-    publicImpactMemory={body,status:upstream.status,headers,expires:Date.now()+60000};
-    if(edgeCache&&cacheKey&&ctx?.waitUntil)ctx.waitUntil(edgeCache.put(cacheKey,cached.clone()));
-    return cached;
+    const response=new Response(body,{status:upstream.status,headers});
+    // Never cache an outage or throttling response. A transient AWS failure
+    // should be visible on the next request rather than replayed for a minute.
+    if (upstream.ok) {
+      publicImpactMemory={body,status:upstream.status,headers,expires:Date.now()+60000};
+      if(edgeCache&&cacheKey&&ctx?.waitUntil)ctx.waitUntil(edgeCache.put(cacheKey,response.clone()));
+    }
+    return response;
   } catch (error) {
     console.error('public_impact_failed', error.name);
     return json({error:'Public impact totals are temporarily unavailable.'},503);

@@ -21,6 +21,18 @@ test('robots policy is available from the static worker',async()=>{
   assert.equal(r.status,200);
   assert.match(await r.text(),/Disallow: \/api\//);
 });
+test('public impact outages are not cached',async()=>{
+  const original=globalThis.fetch;
+  let calls=0;
+  try{
+    globalThis.fetch=async()=>{calls++;return new Response('{"error":"temporarily unavailable"}',{status:503});};
+    const first=await worker.fetch(new Request(origin+'/api/public-impact'),env);
+    const second=await worker.fetch(new Request(origin+'/api/public-impact'),env);
+    assert.equal(first.status,503);
+    assert.equal(second.status,503);
+    assert.equal(calls,2);
+  }finally{globalThis.fetch=original;}
+});
 test('public impact totals do not require a session or expose a tenant header',async()=>{
   const original=globalThis.fetch;
   try{

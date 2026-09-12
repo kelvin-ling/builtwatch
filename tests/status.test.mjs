@@ -37,6 +37,12 @@ test('coverage explains sources added after the run instead of calling them fail
  assert.equal(result.unattempted,0);
  assert.equal(result.complete,false);
 });
+test('a source added after the run is explained as a refresh, not a failed check',()=>{
+ const historical={...run,sources_at_start:['one','two']};
+ const result=S.system(profile,[historical],[...sources,{id:'new'}]);
+ assert.equal(result.key,'partial');
+ assert.match(result.label,/new source.*check again/);
+});
 test('a later failed attempt is not hidden by a prior successful check',()=>{
  const failed={...run,status:'aborted',started_at:'2026-09-10T14:00:00Z'};
  const status=S.system(profile,[run,failed],sources);
