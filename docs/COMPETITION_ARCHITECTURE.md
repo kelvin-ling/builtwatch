@@ -68,6 +68,23 @@ password; the gateway creates a seven-day HttpOnly session. D1 stores only rate-
 counters and quota state. Profiles, findings, dispositions, and cost ledgers remain in
 the private AWS workspace partition.
 
+## Public impact totals
+
+The Impact tab has two clearly separated scopes:
+
+1. **BuiltWatch overall** — anonymous totals across participating workspaces.
+2. **Your workspace** — the signed-in user's own evaluation and outcome totals (or the
+   saved historical demonstration before sign-in).
+
+The public scope is served by `GET /api/public-impact`. The AWS API reads only coarse
+counter fields from the account table and returns no account identifiers, email
+addresses, app names, profile text, evidence passages, prompts, or source URLs. Results
+are cached for 60 seconds to keep the endpoint inexpensive while still updating soon
+after a completed check. A signed-in user sees the same public totals; their private
+workspace data is fetched separately through the authenticated route. If the aggregate
+endpoint is unavailable, the local workspace view remains usable and the page does not
+invent totals.
+
 ## How an evaluation works
 
 1. A source snapshot is retrieved only from `sources/registry.yaml`.
