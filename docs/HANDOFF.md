@@ -13,7 +13,7 @@ the signed-in workspace continues to show only current-generation, verified find
 build pass. Ruff still reports 13 pre-existing style findings outside this release.
 
 The first 21-source production pass also exposed one large-workspace response truncation at
-the old 2,000-token model ceiling. The worker now allows 3,000 output tokens while keeping
+the old 2,000-token model ceiling. The worker now allows 4,000 output tokens while keeping
 the existing per-run/day/month spend guards; the follow-up pass should complete instead of
 ending with `MaxTokensReachedException`.
 

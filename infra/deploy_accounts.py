@@ -65,7 +65,7 @@ def main():
     env={'BW_TABLE':TABLE,'BW_WORKER':WORKER,'BW_SCREEN_MODEL':'us.amazon.nova-lite-v1:0',
          'BW_ASSESS_MODEL':'us.amazon.nova-pro-v1:0','BW_MAX_RUN_USD':'0.25','BW_MAX_DAY_USD':'0.50',
          'BW_MAX_MONTH_USD':'2.00','BW_MAX_SYSTEMS':'10','BW_MAX_ITERATIONS':'8',
-         'BW_MAX_OUTPUT_TOKENS':'3000',
+         'BW_MAX_OUTPUT_TOKENS':'4000',
          'BW_REGISTRY':'sources/registry.yaml','BW_REPLAY':'replay','BW_COST_GUARD_REQUIRED':'true',
          'BW_OWNER_ACCOUNT':json.loads((ROOT/'data/cognito-access.json').read_text())['owner_account']}
     for name in [WORKER,API]:
