@@ -14,3 +14,8 @@ export const agentConnection = sqliteTable('agent_connection', {
   systemId: text('system_id').notNull(), expires: integer('expires').notNull(),
   lastSync: integer('last_sync').notNull(),
 });
+export const feedback = sqliteTable('feedback', {
+  id: text('id').primaryKey(), account: text('account'), email: text('email'),
+  kind: text('kind').notNull(), message: text('message').notNull(), page: text('page'),
+  createdAt: integer('created_at').notNull(),
+});

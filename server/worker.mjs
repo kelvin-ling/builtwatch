@@ -3,6 +3,52 @@ const encoder = new TextEncoder();
 const hex = bytes => Array.from(new Uint8Array(bytes), b => b.toString(16).padStart(2, '0')).join('');
 const digest = text => crypto.subtle.digest('SHA-256', encoder.encode(text)).then(hex);
 const security = {'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'same-origin'};
+let feedbackSchemaReady=null;
+async function ensureFeedbackTable(db){
+  if(feedbackSchemaReady)return feedbackSchemaReady;
+  if(!db?.prepare)return false;
+  feedbackSchemaReady=(async()=>{
+    try{
+      await db.prepare(`CREATE TABLE IF NOT EXISTS feedback (
+        id TEXT PRIMARY KEY NOT NULL,
+        account TEXT,
+        email TEXT,
+        kind TEXT NOT NULL,
+        message TEXT NOT NULL,
+        page TEXT,
+        created_at INTEGER NOT NULL
+      )`).run();
+      await db.prepare('CREATE INDEX IF NOT EXISTS idx_feedback_created_at ON feedback(created_at DESC)').run();
+      return true;
+    }catch{return false;}
+  })();
+  const ready=await feedbackSchemaReady;
+  if(!ready)feedbackSchemaReady=null;
+  return ready;
+}
+const feedbackKinds=new Set(['helpful','confusing','suggestion','issue']);
+async function feedbackRoute(request,env,url,user){
+  if(!['POST','GET'].includes(request.method))return json({error:'Method not allowed'},405);
+  if(request.headers.get('Origin')!==url.origin||request.headers.get('X-BuiltWatch-Request')!=='1')return json({error:'Use the BuiltWatch feedback form.'},403);
+  if(!env.DB)return json({error:'Feedback is temporarily unavailable.'},503);
+  if(request.method==='GET'){
+    if(!user)return json({error:'Sign in required.'},401);
+    if(!await ensureFeedbackTable(env.DB))return json({feedback:[],feedback_count:0});
+    try{const rows=await env.DB.prepare('SELECT id,kind,message,page,created_at,email FROM feedback ORDER BY created_at DESC LIMIT 100').all();return json({feedback:rows.results||[],feedback_count:(rows.results||[]).length});}catch{return json({feedback:[],feedback_count:0});}
+  }
+  let body;
+  try{body=JSON.parse(await boundedBody(request));}catch{return json({error:'Send valid feedback text under 24 KB.'},400);}
+  const kind=String(body?.kind||'').trim().toLowerCase(),message=String(body?.message||'').trim(),page=String(body?.page||'overview').trim().slice(0,80);
+  if(!feedbackKinds.has(kind))return json({error:'Choose a feedback category.'},400);
+  if(message.length<2||message.length>2000)return json({error:'Keep feedback between 2 and 2,000 characters.'},400);
+  const limiter=user?`feedback-${user.account}`:`feedback-ip-${await digest(request.headers.get('CF-Connecting-IP')||'unknown')}`;
+  try{if(!await claimRequest(env.DB,limiter,new Date().toISOString().slice(0,10),user?10:3))return json({error:'Feedback submissions are temporarily limited. Please try again tomorrow.'},429);}catch{return json({error:'Feedback is temporarily unavailable.'},503);}
+  if(!await ensureFeedbackTable(env.DB))return json({error:'Feedback is temporarily unavailable.'},503);
+  try{
+    await env.DB.prepare('INSERT INTO feedback(id,account,email,kind,message,page,created_at) VALUES(?,?,?,?,?,?,?)').bind(crypto.randomUUID(),user?.account||null,user?.email||null,kind,message,page,Date.now()).run();
+    return json({saved:true});
+  }catch{return json({error:'Feedback could not be saved. Please try again.'},503);}
+}
 const json = (data, status=200) => new Response(JSON.stringify(data), {status, headers:{...security,'Content-Type':'application/json'}});
 async function claimRequest(db,key,period,limit){
   return !!await db.prepare(`INSERT INTO request_quota (key,period,used) VALUES (?,?,1)
@@ -180,6 +226,7 @@ export function createWorker(assets) {
     let user;
     try{user=await signedUser(request,env);}catch{return json({error:'Sign-in is temporarily unavailable. The demo still works.'},503);}
     if(url.pathname==='/api/session'&&request.method==='GET')return json({signed_in:!!user,email:user?.email||'',workspace_reference:user?.account||null,is_admin:!!user&&user.account===env.BW_OWNER_ACCOUNT&&user.email.toLowerCase()===env.BW_OWNER_EMAIL?.toLowerCase()});
+    if(url.pathname==='/api/feedback')return feedbackRoute(request,env,url,user);
     const agentRequest=url.pathname==='/api/agent/sync'&&request.method==='POST';
     let agent;
     if(agentRequest){
@@ -230,6 +277,10 @@ export function createWorker(assets) {
         const today=new Date().toISOString().slice(0,10);
         const used=key=>rows.results.find(x=>x.key===key&&(key==='registrations'||x.period===today))?.used||0;
         data.gateway={requests_today:used('global-day'),request_limit:10000,auth_attempts_today:used('auth-global'),registration_attempts:used('registrations')};
+        data.feedback=[];data.feedback_count=0;
+        if(await ensureFeedbackTable(env.DB)){
+          try{const feedback=await env.DB.prepare('SELECT id,kind,message,page,created_at,email FROM feedback ORDER BY created_at DESC LIMIT 100').all();data.feedback=feedback.results||[];data.feedback_count=data.feedback.length;}catch{}
+        }
         return json(data);
       }
       if(agentRequest&&upstream.ok)await env.DB.prepare('UPDATE agent_connection SET last_sync=? WHERE account=?').bind(Date.now(),account).run();

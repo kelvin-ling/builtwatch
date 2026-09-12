@@ -63,7 +63,28 @@ test('ChatGPT and forged identity headers no longer grant access',async()=>{
  const r=await worker.fetch(new Request(origin+'/api/workspace',{headers:{'oai-authenticated-user-id':'alice'}}),env);assert.equal(r.status,401);
 });
 test('static demo survives a missing or exhausted database',async()=>{
- const r=await worker.fetch(new Request(origin),{});assert.equal(r.status,200);
+  const r=await worker.fetch(new Request(origin),{});assert.equal(r.status,200);
+});
+
+test('visitors can send bounded feedback and it is stored without app details',async()=>{
+  const feedback=[];
+  const feedbackDB={prepare(sql){
+    const statement={
+      run:async()=>({}),
+      bind:(...args)=>({
+        first:async()=>sql.startsWith('INSERT INTO request_quota')?{used:1}:null,
+        run:async()=>{if(sql.startsWith('INSERT INTO feedback'))feedback.push({kind:args[3],message:args[4],page:args[5],created_at:args[6]});return{};},
+        all:async()=>({results:feedback}),
+      }),
+      all:async()=>({results:feedback}),
+    };
+    return statement;
+  }};
+  const headers={Origin:origin,'X-BuiltWatch-Request':'1','CF-Connecting-IP':'203.0.113.9','Content-Type':'application/json'};
+  const bad=await worker.fetch(new Request(origin+'/api/feedback',{method:'POST',headers,body:JSON.stringify({kind:'unknown',message:'nope'})}),{...env,DB:feedbackDB});
+  assert.equal(bad.status,400);
+  const good=await worker.fetch(new Request(origin+'/api/feedback',{method:'POST',headers,body:JSON.stringify({kind:'suggestion',message:'Make the import result easier to scan.',page:'systems'})}),{...env,DB:feedbackDB});
+  assert.equal(good.status,200);assert.equal((await good.json()).saved,true);assert.equal(feedback.length,1);assert.equal(feedback[0].page,'systems');
 });
 
 test('admin requires the configured owner and remains available during live pause',async()=>{

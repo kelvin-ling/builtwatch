@@ -39,6 +39,12 @@
   if(path.startsWith('/api/systems/')&&method==='DELETE'){const id=decodeURIComponent(path.split('/').pop());desk.systems=desk.systems.filter(x=>x.id!==id);desk.findings=desk.findings.filter(x=>x.system_id!==id);return {};}
   if(path==='/api/dispositions'){const f=desk.findings.find(x=>x.id===body.finding_id);if(f)f.disposition=body.action;return {};}
   if(path==='/api/preferences'){desk.account={automatic_checks:false};return {};}
+  if(path==='/api/feedback'&&method==='POST'){
+   const kind=String(body?.kind||'').trim(),message=String(body?.message||'').trim();
+   if(!['helpful','confusing','suggestion','issue'].includes(kind))throw Error('Choose a feedback category.');
+   if(message.length<2||message.length>2000)throw Error('Keep feedback between 2 and 2,000 characters.');
+   desk.feedback=[...(desk.feedback||[]),{id:'demo-feedback-'+crypto.randomUUID().slice(0,8),kind,message,page:body?.page||'overview',created_at:Date.now()}];return {saved:true};
+  }
   if(path==='/api/scan'){
    // Replays only the actual saved example assessments; custom apps are never falsely assessed.
    const ids=new Set(desk.systems.map(x=>x.id));desk.findings=clone(seed.findings).filter(x=>ids.has(x.system_id));

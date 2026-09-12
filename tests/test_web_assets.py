@@ -110,6 +110,23 @@ def test_imported_systems_show_freshness_and_can_start_a_first_check():
     assert ".system-freshness" in css
 
 
+def test_feedback_is_available_to_users_and_owner_dashboard():
+    app = (ROOT / "web/app.js").read_text()
+    html = (ROOT / "web/index.html").read_text()
+    worker = (ROOT / "server/worker.mjs").read_text()
+    schema = (ROOT / "db/schema.ts").read_text()
+
+    assert 'data-action="feedback"' in html
+    assert 'id="feedback-form"' in app
+    assert "What kind of feedback is this?" in app
+    assert "feedbackAdminPanel" in app
+    assert "'/api/feedback'" in app
+    assert "async function feedbackRoute" in worker
+    assert "CREATE TABLE IF NOT EXISTS feedback" in worker
+    assert "feedback_count" in worker
+    assert "export const feedback" in schema
+
+
 def test_outcomes_and_repeat_imports_do_not_force_agent_round_trips():
     app = (ROOT / "web/app.js").read_text()
     demo = (ROOT / "web/demo.js").read_text()
