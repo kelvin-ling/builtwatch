@@ -17,6 +17,11 @@ the old 2,000-token model ceiling. The worker now allows 4,000 output tokens whi
 the existing per-run/day/month spend guards; the follow-up pass should complete instead of
 ending with `MaxTokensReachedException`.
 
+The `www.builtwatch.org` Sites custom-domain attachment is also created and pending DNS
+validation. The apex remains active; Cloudflare is still required to publish the supplied
+TXT validation records and the `www` CNAME because the current browser session is signed
+out.
+
 # Canonical-host and crawler-policy release — 12 September 2026
 
 Sites version 78 is live at `https://builtwatch.org/`. The generated

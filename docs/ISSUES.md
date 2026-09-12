@@ -294,7 +294,13 @@ For a submission where judges are given a link, that is a needless way to lose t
 
 **Fix:** in Cloudflare DNS for `builtwatch.org`, add a proxied `CNAME` `www` → `builtwatch.org`,
 then a redirect rule sending `www` to the apex so one canonical host wins. No agent here has
-Cloudflare access for this zone.
+an authenticated Cloudflare session for this zone. The Sites custom-domain attachment is
+created and waiting for DNS validation. It supplied:
+
+- `TXT _openai-site-verification.www.builtwatch.org` →
+  `openai-site-verification=sUxrTYM1K5uQ6Es8DsirYoGhsLg_CADzA91RYYMWlQ`
+- `TXT _cf-custom-hostname.www.builtwatch.org` → `01cb403b-049d-4a73-8804-da36a9105ac9`
+- `CNAME www` → `custom-domains.chatgpt.site.` (proxied if Cloudflare permits it)
 
 ---
 
