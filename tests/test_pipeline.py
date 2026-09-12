@@ -83,6 +83,7 @@ def test_clean_scan_reports_complete_coverage(tmp_path, store, passport, monkeyp
     assert result.run.evaluations_performed == 1
     assert result.run.no_action_evaluations == 1
     assert "COULD NOT BE CHECKED" not in result.summary_line()
+    assert result.run.sources_at_start == [GMAIL_SOURCE["id"]]
 
 
 def test_screening_prevents_expensive_assessment(tmp_path, store, passport, monkeypatch):

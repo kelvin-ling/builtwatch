@@ -28,6 +28,15 @@ test('adding a source changes coverage; disabled sources do not inflate it',()=>
  assert.equal(S.coverage(run,[...sources,{id:'new'}]).unchecked,1);
  assert.equal(S.coverage(run,[...sources,{id:'disabled',enabled:false}]).complete,true);
 });
+test('coverage explains sources added after the run instead of calling them failures',()=>{
+ const historical={...run,sources_at_start:['one','two']};
+ const result=S.coverage(historical,[...sources,{id:'new'}]);
+ assert.equal(result.checked,2);
+ assert.equal(result.failed,0);
+ assert.equal(result.added,1);
+ assert.equal(result.unattempted,0);
+ assert.equal(result.complete,false);
+});
 test('a later failed attempt is not hidden by a prior successful check',()=>{
  const failed={...run,status:'aborted',started_at:'2026-09-10T14:00:00Z'};
  const status=S.system(profile,[run,failed],sources);

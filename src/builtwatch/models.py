@@ -210,6 +210,10 @@ class ScanRun(BaseModel):
     status: Literal["running", "complete", "aborted"] = "running"
 
     source_health: list[SourceHealth] = Field(default_factory=list)
+    # Registry snapshot taken when the run began. This lets the UI distinguish
+    # sources added after a run from sources that were actually skipped during it.
+    # Older runs may omit this field and safely fall back to source_health.
+    sources_at_start: list[str] = Field(default_factory=list)
     systems_evaluated: list[str] = Field(default_factory=list)
     # Counts used by the live Impact view. Defaults keep older saved runs readable.
     evaluations_performed: int = 0

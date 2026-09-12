@@ -121,7 +121,8 @@ def run_scan(
 ) -> ScanResult:
     """Execute one complete watch pass."""
     limits = settings.limits
-    sources = enabled_sources(load_registry(settings.registry_path))[: limits.max_sources_per_run]
+    listed_sources = enabled_sources(load_registry(settings.registry_path))
+    sources = listed_sources[: limits.max_sources_per_run]
     source_map = {s.id: s for s in sources}
 
     systems = store.list_systems()
@@ -133,6 +134,7 @@ def run_scan(
         id=new_id("run"),
         mode=mode,  # type: ignore[arg-type]
         model_id=settings.assess_model_id,
+        sources_at_start=[s.id for s in listed_sources],
         systems_evaluated=[s.id for s in systems],
     )
     store.save_run(run)

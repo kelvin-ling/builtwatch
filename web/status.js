@@ -5,13 +5,18 @@ globalThis.BuiltWatchStatus = (() => {
   const ordered = runs => [...(runs || [])].sort((a,b) => (time(b.started_at) || 0) - (time(a.started_at) || 0));
   function coverage(run, sources = []) {
     const health = new Map((run?.source_health || []).map(h => [h.source_id,h]));
-    const expected = [...new Set(sources.filter(s => s.enabled !== false).map(s => s.id))];
-    const ids = expected.length ? expected : [...health.keys()];
+    const listed = [...new Set(sources.filter(s => s.enabled !== false).map(s => s.id))];
+    // Prefer the registry snapshot captured when the run began. Without it, a
+    // later source addition looks like a failed check even though it did not exist
+    // when that run was made.
+    const ids = [...new Set(run?.sources_at_start?.length ? run.sources_at_start : [...health.keys()])];
     const checked = ids.filter(id => health.get(id)?.fetch_status === 'ok').length;
     const failed = ids.filter(id => health.has(id) && health.get(id).fetch_status !== 'ok').length;
-    const unchecked = ids.length - checked - failed;
-    return {checked,failed,unchecked,total:ids.length,
-      complete:run?.status === 'complete' && ids.length > 0 && checked === ids.length && !run.validation_failures};
+    const unattempted = ids.filter(id => !health.has(id)).length;
+    const added = listed.filter(id => !ids.includes(id));
+    const unchecked = unattempted + added.length;
+    return {checked,failed,unchecked,unattempted,added:added.length,total:ids.length,listed:listed.length,
+      complete:run?.status === 'complete' && ids.length > 0 && checked === ids.length && added.length === 0 && !run.validation_failures};
   }
   function system(profile, runs, sources) {
     const attempts = ordered(runs).filter(r => r.systems_evaluated?.includes(profile.id));
