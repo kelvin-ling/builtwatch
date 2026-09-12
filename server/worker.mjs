@@ -32,7 +32,7 @@ async function feedbackRoute(request,env,url,user){
   if(request.headers.get('Origin')!==url.origin||request.headers.get('X-BuiltWatch-Request')!=='1')return json({error:'Use the BuiltWatch feedback form.'},403);
   if(!env.DB)return json({error:'Feedback is temporarily unavailable.'},503);
   if(request.method==='GET'){
-    if(!user)return json({error:'Sign in required.'},401);
+    if(!user||user.account!==env.BW_OWNER_ACCOUNT||user.email?.toLowerCase()!==env.BW_OWNER_EMAIL?.toLowerCase())return json({error:'Owner access required.'},403);
     if(!await ensureFeedbackTable(env.DB))return json({feedback:[],feedback_count:0});
     try{const rows=await env.DB.prepare('SELECT id,kind,message,page,created_at,email FROM feedback ORDER BY created_at DESC LIMIT 100').all();return json({feedback:rows.results||[],feedback_count:(rows.results||[]).length});}catch{return json({feedback:[],feedback_count:0});}
   }
