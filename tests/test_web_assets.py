@@ -189,6 +189,10 @@ def test_impact_page_is_available_in_demo_and_private_workspaces():
     assert "review_events_created" in app
     assert "LIVE_REFRESH_MS=600000" in app
     assert "This page refreshes every 10 minutes" in app
+    assert "function globalImpactPanel()" in app
+    assert "/api/public-impact" in app
+    assert "Impact across participating workspaces" in app
+    assert "Anonymous totals from every workspace" in app
     assert "Saved demonstration" in app
     assert "Your workspace" in app
     assert ".impact-summary{display:grid" in css

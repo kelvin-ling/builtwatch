@@ -86,12 +86,12 @@ def authorized(event: dict) -> bool:
     return bool(token) and hmac.compare_digest(headers.get("authorization", ""), f"Bearer {token}")
 
 
-def response(status: int, body: Any) -> dict:
+def response(status: int, body: Any, cache_control: str = "no-store") -> dict:
     return {
         "statusCode": status,
         "headers": {
             "Content-Type": "application/json",
-            "Cache-Control": "no-store",
+            "Cache-Control": cache_control,
             "X-Content-Type-Options": "nosniff",
         },
         "body": json.dumps(body),

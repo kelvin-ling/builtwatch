@@ -13,7 +13,7 @@ import pytest
 from conftest import make_finding
 from moto import mock_aws
 
-from builtwatch.accounts import reserve_budget, serve, settle_budget, verify, work
+from builtwatch.accounts import public_impact, reserve_budget, serve, settle_budget, verify, work
 from builtwatch.config import Settings
 from builtwatch.dynamo_store import DynamoStore, tenant_id
 from builtwatch.models import ScanRun
@@ -70,6 +70,31 @@ def test_signature_auth_replay_and_tampering(table):
         if alteration == "path":
             request["rawPath"] = "/api/systems"
         assert verify(request, "bad" if alteration == "secret" else "test-secret", table) is None
+
+
+def test_public_impact_returns_aggregate_totals_without_workspace_details(table, passport):
+    store = DynamoStore(table, tenant_id("impact-user"))
+    store.upsert_system(passport)
+    store.put(
+        "run#impact",
+        {
+            "status": "complete",
+            "systems_evaluated": [passport.id],
+            "evaluations_performed": 3,
+            "review_events_created": 1,
+            "no_action_evaluations": 1,
+            "detail_needed_evaluations": 1,
+            "finished_at": "2026-09-11T12:00:00+00:00",
+        },
+    )
+    result = public_impact(table)
+    assert result["workspaces"] == 1
+    assert result["systems_monitored"] == 1
+    assert result["evaluations_performed"] == 3
+    assert result["review_events_created"] == 1
+    assert "email" not in json.dumps(result).lower()
+    assert "system_id" not in json.dumps(result)
+    assert table.get_item(Key={"pk": "GLOBAL", "sk": "impact"}).get("Item")
 
 
 def test_accounts_cannot_read_delete_or_dispose_each_others_records(table, passport, snapshot):

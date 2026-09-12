@@ -10,11 +10,13 @@ import os
 import re
 import time
 import uuid
+from datetime import datetime, timezone
 from decimal import Decimal
 from http import HTTPStatus
 from typing import Any
 
 from botocore.exceptions import ClientError
+from boto3.dynamodb.conditions import Key
 
 from .dynamo_store import DynamoStore
 from .web_api import dispatch, response
@@ -23,6 +25,124 @@ SIGNATURE_AGE = 300
 COST_STATUS_MAX_AGE = 172800
 RESERVATION = Decimal("1.00")
 GLOBAL_MONTH_LIMIT = Decimal("5.00")
+
+
+def public_impact(table: Any) -> dict[str, Any]:
+    """Compute anonymous aggregate totals for the public Impact page.
+
+    Only coarse counters leave this function. Tenant identifiers, app names,
+    evidence, prompts, and source URLs remain inside the account table. Results
+    are cached for one minute so the public route remains inexpensive while still
+    reflecting newly completed checks quickly.
+    """
+    now = time.time()
+    cached = table.get_item(Key={"pk": "GLOBAL", "sk": "impact"}).get("Item") or {}
+    try:
+        if float(cached.get("expires_at", 0)) > now:
+            return json.loads(cached.get("payload", "{}"))
+    except (TypeError, ValueError, json.JSONDecodeError):
+        pass
+
+    directories: list[dict] = []
+    args = {"KeyConditionExpression": Key("pk").eq("DIRECTORY")}
+    while True:
+        page = table.query(**args)
+        directories.extend(page.get("Items", []))
+        if "LastEvaluatedKey" not in page:
+            break
+        args["ExclusiveStartKey"] = page["LastEvaluatedKey"]
+
+    systems = evaluations = reviews = no_action = detail_needed = outcomes = 0
+    apps_needing_review: set[tuple[str, str]] = set()
+    last_activity = 0.0
+    for directory in directories:
+        tenant = str(directory.get("sk", ""))
+        if not re.fullmatch(r"[a-f0-9]{64}", tenant):
+            continue
+        pk = "USER#" + tenant
+        rows: list[dict] = []
+        query = {"KeyConditionExpression": Key("pk").eq(pk), "ProjectionExpression": "sk, payload"}
+        while True:
+            page = table.query(**query)
+            rows.extend(page.get("Items", []))
+            if "LastEvaluatedKey" not in page:
+                break
+            query["ExclusiveStartKey"] = page["LastEvaluatedKey"]
+        findings: dict[str, dict] = {}
+        latest_actions: dict[str, str] = {}
+        legacy_review_events = 0
+        has_review_metric = False
+        has_detail_metric = False
+        legacy_detail_events = 0
+        for item in rows:
+            key = str(item.get("sk", ""))
+            try:
+                value = json.loads(item.get("payload", "{}"))
+            except (TypeError, json.JSONDecodeError):
+                continue
+            if key.startswith("system#"):
+                systems += 1
+            elif key.startswith("run#") and value.get("status") == "complete":
+                raw_evaluations = value.get("evaluations_performed")
+                evaluations += int(raw_evaluations if raw_evaluations is not None else len(value.get("systems_evaluated", [])))
+                raw_reviews = value.get("review_events_created")
+                if raw_reviews is not None:
+                    has_review_metric = True
+                    reviews += int(raw_reviews)
+                raw_no_action = value.get("no_action_evaluations")
+                if raw_no_action is not None:
+                    no_action += int(raw_no_action)
+                raw_detail = value.get("detail_needed_evaluations")
+                if raw_detail is not None:
+                    has_detail_metric = True
+                    detail_needed += int(raw_detail)
+                stamp = value.get("finished_at")
+                if stamp:
+                    try:
+                        last_activity = max(last_activity, datetime.fromisoformat(stamp.replace("Z", "+00:00")).timestamp())
+                    except (TypeError, ValueError):
+                        pass
+            elif key.startswith("finding#"):
+                findings[str(value.get("id", key[8:]))] = value
+            elif key.startswith("disposition#"):
+                finding_id = str(value.get("finding_id", ""))
+                if finding_id and value.get("action") in {"acknowledged", "dismissed"}:
+                    outcomes += 1
+                    created = str(value.get("created_at", ""))
+                    if created > latest_actions.get(finding_id, ""):
+                        latest_actions[finding_id] = created
+        for finding_id, finding in findings.items():
+            if finding.get("relevance") == "relevant":
+                if (finding_id not in latest_actions):
+                    apps_needing_review.add((tenant, str(finding.get("system_id", ""))))
+                # Runs written before metric fields existed still contribute a
+                # visible lower bound: one currently known match is one event.
+                if not has_review_metric:
+                    legacy_review_events += 1
+            elif finding.get("relevance") == "insufficient_information":
+                legacy_detail_events += 1
+        reviews += legacy_review_events
+        if not has_detail_metric:
+            detail_needed += legacy_detail_events
+
+    if last_activity <= 0:
+        last_activity = now
+    payload = {
+        "scope": "all_participating_workspaces",
+        "workspaces": len(directories),
+        "systems_monitored": systems,
+        "evaluations_performed": evaluations,
+        "review_events_created": reviews,
+        "apps_needing_review": len(apps_needing_review),
+        "outcomes_recorded": outcomes,
+        "no_action_evaluations": no_action,
+        "detail_needed_evaluations": detail_needed,
+        "last_activity": datetime.fromtimestamp(last_activity, timezone.utc).isoformat(),
+        "updated_at": datetime.fromtimestamp(now, timezone.utc).isoformat(),
+        "privacy": "Anonymous totals only. App names, account details, evidence, and source URLs are never included.",
+    }
+    table.put_item(Item={"pk": "GLOBAL", "sk": "impact", "payload": json.dumps(payload), "expires_at": Decimal(str(now + 60))})
+    return payload
 
 
 def verify(event: dict, secret: str, table: Any) -> str | None:

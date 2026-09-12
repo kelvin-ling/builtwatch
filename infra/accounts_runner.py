@@ -9,7 +9,7 @@ import time
 import boto3
 from boto3.dynamodb.conditions import Key
 
-from builtwatch.accounts import serve, verify, work
+from builtwatch.accounts import public_impact, serve, verify, work
 from builtwatch.admission import admit, allow_request
 from builtwatch.config import Settings
 from builtwatch.dynamo_store import DynamoStore
@@ -29,6 +29,13 @@ def lambda_handler(event, context):
         )
 
     if "requestContext" in event:
+        if event.get("rawPath") == "/api/public-impact":
+            if event["requestContext"]["http"]["method"] != "GET":
+                return response(405, {"error": "Method not allowed."})
+            try:
+                return response(200, public_impact(table), "public, max-age=60")
+            except Exception:  # noqa: BLE001 - public telemetry must fail closed
+                return response(503, {"error": "Public impact totals are temporarily unavailable."})
         tenant = verify(event, os.environ.get("BW_PROXY_SECRET", ""), table)
         if not tenant:
             return response(401, {"error": "Please sign in to BuiltWatch."})

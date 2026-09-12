@@ -143,6 +143,28 @@ async function connectionRoute(request,env,user,url){
   return json({token,system_id:systemId,endpoint:url.origin+'/api/agent/sync',expires_days:90});
 }
 
+async function publicImpact(request, env, url) {
+  if (request.method !== 'GET') return json({error:'Method not allowed'},405);
+  if (!env.BW_API_URL || !env.BW_AWS_ACCESS_KEY_ID || !env.BW_AWS_SECRET_ACCESS_KEY) {
+    return json({error:'Public impact totals are temporarily unavailable.'},503);
+  }
+  try {
+    const target = new URL('/api/public-impact', env.BW_API_URL);
+    const authorization = await awsHeaders(target, 'GET', '', env);
+    const upstream = await fetch(target, {
+      method:'GET',
+      headers:{...authorization,'Content-Type':'application/json'},
+      signal:AbortSignal.timeout(15000),
+      redirect:'manual',
+    });
+    if (upstream.status >= 300 && upstream.status < 400) return json({error:'Public impact service returned an unexpected redirect.'},502);
+    return new Response(await upstream.text(), {status:upstream.status,headers:{...security,'Cache-Control':upstream.headers.get('Cache-Control')||'public, max-age=60','Content-Type':'application/json'}});
+  } catch (error) {
+    console.error('public_impact_failed', error.name);
+    return json({error:'Public impact totals are temporarily unavailable.'},503);
+  }
+}
+
 export function createWorker(assets) {
   return {async fetch(request, env) {
     const url = new URL(request.url);
@@ -154,6 +176,7 @@ export function createWorker(assets) {
         'Content-Type':asset.type,...(url.pathname==='/offline-demo.html'?{'Content-Disposition':'attachment; filename=BuiltWatch-offline-demo.html'}:{}),'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"}});
     }
     if(url.pathname.startsWith('/api/auth/'))return authRoute(request,env,url);
+    if(url.pathname==='/api/public-impact')return publicImpact(request,env,url);
     let user;
     try{user=await signedUser(request,env);}catch{return json({error:'Sign-in is temporarily unavailable. The demo still works.'},503);}
     if(url.pathname==='/api/session'&&request.method==='GET')return json({signed_in:!!user,email:user?.email||'',workspace_reference:user?.account||null,is_admin:!!user&&user.account===env.BW_OWNER_ACCOUNT&&user.email.toLowerCase()===env.BW_OWNER_EMAIL?.toLowerCase()});
