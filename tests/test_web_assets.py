@@ -27,6 +27,8 @@ def test_frontend_does_not_embed_owner_secret():
     styles = (ROOT / "web/style.css").read_text()
     assert "Scroll for more" in styles
     assert "#bulk-json" in styles
+    assert ".automation-cards{align-items:stretch}" in styles
+    assert ".automation-cards .system-card{height:100%;display:flex;flex-direction:column}" in styles
 
 
 def test_frontend_copy_does_not_reference_chat_accounts_or_model_brands():
