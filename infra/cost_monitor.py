@@ -14,11 +14,11 @@ CONFIRM_WARNING = "Confirm the AWS email subscription to receive operational war
 
 
 # Reported account cost at which paid checks stop entirely.
-PAUSE_AT_USD = 10
+PAUSE_AT_USD = 5
 # Reported account cost at which the owner is warned but checks continue.
-WARN_AT_USD = 7
+WARN_AT_USD = 3
 # Shared monthly model reserve, in USD, at which the allowance is called nearly used.
-RESERVE_WARN_USD = 4
+RESERVE_WARN_USD = 1.5
 
 
 def email_confirmed(session):
@@ -126,7 +126,7 @@ def lambda_handler(event, context):
             "Saved workspaces and the local demo remain available."
         )
     if allocated >= RESERVE_WARN_USD:
-        warnings.append("The shared USD 5 monthly model reserve is nearly used.")
+        warnings.append("The shared USD 2 monthly model reserve is nearly used.")
     confirmed = email_confirmed(s)
     if not confirmed:
         warnings.append(CONFIRM_WARNING)
@@ -138,8 +138,8 @@ def lambda_handler(event, context):
         "error": error,
         "actual_usd": total,
         "actual_cad_buffered": round(total * 1.5, 2) if total is not None else None,
-        "monthly_target_cad": 25,
-        "stop_usd": 10,
+        "monthly_target_cad": 8,
+        "stop_usd": 5,
         "cad_per_usd_buffer": 1.5,
         "daily": daily,
         "registered_accounts": count,
@@ -148,7 +148,7 @@ def lambda_handler(event, context):
         "workspaces_with_jobs": jobs,
         "jobs_needing_attention": failures,
         "model_allocated_usd": allocated,
-        "model_limit_usd": 5,
+        "model_limit_usd": 2,
         "warnings": warnings,
         "email_confirmed": confirmed,
         "scope": (
@@ -175,8 +175,8 @@ def lambda_handler(event, context):
                 Subject="BuiltWatch cost and service warning",
                 Message="\n".join(warnings)
                 + (
-                    "\n\nMonthly target: CAD 25. Paid checks pause at USD 10 reported "
-                    "account cost, with USD 5 shared model reservations. Billing can lag; "
+                    "\n\nMonthly target: CAD 8. Paid checks pause at USD 5 reported "
+                    "account cost, with USD 2 shared model reservations. Billing can lag; "
                     "this is not an exact invoice cap."
                     "\nhttps://builtwatch.org/#admin"
                 ),

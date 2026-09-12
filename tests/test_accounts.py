@@ -137,7 +137,7 @@ def test_api_readable_during_worker_lock_writes_blocked(table, passport):
 
 
 def test_shared_budget_is_bounded(table):
-    assert all(reserve_budget(table, "2026-09") for _ in range(5))
+    assert all(reserve_budget(table, "2026-09") for _ in range(8))
     assert not reserve_budget(table, "2026-09")
     settle_budget(table, "2026-09", 0.01)
     assert not reserve_budget(table, "2026-09")

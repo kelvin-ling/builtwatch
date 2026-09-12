@@ -123,10 +123,10 @@ allowed = [
     "Metrics",
 ]
 new = {k: v for k, v in old.items() if k in allowed}
-new["BudgetLimit"] = {"Amount": "12", "Unit": "USD"}
+new["BudgetLimit"] = {"Amount": "5", "Unit": "USD"}
 bud.update_budget(AccountId=account, NewBudget=new)
 print(
-    "Daily monitor configured; BuiltWatch budget lowered to USD 12. "
+    "Daily monitor configured; BuiltWatch budget lowered to USD 5. "
     "Email confirmation may be required."
 )
 r = lam.invoke(FunctionName=name, Payload=b"{}")

@@ -23,7 +23,7 @@ THRESHOLDS = [(50.0, "ACTUAL"), (80.0, "ACTUAL"), (100.0, "ACTUAL"), (100.0, "FO
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--email", required=True, help="Where alerts are sent.")
-    parser.add_argument("--limit", default="20", help="Monthly USD ceiling.")
+    parser.add_argument("--limit", default="5", help="Monthly USD alert ceiling.")
     parser.add_argument("--name", default=BUDGET_NAME)
     args = parser.parse_args()
 

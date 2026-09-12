@@ -23,8 +23,10 @@ from .web_api import dispatch, response
 
 SIGNATURE_AGE = 300
 COST_STATUS_MAX_AGE = 172800
-RESERVATION = Decimal("1.00")
-GLOBAL_MONTH_LIMIT = Decimal("5.00")
+# Reserve only the per-run model ceiling. This bounds concurrent work without
+# reserving a larger amount than a run can spend.
+RESERVATION = Decimal("0.25")
+GLOBAL_MONTH_LIMIT = Decimal("2.00")
 
 
 def public_impact(table: Any) -> dict[str, Any]:

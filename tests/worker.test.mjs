@@ -31,7 +31,7 @@ test('public impact totals do not require a session or expose a tenant header',a
     };
     const r=await worker.fetch(new Request(origin+'/api/public-impact'),env);
     assert.equal(r.status,200);assert.equal((await r.json()).systems_monitored,2);
-    assert.equal(r.headers.get('Cache-Control'),'public, max-age=60');
+  assert.ok(r.headers.get('Cache-Control').includes('public, max-age=60'));
   }finally{globalThis.fetch=original;}
 });
 test('cross-origin writes are rejected even for a signed-in user',async()=>{

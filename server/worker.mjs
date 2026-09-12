@@ -4,6 +4,7 @@ const hex = bytes => Array.from(new Uint8Array(bytes), b => b.toString(16).padSt
 const digest = text => crypto.subtle.digest('SHA-256', encoder.encode(text)).then(hex);
 const security = {'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'same-origin'};
 let feedbackSchemaReady=null;
+let publicImpactMemory=null;
 async function ensureFeedbackTable(db){
   if(feedbackSchemaReady)return feedbackSchemaReady;
   if(!db?.prepare)return false;
@@ -189,10 +190,21 @@ async function connectionRoute(request,env,user,url){
   return json({token,system_id:systemId,endpoint:url.origin+'/api/agent/sync',expires_days:90});
 }
 
-async function publicImpact(request, env, url) {
+async function publicImpact(request, env, url, ctx) {
   if (request.method !== 'GET') return json({error:'Method not allowed'},405);
   if (!env.BW_API_URL || !env.BW_AWS_ACCESS_KEY_ID || !env.BW_AWS_SECRET_ACCESS_KEY) {
     return json({error:'Public impact totals are temporarily unavailable.'},503);
+  }
+  // Anonymous impact is aggregate telemetry and can be cached safely for one
+  // minute. This keeps repeated refreshes from reaching the AWS-backed endpoint.
+  if (publicImpactMemory && publicImpactMemory.expires > Date.now()) {
+    return new Response(publicImpactMemory.body, {status:publicImpactMemory.status, headers:publicImpactMemory.headers});
+  }
+  const edgeCache=globalThis.caches?.default;
+  const cacheKey=edgeCache?new Request(new URL('/api/public-impact',url.origin),{method:'GET'}):null;
+  if(edgeCache&&cacheKey){
+    const hit=await edgeCache.match(cacheKey);
+    if(hit)return hit;
   }
   try {
     const target = new URL('/api/public-impact', env.BW_API_URL);
@@ -204,7 +216,12 @@ async function publicImpact(request, env, url) {
       redirect:'manual',
     });
     if (upstream.status >= 300 && upstream.status < 400) return json({error:'Public impact service returned an unexpected redirect.'},502);
-    return new Response(await upstream.text(), {status:upstream.status,headers:{...security,'Cache-Control':upstream.headers.get('Cache-Control')||'public, max-age=60','Content-Type':'application/json'}});
+    const body=await upstream.text();
+    const headers={...security,'Cache-Control':'public, max-age=60, s-maxage=60','Content-Type':'application/json'};
+    const cached=new Response(body,{status:upstream.status,headers});
+    publicImpactMemory={body,status:upstream.status,headers,expires:Date.now()+60000};
+    if(edgeCache&&cacheKey&&ctx?.waitUntil)ctx.waitUntil(edgeCache.put(cacheKey,cached.clone()));
+    return cached;
   } catch (error) {
     console.error('public_impact_failed', error.name);
     return json({error:'Public impact totals are temporarily unavailable.'},503);
@@ -212,7 +229,7 @@ async function publicImpact(request, env, url) {
 }
 
 export function createWorker(assets) {
-  return {async fetch(request, env) {
+  return {async fetch(request, env, ctx) {
     const url = new URL(request.url);
     // Keep the competition-facing custom domain canonical. The Sites-generated
     // hostname remains useful as a deployment origin, but should not serve a
@@ -229,7 +246,7 @@ export function createWorker(assets) {
         'Content-Type':asset.type,...(url.pathname==='/offline-demo.html'?{'Content-Disposition':'attachment; filename=BuiltWatch-offline-demo.html'}:{}),'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"}});
     }
     if(url.pathname.startsWith('/api/auth/'))return authRoute(request,env,url);
-    if(url.pathname==='/api/public-impact')return publicImpact(request,env,url);
+    if(url.pathname==='/api/public-impact')return publicImpact(request,env,url,ctx);
     let user;
     try{user=await signedUser(request,env);}catch{return json({error:'Sign-in is temporarily unavailable. The demo still works.'},503);}
     if(url.pathname==='/api/session'&&request.method==='GET')return json({signed_in:!!user,email:user?.email||'',workspace_reference:user?.account||null,is_admin:!!user&&user.account===env.BW_OWNER_ACCOUNT&&user.email.toLowerCase()===env.BW_OWNER_EMAIL?.toLowerCase()});
