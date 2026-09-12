@@ -164,9 +164,10 @@ def test_disposition_does_not_permanently_silence_a_development(store, passport,
     becoming law, a deadline moving — must reach the user again. Wiring is_disposed() into
     the pipeline would break that, so this pins the intended behaviour.
     """
+    from conftest import make_finding
+
     from builtwatch.models import Disposition, DispositionAction
     from builtwatch.store import new_id
-    from conftest import make_finding
 
     original = make_finding(passport, snapshot, finding_id="find_bw11a")
     stored, is_new = store.save_finding(original)

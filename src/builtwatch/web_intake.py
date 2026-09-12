@@ -62,7 +62,10 @@ def queue_intake(store: Any, settings: Any, body: dict, invoke: Any) -> dict:
     ):
         return response(
             429,
-            {"error": "The assisted-drafting limit was reached. Use the optional editor or import a profile."},
+            {
+                "error": "The assisted-drafting limit was reached. "
+                "Use the optional editor or import a profile."
+            },
         )
     if not allow_request(store.table, store.tenant, DAILY_DRAFTS, "intake"):
         return response(
@@ -118,7 +121,10 @@ def draft_profile(event: dict, store: Any, settings: Any, extract: Any = from_te
                 {
                     **job,
                     "status": "paused",
-                    "message": "The assisted-drafting limit is temporarily full. Use the optional editor or try again later.",
+                    "message": (
+                        "The assisted-drafting limit is temporarily full. "
+                        "Use the optional editor or try again later."
+                    ),
                 },
             )
             return {"status": "paused"}

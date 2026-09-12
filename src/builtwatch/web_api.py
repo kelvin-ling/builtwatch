@@ -166,7 +166,7 @@ def dispatch(
                 )
             if store.spent_today() >= settings.limits.max_cost_per_day_usd:
                 return response(
-                    429, {"error": "Today’s check limit has been reached. Try again tomorrow."}
+                    429, {"error": "Today's check limit has been reached. Try again tomorrow."}
                 )
             now = datetime.now(timezone.utc).timestamp()
             if not store.reserve_scan(now, SCAN_COOLDOWN_SECONDS):

@@ -28,7 +28,10 @@ def test_frontend_does_not_embed_owner_secret():
     assert "Scroll for more" in styles
     assert "#bulk-json" in styles
     assert ".automation-cards{align-items:stretch}" in styles
-    assert ".automation-cards .system-card{height:100%;display:flex;flex-direction:column}" in styles
+    assert (
+        ".automation-cards .system-card{height:100%;display:flex;flex-direction:column}"
+        in styles
+    )
 
 
 def test_frontend_copy_does_not_reference_chat_accounts_or_model_brands():
@@ -352,7 +355,9 @@ def test_sources_view_groups_by_category_and_surfaces_coverage_failures():
     view = app[start : app.index("\nfunction ", start + 10)]
 
     assert "CATEGORY_ORDER" in view and "source-group" in view, "sources view is not grouped"
-    assert "sourceFilter" in view and "data-source-filter" in view, "sources view has no category filter"
+    assert "sourceFilter" in view and "data-source-filter" in view, (
+        "sources view has no category filter"
+    )
     assert '<details class="panel source-group"' in view, "source groups are not collapsible"
     assert "source-filter-button" in view, "source filter counts are not rendered"
     assert "failed ·" in view, "group header does not report fetch failures"
