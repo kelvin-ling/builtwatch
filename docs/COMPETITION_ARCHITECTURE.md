@@ -38,10 +38,10 @@ flowchart TD
   Browser[Browser]
   Site[Cloudflare Sites static UI]
   Gateway[Cloudflare Worker gateway]
-  D1[D1 request quotas]
+  D1[D1 sessions, quotas and feedback]
   Cognito[AWS Cognito email/password]
   API[AWS Lambda API]
-  Store[Encrypted S3 SQLite checkpoint]
+  Store[Tenant-partitioned DynamoDB]
   Schedule[EventBridge daily schedule]
   Agent[User-authorized builder agent]
   Sources[Curated HTTPS source registry]
@@ -57,15 +57,15 @@ flowchart TD
   Schedule --> API
   Agent -->|short-lived scoped token| Gateway
   API --> Store
-  API --> Sources
-  API --> Strands
+  API -->|asynchronous invocation| Worker[AWS background worker]
+  Worker --> Sources
+  Worker --> Strands
   Strands --> Bedrock
   Strands --> Store
 ```
 
 The browser never receives AWS signing credentials. Cognito verifies the email and
-password; the gateway creates a seven-day HttpOnly session. D1 stores only rate-limit
-counters and quota state. Profiles, findings, dispositions, and cost ledgers remain in
+password; the gateway creates a seven-day HttpOnly session. D1 stores sessions, rate-limit counters, quota state and submitted feedback. Profiles, findings, dispositions, and cost ledgers remain in
 the private AWS workspace partition.
 
 ## Public impact totals
@@ -76,8 +76,7 @@ The Impact tab has two clearly separated scopes:
 2. **Your workspace** — the signed-in user's own evaluation and outcome totals (or the
    saved historical demonstration before sign-in).
 
-The public scope is served by `GET /api/public-impact`. The AWS API reads only coarse
-counter fields from the account table and returns no account identifiers, email
+The public scope is served by `GET /api/public-impact`. The AWS API aggregates private account records internally and returns no account identifiers, email
 addresses, app names, profile text, evidence passages, prompts, or source URLs. Results
 are cached for 60 seconds to keep the endpoint inexpensive while still updating soon
 after a completed check. A signed-in user sees the same public totals; their private
@@ -135,6 +134,7 @@ choose Import, Watch, Triage, Handoff, or Outcome to see the data boundary for t
 stage. It is intentionally a diagram rather than a screenshot gallery so the same
 explanation stays readable on desktop and mobile.
 
+The following table records an earlier audit, not a fresh certification of production.
 The workflow was exercised in the browser with a disposable `Audit Test App` profile:
 
 | Checkpoint | Result |
@@ -161,3 +161,13 @@ developer, technical maker, consultant, or small team that already runs several 
 automations, APIs, or small apps and does not have time to repeatedly compare them with
 every relevant external change. The differentiator is the judgment-heavy link between
 an outside development and the exact saved system detail that makes it matter.
+
+## September 12 reliability update
+
+The UI now distinguishes inbox state from profile/source coverage. Edited, never-checked,
+aborted and partially checked states no longer inherit a reassuring label from an older
+run. A saved demo is explicitly historical. Local browser checks verified outcome-count
+updates, search empty states, import validation and 390px layout. New deterministic
+coverage and refresh tests exercise failure and race conditions without model calls.
+These tests are software regression evidence, not a semantic AI benchmark or proof of
+user adoption. The current topology and limits are detailed in ARCHITECTURE.md.

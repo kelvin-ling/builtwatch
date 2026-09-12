@@ -116,7 +116,6 @@ def test_imported_systems_show_freshness_and_can_start_a_first_check():
     assert "function systemFreshness(s)" in app
     assert "Profile updated" in app
     assert "Waiting for first check" in app
-    assert "First check in progress" in app
     assert 'data-action="scan"' in app
     assert "Import complete · ${importSummary}. Your first check is starting." in app
     assert "button[data-action=\"save-bulk\"]" in app
@@ -124,11 +123,7 @@ def test_imported_systems_show_freshness_and_can_start_a_first_check():
     assert ".system-freshness" in css
 
 
-def test_returning_users_get_fresh_review_data_across_core_views():
-    app = (ROOT / "web/app.js").read_text()
-
-    assert "['overview','impact','history','systems','findings','sources']" in app
-    assert "Last check ${when(latest.finished_at||latest.completed_at||latest.started_at)}." in app
+# Refresh timing, navigation and failure recovery are exercised in refresh.test.mjs.
 
 
 def test_feedback_is_available_to_users_and_owner_dashboard():
@@ -169,7 +164,7 @@ def test_agent_import_is_primary_and_profiles_show_their_source():
 
     assert "Import from agent" in app
     assert "Import one app from your agent" in app
-    assert "Import several apps from your agent" in app
+    assert "Import apps from your agent" in app
     assert "Describe the agent, automation, API integration, or app" not in app
     assert "source_agent" in app
     assert "Imported from ${esc(s.source_agent)}" in app
@@ -260,7 +255,6 @@ def test_impact_page_is_available_in_demo_and_private_workspaces():
     assert "f.relevance==='insufficient_information'" in app
     assert "evaluations_performed" in app
     assert "review_events_created" in app
-    assert "LIVE_REFRESH_MS=600000" in app
     assert "This page refreshes every 10 minutes" in app
     assert "function globalImpactPanel()" in app
     assert "/api/public-impact" in app
@@ -286,12 +280,7 @@ def test_draft_notice_and_context_save_action_remain_visible_on_mobile():
     assert '.modal-footer{padding-bottom:calc(28px + env(safe-area-inset-bottom))!important}' in css
 
 
-def test_unchecked_profiles_are_not_described_as_monitored():
-    app = (ROOT / "web/app.js").read_text()
-
-    assert "Profile only · not evaluated" in app
-    assert "Waiting for first check" in app
-    assert "Profiles you add to the demo stay local and are not evaluated." in app
+# Coverage and unchecked profiles are exercised with real state in status.test.mjs.
 
 
 def test_public_demo_offers_multiple_safe_example_inputs():
@@ -358,7 +347,7 @@ def test_sources_view_groups_by_category_and_surfaces_coverage_failures():
     assert "sourceFilter" in view and "data-source-filter" in view, "sources view has no category filter"
     assert '<details class="panel source-group"' in view, "source groups are not collapsible"
     assert "source-filter-button" in view, "source filter counts are not rendered"
-    assert "could not be checked" in view, "group header does not report fetch failures"
+    assert "failed ·" in view, "group header does not report fetch failures"
     assert "pill amber" in view, "fetch failures are not visually distinguished"
     # The whole-registry count must stay honest about what is and is not watched.
     assert "Nothing outside this list is checked" in view

@@ -166,7 +166,7 @@ def test_disposition_does_not_permanently_silence_a_development(store, passport,
     """
     from builtwatch.models import Disposition, DispositionAction
     from builtwatch.store import new_id
-    from tests.conftest import make_finding
+    from conftest import make_finding
 
     original = make_finding(passport, snapshot, finding_id="find_bw11a")
     stored, is_new = store.save_finding(original)
