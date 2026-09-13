@@ -136,7 +136,8 @@ Registration, intake and live checks have conservative pilot limits.
 ![BuiltWatch architecture: Cloudflare gateway, AWS Lambda, DynamoDB, Cognito, EventBridge, Strands Agents on Amazon Bedrock, and the cost monitor](docs/architecture.png)
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full diagram and the deployed AWS
-topology. Continuing this work? Start at [docs/HANDOFF.md](docs/HANDOFF.md).
+topology. For the competition context, see [docs/COMPETITION_ARCHITECTURE.md](docs/COMPETITION_ARCHITECTURE.md)
+and [docs/DEVPOST_SUBMISSION.md](docs/DEVPOST_SUBMISSION.md).
 
 ## Quick start
 
