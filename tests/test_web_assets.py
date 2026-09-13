@@ -226,7 +226,11 @@ def test_review_outcomes_are_explicit_and_agent_handoff_is_optional():
         assert label in app
     assert "Nothing closes until you record the outcome." in app
     assert "data-record-outcome" in app
+    assert "function modalStatus(" in app
+    assert "setOutcomeBusy" in app
+    assert "outcome-check-note" in app
     assert ".outcome-options" in css
+    assert ".modal-action-status" in css
     assert ".agent-review-result" in css
 
 

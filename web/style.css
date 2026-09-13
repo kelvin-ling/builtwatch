@@ -136,6 +136,7 @@
 .modal-body.has-more::before{content:'';position:absolute;z-index:1;left:0;right:0;bottom:0;height:42px;background:linear-gradient(to bottom,transparent,#fff);pointer-events:none}
 .modal-body .error:not(:empty){display:block;margin:14px 0 0;padding:11px 13px;border:1px solid #e7c2bb;border-left:4px solid #b45143;border-radius:10px;background:#fff4f1;color:#8b3d33;font-weight:600;line-height:1.45}
 .modal-body .error.visible:not(:empty){animation:error-pulse .35s ease-out}
+.modal-action-status{margin:0 0 16px;padding:11px 13px;border:1px solid #cddfd2;border-left:4px solid #6b9577;border-radius:10px;background:#f1f8f2;color:#355e46;font-size:14px;font-weight:650;line-height:1.45}.modal-action-status.error{border-color:#e7c2bb;border-left-color:#b45143;background:#fff4f1;color:#8b3d33}.outcome-options[aria-busy="true"]{opacity:.7}.outcome-options>button:disabled{cursor:wait}
 #bulk-json{height:220px;min-height:160px;max-height:32vh;resize:vertical}
 @keyframes error-pulse{from{transform:translateY(-3px);box-shadow:0 0 0 4px #e7c2bb55}to{transform:none;box-shadow:none}}
 @media(max-width:600px){.modal-body.has-more::after{bottom:10px}.modal-body.has-more::before{height:48px}#bulk-json{height:190px;max-height:34vh}}
