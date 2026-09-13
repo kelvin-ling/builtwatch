@@ -6,6 +6,39 @@
 
 Built for the [Agents for Humans hackathon](https://agentsforhumans.devpost.com/) — *Professional Agents* track. Powered by [Strands Agents](https://github.com/strands-agents/sdk-python) on Amazon Bedrock.
 
+## Submission at a glance
+
+**The problem.** After people ship agents, automations, APIs, and small apps, outside changes keep arriving: a vendor retires an API, a security issue appears, or a new rule takes effect. The difficult part is not finding the announcement. It is knowing which running system is affected.
+
+**Who it is for.** Independent professionals, makers, consultants, and small teams running more systems than they can track by hand. Larger teams and compliance functions can use the same evidence trail for review.
+
+**Why it matters.** BuiltWatch turns a noisy stream of outside changes into a short, evidence-backed review list. A person sees the source passage, checks the connection to their system, and decides what to do. Nothing changes automatically.
+
+**What it demonstrates.** A person imports a lightweight system profile, BuiltWatch compares it with curated sources, explains possible impact, shows the original evidence, and records the human decision. Agent help is optional; source code, API keys, and private records are not required.
+
+### The problems BuiltWatch resolves
+
+- **Too many updates:** keeps relevant changes together instead of asking someone to read every changelog.
+- **Unclear impact:** connects an outside change to a specific saved system detail and explains why it may matter.
+- **Untrusted summaries:** keeps the quoted source passage visible so a person can verify the claim.
+- **Automation without accountability:** leaves the final decision with a person and records what happened.
+
+### See the product
+
+The screenshots below show the core path from a saved system to a reviewable decision.
+
+| Save the system once | See why a change may matter |
+| --- | --- |
+| ![BuiltWatch workspace showing saved systems and the review path](docs/screenshots/workspace.png) | ![BuiltWatch finding showing the affected system and possible impact](docs/screenshots/finding.png) |
+| *Import a system profile, then see what may need attention.* | *The finding names the system, the outside change, and the reason they are connected.* |
+
+| Verify the original source | Record the human decision |
+| --- | --- |
+| ![BuiltWatch evidence view showing the quoted source passage](docs/screenshots/evidence.png) | ![BuiltWatch outcome view showing the three human decision options](docs/screenshots/decision.png) |
+| *The cited passage and publication details are visible before action.* | *The person records what happened; sending a prepared review to an agent is optional.* |
+
+The full architecture diagram is in [docs/architecture.png](docs/architecture.png), and the live product is available at [builtwatch.org](https://builtwatch.org).
+
 ---
 
 ## The problem
