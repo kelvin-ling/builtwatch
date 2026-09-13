@@ -169,3 +169,7 @@
 .coverage-summary details{border-top:1px solid #d9e5df;margin-top:16px;padding-top:16px}
 .coverage-summary summary{cursor:pointer;font-weight:600}
 @media(max-width:600px){.coverage-summary{padding:18px}.coverage-summary-head{align-items:flex-start;flex-wrap:wrap}.coverage-counts{grid-template-columns:1fr;gap:16px}.coverage-counts>div{display:flex;justify-content:space-between;align-items:center;gap:16px}.coverage-counts dd{margin:0;white-space:nowrap;font-size:24px}}
+
+/* Keep the fixed navigation usable when a desktop window is shorter than its copy. */
+.sidebar{overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;-webkit-overflow-scrolling:touch}
+@media(max-width:760px){.sidebar{overflow:visible;scrollbar-gutter:auto}}

@@ -234,6 +234,14 @@ def test_review_outcomes_are_explicit_and_agent_handoff_is_optional():
     assert ".agent-review-result" in css
 
 
+def test_sidebar_can_scroll_when_desktop_viewport_is_short():
+    css = (ROOT / "web/style.css").read_text()
+
+    assert ".sidebar{overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable" in css
+    assert "-webkit-overflow-scrolling:touch" in css
+    assert "@media(max-width:760px){.sidebar{overflow:visible;scrollbar-gutter:auto}}" in css
+
+
 def test_reviews_show_whether_an_agent_or_human_owns_the_next_step():
     app = (ROOT / "web/app.js").read_text()
     perspectives = (ROOT / "web/perspectives.js").read_text()
