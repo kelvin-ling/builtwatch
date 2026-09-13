@@ -136,6 +136,26 @@ def test_api_readable_during_worker_lock_writes_blocked(table, passport):
     )
 
 
+def test_outcome_can_be_recorded_during_worker_lock(table, passport, snapshot):
+    store = DynamoStore(table, tenant_id("alice"))
+    store.upsert_system(passport)
+    finding, _ = store.save_finding(make_finding(passport, snapshot))
+    assert store.acquire_lock("worker")
+    result = serve(
+        event(
+            "/api/dispositions",
+            "POST",
+            json.dumps({"finding_id": finding.id, "action": "acknowledged"}),
+        ),
+        store,
+        Settings(),
+        None,
+    )
+    assert result["statusCode"] == 200
+    assert store.dispositions_for(finding.id)
+    store.release_lock("worker")
+
+
 def test_shared_budget_is_bounded(table):
     assert all(reserve_budget(table, "2026-09") for _ in range(8))
     assert not reserve_budget(table, "2026-09")

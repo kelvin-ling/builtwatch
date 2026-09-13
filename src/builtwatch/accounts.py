@@ -278,17 +278,22 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
             }
             result = response(200, data)
         return result
-    lock = str(uuid.uuid4())
-    if not store.acquire_lock(lock):
-        return response(
-            409,
-            {
-                "error": (
-                    "A check is in progress. You can read your workspace; "
-                    "changes will be available when it finishes."
-                )
-            },
-        )
+    # Recording a human outcome is independent of source scanning. Keep it
+    # available while the worker is running so a finding can be closed without
+    # making the user wait or leaving the modal in a misleading error state.
+    lock = None
+    if not (path == "/api/dispositions" and method == "POST"):
+        lock = str(uuid.uuid4())
+        if not store.acquire_lock(lock):
+            return response(
+                409,
+                {
+                    "error": (
+                        "A check is in progress. You can read your workspace; "
+                        "changes will be available when it finishes."
+                    )
+                },
+            )
     try:
         body = {}
         if path in {"/api/intake", "/api/preferences", "/api/agent/sync"} and method == "POST":
@@ -411,7 +416,8 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
 
         return dispatch(event, store, settings, enqueue, verified=True)
     finally:
-        store.release_lock(lock)
+        if lock:
+            store.release_lock(lock)
 
 
 def work(event: dict, store: DynamoStore, settings: Any, scan: Any) -> dict:
