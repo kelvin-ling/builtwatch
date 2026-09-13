@@ -133,8 +133,8 @@ The AWS-native substance is real and substantial — Strands, Bedrock, Lambda, D
 Cognito, EventBridge Scheduler, S3. The competition-facing URL now uses the custom
 `builtwatch.org` domain, and the generated Sites host redirects to it.
 
-The remaining hostname task is only `www.builtwatch.org` DNS/redirect configuration
-(BW-13).
+`www.builtwatch.org` is also configured and redirects to the apex (see BW-13), so no
+hostname work remains for the public demo.
 
 ---
 
@@ -264,7 +264,7 @@ saying it must not be used for suppression, and
 ---
 
 ## BW-12 · Frontend deployment gap
-**Severity:** MED · **Owner:** AGENT (with Sites access) · **Status:** ✅ FIXED AND LIVE 10 Sep 2026 — categorized sources and the modal scroll/footer correction shipped in Sites version 21
+**Severity:** MED · **Owner:** AGENT (with Sites access) · **Status:** ✅ FIXED AND LIVE 13 Sep 2026 — refreshed frontend package shipped in Sites version 89
 
 The categorized **Watched sources** view and modal footer fix are now live. The AWS
 backend and frontend still deploy through different paths:
@@ -277,26 +277,28 @@ backend and frontend still deploy through different paths:
 The Worker's runtime secrets (`BW_PROXY_SECRET`, the scoped AWS keys, the Cognito client
 secret, and the private owner migration mapping) remain in Sites, not in this repository.
 
-Sites version 21 deployed source `0fce94466a0756fe7e5114933c263a79be5f4d01` and uses
-the refreshed `?v=20` browser asset key. Live HTTP verification found the categorized
-source groups, category-level failure counts, and separated modal action footer in the
-served assets.
+Sites version 21 deployed the original categorized-source and modal-footer fix. Sites
+version 89 now serves source commit `88862e5630e2f2bba02379d109186eab74d68b84`, including
+the current demo data. Live `demo.json` matches `web/demo.json` (SHA-256
+`c4b4c00d6e20e2105b31b75aaca4716ff47d9925984ac8c2b9d2ad8cc3b76672`), includes the
+current `replay_date`, and has no duplicate `the the` phrase.
 
 ---
 
 ## BW-13 · `www.builtwatch.org` does not resolve
-**Severity:** MED · **Owner:** HUMAN (Cloudflare DNS) · **Status:** open
+**Severity:** MED · **Owner:** HUMAN (Cloudflare DNS) · **Status:** ✅ FIXED AND VERIFIED 13 Sep 2026 — Cloudflare DNS + redirect
 
-`builtwatch.org` serves 200 and resolves to `172.64.80.1` (Cloudflare). `www.builtwatch.org`
-has **no DNS records at all** and fails to connect — `curl` returns `000`, not a redirect.
+`builtwatch.org` serves 200 through Cloudflare. `www.builtwatch.org` now resolves through
+Cloudflare and returns a permanent redirect to `https://builtwatch.org/`.
 
-Anyone who types or is handed the `www` form gets a connection failure rather than the site.
-For a submission where judges are given a link, that is a needless way to lose them.
+Before the fix, anyone who typed the `www` form got a connection failure rather than the
+site. The redirect now preserves the submission path while keeping the apex canonical.
 
-**Fix:** in Cloudflare DNS for `builtwatch.org`, add a proxied `CNAME` `www` → `builtwatch.org`,
-then a redirect rule sending `www` to the apex so one canonical host wins. No agent here has
-an authenticated Cloudflare session for this zone. The Sites custom-domain attachment is
-created and waiting for DNS validation. It supplied:
+**Fix applied:** the owner configured the Cloudflare `www` record and redirect rule so one
+canonical host wins. The public result was verified with an independent HTTPS request:
+`https://www.builtwatch.org/` returns `301` with `Location: https://builtwatch.org/`.
+The Sites custom-domain attachment remains the canonical apex deployment. Historical setup
+values supplied during the original attachment were:
 
 - `TXT _openai-site-verification.www.builtwatch.org` →
   `openai-site-verification=sUxrTYM1K5uQ6Es8DsirYoGhsLg_CADzA91RYYMWlQ`
@@ -367,11 +369,10 @@ When the underlying session expires, only a human can run
 
 ## Remaining work, in order
 
-The backend corrections and the pending frontend work are now live. Use
+The backend corrections, frontend refresh, and custom-host redirect are now live. Use
 [DEPLOY.md](DEPLOY.md) only when future backend code changes require another release.
 
 1. **BW-3** — one click, and the submission is invalid without it (HUMAN)
-2. **BW-13** — add the `www` DNS/redirect rule in Cloudflare (HUMAN unless an authenticated session is provided)
-3. **BW-10** — sample only after the re-scan; see the note in that section (AGENT)
-4. **BW-9** — orphaned stack; destructive, so confirm before deleting (AGENT)
-5. **Demo video** — the only remaining submission artefact (HUMAN)
+2. **BW-10** — sample only after the re-scan; see the note in that section (AGENT)
+3. **BW-9** — orphaned stack; destructive, so confirm before deleting (AGENT)
+4. **Demo video** — the only remaining submission artefact (HUMAN)

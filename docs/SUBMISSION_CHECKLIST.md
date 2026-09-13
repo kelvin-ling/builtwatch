@@ -25,7 +25,7 @@ Judging: 15 September – 8 October 2026. Winners: 14 October 2026.
 | Functioning end-to-end agent | ✅ | Running in production on Amazon Nova (`nova-lite` screen / `nova-pro` assess). Two tenants have completed scans end to end. *Anthropic models are not entitled on this account; the model ladder fell back automatically.* |
 | AI assistance disclosed | ✅ | [NOTICE](../NOTICE) and README |
 | Newly created in submission period | ✅ | First commit 8 Sep 2026; no prior code incorporated |
-| Live demo link *(bonus)* | ✅ | `https://builtwatch.org` — registered, deployed and returning 200. The generated Sites hostname redirects to the custom domain; `www` DNS remains a Cloudflare account action. |
+| Live demo link *(bonus)* | ✅ | `https://builtwatch.org` — registered, deployed and returning 200. The generated Sites hostname redirects to the custom domain, and `https://www.builtwatch.org/` is configured in Cloudflare and verified to return a permanent redirect to the apex (13 Sep 2026). |
 | builder.aws blog post *(bonus)* | ⬜ | Up to +0.6 (0.2 × 3 posts) |
 
 ## Historical provider-access note
