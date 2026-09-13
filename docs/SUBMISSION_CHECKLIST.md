@@ -5,7 +5,7 @@ Judging: 15 September – 8 October 2026. Winners: 14 October 2026.
 
 ## Hackathon requirements
 
-> **Verified against live state on 12 September 2026.** Every ✅ below was checked
+> **Verified against live state on 13 September 2026.** Every ✅ below was checked
 > against the running system, not assumed. Known-open defects are tracked separately in
 > [ISSUES.md](ISSUES.md) — read that before submitting, since BW-3 (private repo) is a
 > hard blocker and BW-5 (demo domain) affects how this is judged.
@@ -16,12 +16,12 @@ Judging: 15 September – 8 October 2026. Winners: 14 October 2026.
 | AWS account | ✅ | `[aws-account-redacted]`, AdministratorAccess via IAM Identity Center (SSO profile `[aws-profile-redacted]`). *Superseded `561217459367`; nothing runs there.* |
 | AWS Builder ID | ✅ | Kelvin Ling |
 | $50 AWS credits requested | ✅ | Submitted before the 11 Sep 12:00 PT cutoff |
-| Public code repository | ⛔ **BLOCKER** | Still private — re-verified `api.github.com` → 404 on **11 Sep 2026**. Rules require public with an OSI licence. **3 days left. Flip before 14 Sep 17:00 PT or the submission is invalid.** |
+| Public code repository | ⛔ **BLOCKER** | Still private — re-verified `api.github.com` → 404 on **13 Sep 2026**. Rules require public with an OSI licence. **Flip before 14 Sep 17:00 PT or the submission is invalid.** See the history note below first. |
 | MIT or Apache license | ✅ | [MIT](../LICENSE) + [NOTICE](../NOTICE) |
 | README | ✅ | [README.md](../README.md) |
-| Architecture diagram | ✅ | [ARCHITECTURE.md](ARCHITECTURE.md) — Mermaid, renders on GitHub |
-| Demo video ≤ 5 min | ⬜ **OUTSTANDING** | Beat sheet below. **Kelvin must record and narrate.** |
-| Text description of features | ⬜ | Draft from README once the demo is final |
+| Architecture diagram | ✅ | [ARCHITECTURE.md](ARCHITECTURE.md) (Mermaid, verified to render) and [architecture.png](architecture.png), embedded in the README and ready for the Devpost gallery |
+| Demo video ≤ 5 min | ✅ produced · ⬜ **upload** | Refined 13 Sep to cover every required element (see *Demo video* below). **Upload to YouTube or Vimeo as public**, which the rules require. |
+| Text description of features | ✅ | [DEVPOST_SUBMISSION.md](DEVPOST_SUBMISSION.md), section by section for the Devpost form |
 | Functioning end-to-end agent | ✅ | Running in production on Amazon Nova (`nova-lite` screen / `nova-pro` assess). Two tenants have completed scans end to end. *Anthropic models are not entitled on this account; the model ladder fell back automatically.* |
 | AI assistance disclosed | ✅ | [NOTICE](../NOTICE) and README |
 | Newly created in submission period | ✅ | First commit 8 Sep 2026; no prior code incorporated |
@@ -92,26 +92,35 @@ older pre-sanitization commits contain owner email references and must be scrubb
 replaced with a clean public history. Do not force-push that rewrite until the repository
 has been backed up.
 
+Verified 13 September 2026: the two owner addresses appear 23 times in commit *contents*
+(introduced in `a89c671`, `7453039` and `5008376`; removed from the tree in `ff739d6`).
+Commit author and committer metadata already use the GitHub noreply address. A full-history
+scan found no AWS keys, private keys, bearer tokens, Cognito client secret, owner token or
+account password. Publishing the history as-is exposes only those two email addresses; that
+is the owner's call.
+
 ### Demo video
 
-Five minutes maximum, must show the working project and pitch the problem, audience, and
-why it matters.
+Rules: at most five minutes, uploaded to YouTube or Vimeo and public, showing the working
+project and pitching (1) the problem, (2) who it is for and (3) why it matters. Slides,
+screen recordings and voice-over are all acceptable.
 
-Draft beat sheet:
+The refined cut (13 September 2026) lives in the private media folder, outside this
+repository:
 
-| Time | Beat |
+| File | Use |
 |---|---|
-| 0:00–0:35 | The problem. "I've built eleven things this year. I could not tell you which of them still comply with anything." |
-| 0:35–1:10 | Web workspace: paste a plain-text description → the Strands intake agent drafts a passport. **Show unknowns preserved rather than guessed.** |
-| 1:10–1:30 | Source registry — coverage is explicit and enumerable, not "we watch everything" |
-| 1:30–2:45 | A completed check: one affected system with its cited passage and matched passport fact, one explicitly unaffected, one insufficient-information |
-| 2:45–3:10 | A failed source shown as a **coverage failure**, not silence *(the real Gmail `ReadTimeout` from 9 Sep is a genuine example)* |
-| 3:10–3:35 | Re-run: quiet. No duplicate alerts, and $0.00 because nothing changed. |
-| 3:35–4:10 | Export the builder handoff — a saved file, not chat text |
-| 4:10–5:00 | Architecture: two-stage Nova screening/assessment, read-only Strands tools, grounding validation that downgrades ungrounded claims, and the spend ceilings that abort rather than degrade |
+| `BuiltWatch-submission-video-subtitle-ready.mp4` | Captions burned in, no audio. Record your voice-over over this one. |
+| `BuiltWatch-submission-video-narrated.mp4` | The same cut with synthetic narration. Submit this if there is no time to record. |
+| `TRANSCRIPT-submission.md` | Timed script for reading the voice-over. |
 
-**Record from the web workspace, not the CLI** — the CLI beat sheet this replaced predates
-the UI. Keep the CLI for the architecture beat if it helps show the internals.
+| Requirement | Where it is covered |
+|---|---|
+| The problem | *The problem* and *Why it stays unsolved* slides |
+| Who it is for | *Who it's for*: independent professionals, makers and small teams |
+| Why it matters | *Why it matters*: retired API versions, stricter sender rules, exploited vulnerabilities, the EU AI Act Article 50 date |
+| Working project | *A real run* (verbatim Bedrock run log) followed by the product walkthrough |
+| Strands Agents usage | *How it works* and *Architecture* slides |
 
 ## Post-submission
 

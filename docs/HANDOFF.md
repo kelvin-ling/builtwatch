@@ -303,7 +303,7 @@ uv venv --python 3.12
 uv pip install -e ".[dev]"
 
 .venv/bin/python -m pytest -q      # expect: 44 passed
-.venv/bin/python -m ruff check src tests infra   # expect: All checks passed!
+.venv/bin/python -m ruff check src tests infra scripts   # expect: All checks passed!
 ```
 
 Tests make **no AWS calls** and cost nothing. Run them before and after every change.

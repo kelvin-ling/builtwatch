@@ -133,6 +133,8 @@ Registration, intake and live checks have conservative pilot limits.
 
 ## Architecture
 
+![BuiltWatch architecture: Cloudflare gateway, AWS Lambda, DynamoDB, Cognito, EventBridge, Strands Agents on Amazon Bedrock, and the cost monitor](docs/architecture.png)
+
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full diagram and the deployed AWS
 topology. Continuing this work? Start at [docs/HANDOFF.md](docs/HANDOFF.md).
 
@@ -184,7 +186,7 @@ security issues privately using [SECURITY.md](SECURITY.md), not in a public issu
 
 ```bash
 pytest                 # unit tests, no AWS calls
-ruff check src tests
+ruff check src tests infra scripts
 ```
 
 Tests cover relevant, irrelevant, ambiguous, duplicate, stale, and failed-source cases, and run entirely offline.

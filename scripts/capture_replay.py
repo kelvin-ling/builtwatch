@@ -18,11 +18,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-import yaml  # noqa: E402
+import yaml
 
-from builtwatch.config import Settings  # noqa: E402
-from builtwatch.fetch import fetch_live  # noqa: E402
-from builtwatch.registry import enabled_sources, load_registry  # noqa: E402
+from builtwatch.config import Settings
+from builtwatch.fetch import fetch_live
+from builtwatch.registry import enabled_sources, load_registry
 
 
 def main() -> int:

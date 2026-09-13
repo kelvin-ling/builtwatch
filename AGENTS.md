@@ -68,7 +68,7 @@ examples/passports/      three demo systems
 - Pydantic v2 for anything crossing a boundary (model output, import/export, storage).
 - Comments explain **why**, not what. If a line needs a "what" comment, rename something.
 - Never widen a ceiling to make something pass. Fix the thing that overran.
-- `ruff check src tests` before committing.
+- `ruff check src tests infra scripts` before committing.
 
 ## Cost discipline while developing
 

@@ -37,7 +37,7 @@ No agent can complete that; it needs a browser approval. Stop and ask.
 
 ```bash
 .venv/bin/python -m pytest tests/ -q          # expect 120 passed
-.venv/bin/python -m ruff check src tests infra # expect All checks passed!
+.venv/bin/python -m ruff check src tests infra scripts # expect All checks passed!
 ```
 
 Do not deploy on a red suite.

@@ -24,9 +24,27 @@ flowchart TD
   Worker --> Sources[Curated source registry]
   Worker --> Strands[Strands: read-only assessment tools]
   Strands --> Bedrock[Bedrock Nova Lite screen and Nova Pro assessment]
-  Worker --> DDB
+  Worker -->|Reserve, then settle model spend| DDB
   Agent[User-authorized project agent] -->|Scoped one-app token| Gateway
+  CostSchedule[EventBridge daily cost check] --> Monitor[Cost monitor Lambda]
+  Monitor --> CE[AWS Cost Explorer: account spend]
+  Monitor --> SNS[SNS: owner cost alerts]
+  Monitor -->|Pause flag when spend or billing data is unsafe| DDB
 ```
+
+## Spend controls
+
+Every paid step is bounded before it runs, and each bound fails closed:
+
+| Layer | Control | Value |
+|---|---|---|
+| Per assessment | Strands `BudgetGuard` hooks meter tokens and abort the run | $0.25 per run, $0.50 per day |
+| Shared model reserve | Conditional DynamoDB reservation before a scan, settled to actual cost after | $2.00 per month, reserved in $0.25 steps |
+| Account | Daily cost monitor reads Cost Explorer and sets a pause flag | Warns at $3, pauses paid checks at $5 or if billing data cannot be read |
+| Admission | Workspace and request caps | 25 workspaces, 300 requests per workspace per day |
+
+A scan that cannot reserve budget does not start. A worker that times out keeps its full
+reservation charged. The public demo never invokes Bedrock.
 
 The UI and gateway are hosted through Sites; the monitoring and AI workloads run in
 AWS. Cloudflare provides domain routing and the edge runtime. It is not accurate to
@@ -102,5 +120,5 @@ AWS backend changes require the account deployment path and separate account che
 Never run the legacy deployment command as an assumed multi-user upgrade.
 
 Offline gates: npm run check; npm test; .venv/bin/pytest -q;
-.venv/bin/ruff check src tests; npm run build. Tests do not prove model accuracy.
+.venv/bin/ruff check src tests infra scripts; npm run build. Tests do not prove model accuracy.
 See COMPETITION_EXECUTION_PLAN.md for the remaining evidence and deployment gates.
