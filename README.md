@@ -267,8 +267,8 @@ same saved profile, without a separate questionnaire or new mandatory fields.
 
 The screening agent now sees recorded actions, assumptions and constraints. Its review
 must connect a source development to a specific recorded fact; it may not invent
-commercial impact. Live coverage is 12 curated sources, now including the US FTC
-Business Blog summaries. This is bounded source monitoring, not an all-news service.
+commercial impact. Live coverage is 21 curated sources across eight categories, including
+the US FTC Business Blog summaries. This is bounded source monitoring, not an all-news service.
 The existing monthly spending controls remain unchanged.
 
 ### App-specific review briefs
