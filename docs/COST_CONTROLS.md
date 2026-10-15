@@ -1,3 +1,5 @@
+> **Current operation (October 2026):** The competition freeze is lifted. BuiltWatch defaults to rule-based change matching with no AI inference charges. See [current operation and tradeoffs](OPERATIONS.md). Bedrock descriptions below document the historical submission.
+
 # BuiltWatch cost controls
 
 The owner targets **CAD 25 per month**. This is a conservative operating target, not a

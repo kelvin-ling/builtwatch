@@ -1,3 +1,5 @@
+> **Current operation (October 2026):** The competition freeze is lifted. BuiltWatch defaults to rule-based change matching with no AI inference charges. See [current operation and tradeoffs](OPERATIONS.md). Bedrock descriptions below document the historical submission.
+
 # BuiltWatch architecture
 
 Updated 12 September 2026 against the current source. Infrastructure settings must

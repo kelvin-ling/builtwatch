@@ -31,6 +31,7 @@ def main():
     args = parser.parse_args()
     archive = ROOT / 'data/accounts.zip'
     if args.build_only:
+        archive.parent.mkdir(parents=True, exist_ok=True)
         data = io.BytesIO(build_zip())
         with zipfile.ZipFile(data,'a',zipfile.ZIP_DEFLATED) as z:
             z.write(ROOT/'infra/accounts_runner.py','accounts_runner.py')
@@ -38,7 +39,7 @@ def main():
         return
     session = boto3.Session(region_name=REGION)
     account = session.client('sts').get_caller_identity()['Account']
-    if account != '[aws-account-redacted]':
+    if account != '234194272475':
         raise RuntimeError('Wrong AWS account')
     ddb,lam,iam,logs = [session.client(x) for x in ['dynamodb','lambda','iam','logs']]
     try:
@@ -62,7 +63,7 @@ def main():
     access_path.write_text(json.dumps(saved))
     os.chmod(access_path,0o600)
     worker_arn=f'arn:aws:lambda:{REGION}:{account}:function:{WORKER}'
-    env={'BW_TABLE':TABLE,'BW_WORKER':WORKER,'BW_SCREEN_MODEL':'us.amazon.nova-lite-v1:0',
+    env={'BW_INFERENCE_MODE':'rules','BW_TABLE':TABLE,'BW_WORKER':WORKER,'BW_SCREEN_MODEL':'us.amazon.nova-lite-v1:0',
          'BW_ASSESS_MODEL':'us.amazon.nova-pro-v1:0','BW_MAX_RUN_USD':'0.25','BW_MAX_DAY_USD':'0.50',
          'BW_MAX_MONTH_USD':'2.00','BW_MAX_SOURCES':'25','BW_MAX_SYSTEMS':'10','BW_MAX_ITERATIONS':'8',
          'BW_MAX_OUTPUT_TOKENS':'4000','BW_SCREEN_OUTPUT_TOKENS':'800',
@@ -76,17 +77,7 @@ def main():
              'Resource':f'arn:aws:dynamodb:{REGION}:{account}:table/{TABLE}'}]
         if name == API:
             statements.append({'Effect':'Allow','Action':'lambda:InvokeFunction','Resource':worker_arn})
-        else:
-            statements.append({'Effect':'Allow','Action':['bedrock:InvokeModel','bedrock:InvokeModelWithResponseStream'],
-                'Resource': [
-                    f'arn:aws:bedrock:{REGION}:{account}:inference-profile/'
-                    f'us.amazon.nova-{m}-v1:0'
-                    for m in ['lite', 'pro']
-                ]
-                + [
-                    f'arn:aws:bedrock:*::foundation-model/amazon.nova-{m}-v1:0'
-                    for m in ['lite', 'pro']
-                ]})
+        statements.append({'Effect':'Deny','Action':['bedrock:*'], 'Resource':'*'})
         arn=role(iam,name+'-role','lambda.amazonaws.com',{'Version':'2012-10-17','Statement':statements})
         with contextlib.suppress(logs.exceptions.ResourceAlreadyExistsException):
             logs.create_log_group(logGroupName='/aws/lambda/'+name)

@@ -104,6 +104,9 @@ class Limits:
 
 @dataclass
 class Settings:
+    inference_mode: str = field(
+        default_factory=lambda: os.environ.get("BW_INFERENCE_MODE", "rules")
+    )
     region: str = field(default_factory=lambda: os.environ.get("AWS_REGION", "us-east-1"))
     screen_model_id: str = field(
         default_factory=lambda: os.environ.get("BW_SCREEN_MODEL", DEFAULT_SCREEN_MODEL)
@@ -119,6 +122,10 @@ class Settings:
     )
     replay_dir: Path = field(default_factory=lambda: Path(os.environ.get("BW_REPLAY", "replay")))
     limits: Limits = field(default_factory=Limits)
+
+    def __post_init__(self) -> None:
+        if self.inference_mode not in {"rules", "bedrock"}:
+            raise ValueError("BW_INFERENCE_MODE must be rules or bedrock")
 
     # Public demo mode: read-only replay, no live fetch, no user-supplied sources.
     demo_mode: bool = field(

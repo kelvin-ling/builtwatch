@@ -434,7 +434,7 @@ def work(event: dict, store: DynamoStore, settings: Any, scan: Any) -> dict:
         if job.get("id") != event.get("job_id") or job.get("status") != "queued":
             return {"status": "skipped"}
         month = time.strftime("%Y-%m", time.gmtime())
-        if not reserve_budget(store.table, month):
+        if settings.inference_mode == "bedrock" and not reserve_budget(store.table, month):
             store.put(
                 "job",
                 {
@@ -458,7 +458,8 @@ def work(event: dict, store: DynamoStore, settings: Any, scan: Any) -> dict:
         )
         try:
             result = scan(store, settings, mode="live")
-            settle_budget(store.table, month, result.run.estimated_cost_usd)
+            if settings.inference_mode == "bedrock":
+                settle_budget(store.table, month, result.run.estimated_cost_usd)
             store.put(
                 "job",
                 {

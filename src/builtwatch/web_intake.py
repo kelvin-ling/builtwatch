@@ -56,7 +56,7 @@ def queue_intake(store: Any, settings: Any, body: dict, invoke: Any) -> dict:
         return response(200, {"ready": True})
     if store.job().get("status") in {"queued", "running"}:
         return response(409, {"error": "Please wait for your current task to finish."})
-    if (
+    if settings.inference_mode == "bedrock" and (
         store.spent_this_month() >= settings.limits.max_cost_per_month_usd
         or store.spent_today() >= settings.limits.max_cost_per_day_usd
     ):
@@ -114,7 +114,7 @@ def draft_profile(event: dict, store: Any, settings: Any, extract: Any = from_te
         if pending.get("job_id") != job["id"]:
             raise RuntimeError("Draft input is unavailable")
         month = time.strftime("%Y-%m", time.gmtime())
-        if not reserve_budget(store.table, month):
+        if settings.inference_mode == "bedrock" and not reserve_budget(store.table, month):
             store.delete("intake-input")
             store.put(
                 "job",
@@ -134,7 +134,7 @@ def draft_profile(event: dict, store: Any, settings: Any, extract: Any = from_te
                 **job,
                 "status": "running",
                 "started_at": time.time(),
-                "message": "The intake agent is identifying services, data, and important actions.",
+                "message": "Preparing a draft for review. No fields are saved until you confirm.",
             },
         )
         intake_settings = replace(
@@ -150,7 +150,7 @@ def draft_profile(event: dict, store: Any, settings: Any, extract: Any = from_te
             if pending.get("system_id") and previous is None:
                 raise ValueError("The system was removed before this update")
             description = pending["description"]
-            if previous:
+            if previous and settings.inference_mode == "bedrock":
                 description = (
                     "Previous confirmed profile: "
                     + json.dumps(previous.model_dump(mode="json"))
@@ -163,6 +163,13 @@ def draft_profile(event: dict, store: Any, settings: Any, extract: Any = from_te
                 meter,
                 system_id=previous.id if previous else "app-" + uuid.uuid4().hex[:12],
             )
+            if previous and settings.inference_mode == "rules":
+                # Literal extraction cannot interpret removal/merge instructions safely.
+                # Keep confirmed fields and put the supplied update in the reviewable purpose.
+                profile = previous.model_copy(update={
+                    "purpose": pending["description"][:600],
+                    "unknowns": list(dict.fromkeys(previous.unknowns + profile.unknowns)),
+                })
             if pending.get("source_agent"):
                 profile.source_agent = pending["source_agent"]
             elif previous:
@@ -220,6 +227,7 @@ def draft_profile(event: dict, store: Any, settings: Any, extract: Any = from_te
                 meter.output_tokens,
                 meter.run_cost,
             )
-            settle_budget(store.table, month, meter.run_cost)
+            if settings.inference_mode == "bedrock":
+                settle_budget(store.table, month, meter.run_cost)
     finally:
         store.release_lock(lock)

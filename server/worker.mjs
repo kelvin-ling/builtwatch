@@ -200,12 +200,14 @@ async function publicImpact(request, env, url, ctx) {
   if (publicImpactMemory && publicImpactMemory.expires > Date.now()) {
     return new Response(publicImpactMemory.body, {status:publicImpactMemory.status, headers:publicImpactMemory.headers});
   }
-  const edgeCache=globalThis.caches?.default;
-  const cacheKey=edgeCache?new Request(new URL('/api/public-impact',url.origin),{method:'GET'}):null;
-  if(edgeCache&&cacheKey){
-    const hit=await edgeCache.match(cacheKey);
-    if(hit)return hit;
-  }
+  // Sites may prohibit the default cache even when the Cache API exists.
+  // Aggregate data also has a backend cache; edge caching is only an optimization.
+  let edgeCache,cacheKey;
+  try{
+    edgeCache=globalThis.caches?.default;
+    cacheKey=edgeCache?new Request(new URL('/api/public-impact',url.origin),{method:'GET'}):null;
+    if(edgeCache&&cacheKey){const hit=await edgeCache.match(cacheKey);if(hit)return hit;}
+  }catch{edgeCache=null;}
   try {
     const target = new URL('/api/public-impact', env.BW_API_URL);
     const authorization = await awsHeaders(target, 'GET', '', env);
@@ -223,7 +225,7 @@ async function publicImpact(request, env, url, ctx) {
     // should be visible on the next request rather than replayed for a minute.
     if (upstream.ok) {
       publicImpactMemory={body,status:upstream.status,headers,expires:Date.now()+60000};
-      if(edgeCache&&cacheKey&&ctx?.waitUntil)ctx.waitUntil(edgeCache.put(cacheKey,response.clone()));
+      if(edgeCache&&cacheKey&&ctx?.waitUntil)ctx.waitUntil(Promise.resolve().then(()=>edgeCache.put(cacheKey,response.clone())).catch(()=>{}));
     }
     return response;
   } catch (error) {

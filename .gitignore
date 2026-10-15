@@ -37,3 +37,6 @@ BuiltWatch-private-demo/
 **/BuiltWatch-demo*.mov
 **/BuiltWatch-demo*.mp4
 **/DEMO_TRANSCRIPT.md
+
+# Managed source of the deployed Site, with its own history and private backups
+/site-source/

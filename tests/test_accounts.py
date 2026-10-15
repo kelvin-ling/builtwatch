@@ -171,10 +171,16 @@ def test_enqueue_and_worker_are_idempotent(table, passport):
     store.upsert_system(passport)
     jobs = []
     assert (
-        serve(event("/api/scan", "POST", "{}"), store, Settings(), jobs.append)["statusCode"] == 202
+        serve(
+            event("/api/scan", "POST", "{}"), store, Settings(inference_mode="bedrock"), jobs.append
+        )["statusCode"]
+        == 202
     )
     assert (
-        serve(event("/api/scan", "POST", "{}"), store, Settings(), jobs.append)["statusCode"] == 429
+        serve(
+            event("/api/scan", "POST", "{}"), store, Settings(inference_mode="bedrock"), jobs.append
+        )["statusCode"]
+        == 429
     )
     calls = []
 
@@ -185,8 +191,8 @@ def test_enqueue_and_worker_are_idempotent(table, passport):
             summary_line=lambda: "Finished",
         )
 
-    assert work(jobs[0], store, Settings(), scan)["status"] == "complete"
-    assert work(jobs[0], store, Settings(), scan)["status"] == "skipped"
+    assert work(jobs[0], store, Settings(inference_mode="bedrock"), scan)["status"] == "complete"
+    assert work(jobs[0], store, Settings(inference_mode="bedrock"), scan)["status"] == "skipped"
     assert len(calls) == 1
     assert store.acquire_lock("next")
     allocated = table.get_item(Key={"pk": "BUDGET", "sk": time.strftime("%Y-%m", time.gmtime())})[
@@ -333,7 +339,7 @@ def test_summary_update_preserves_identity_and_requires_review(table, passport):
             ),
         ),
         store,
-        Settings(),
+        Settings(inference_mode="bedrock"),
         jobs.append,
     )
     assert r["statusCode"] == 202
@@ -343,7 +349,7 @@ def test_summary_update_preserves_identity_and_requires_review(table, passport):
         assert "Email sending is now disabled" in description
         return passport.model_copy(update={"id": system_id, "purpose": "Local only"})
 
-    draft_profile(jobs[0], store, Settings(), extract)
+    draft_profile(jobs[0], store, Settings(inference_mode="bedrock"), extract)
     draft = store.get("intake-draft")["profile"]
     assert draft["id"] == passport.id
     assert draft["purpose"] == "Local only"

@@ -174,6 +174,7 @@ class SourceSnapshot(BaseModel):
     content: str = ""
     content_hash: str = ""
     change_context: str = "First observation: existing guidance, not a newly detected change."
+    added_passages: list[str] = Field(default_factory=list)
 
     published_at: date | None = None
     effective_at: date | None = None
@@ -222,6 +223,7 @@ class ScanRun(BaseModel):
     detail_needed_evaluations: int = 0
 
     model_id: str | None = None
+    assessment_method: str = "bedrock"
     input_tokens: int = 0
     output_tokens: int = 0
     estimated_cost_usd: float = 0.0
@@ -300,6 +302,7 @@ class Finding(BaseModel):
     source_id: str
 
     relevance: Relevance
+    assessment_method: str = "bedrock"
     title: str
     development_key: str = Field(
         description="Stable identifier for the underlying development, used for dedup."

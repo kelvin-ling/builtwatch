@@ -28,7 +28,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import httpx
-from selectolax.parser import HTMLParser
+from selectolax.lexbor import LexborHTMLParser as HTMLParser
 
 from .config import Limits
 from .models import FetchStatus, Source, SourceSnapshot

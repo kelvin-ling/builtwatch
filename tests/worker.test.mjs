@@ -124,3 +124,19 @@ test('admin requires the configured owner and remains available during live paus
   assert.equal((await worker.fetch(new Request(origin+'/api/admin',{headers:{Authorization:'Bearer '+'a'.repeat(64)}}),adminEnv)).status,401);
  }finally{globalThis.fetch=original;}
 });
+
+test('public impact works when the hosting runtime prohibits the default cache', async()=>{
+  const previous=Object.getOwnPropertyDescriptor(globalThis,'caches');
+  const original=globalThis.fetch;
+  Object.defineProperty(globalThis,'caches',{configurable:true,get(){throw new Error('This Worker is not permitted to access the default cache.');}});
+  try{
+    globalThis.fetch=async()=>new Response('{"systems_monitored":7}');
+    const isolated=await import('../server/worker.mjs?cache-prohibited');
+    const response=await isolated.createWorker({}).fetch(new Request(origin+'/api/public-impact'),env);
+    assert.equal(response.status,200);
+    assert.equal((await response.json()).systems_monitored,7);
+  }finally{
+    globalThis.fetch=original;
+    if(previous)Object.defineProperty(globalThis,'caches',previous);else delete globalThis.caches;
+  }
+});

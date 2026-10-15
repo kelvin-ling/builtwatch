@@ -77,6 +77,13 @@ def collect_snapshots(
         previous_hash = previous.content_hash if previous and previous.mode == mode else None
         snapshot = fetch(source, mode, settings.replay_dir, settings.limits)
         if previous_hash and snapshot.succeeded:
+            old_lines = previous.content.splitlines()
+            new_lines = snapshot.content.splitlines()
+            matcher = difflib.SequenceMatcher(a=old_lines, b=new_lines, autojunk=False)
+            snapshot.added_passages = [
+                line for tag, _, _, start, end in matcher.get_opcodes()
+                if tag in {"insert", "replace"} for line in new_lines[start:end] if line.strip()
+            ]
             differences = list(
                 difflib.unified_diff(
                     previous.content.splitlines(),
@@ -133,7 +140,8 @@ def run_scan(
     run = ScanRun(
         id=new_id("run"),
         mode=mode,  # type: ignore[arg-type]
-        model_id=settings.assess_model_id,
+        model_id=settings.assess_model_id if settings.inference_mode == "bedrock" else None,
+        assessment_method=settings.inference_mode,
         sources_at_start=[s.id for s in listed_sources],
         systems_evaluated=[s.id for s in systems],
     )
@@ -173,7 +181,8 @@ def run_scan(
                     ).encode()
                 ).hexdigest()
                 pair_key = (
-                    f"quality-v{QUALITY_VERSION}:{passport.id}:{profile_hash}"
+                    f"{settings.inference_mode}-v1:quality-v{QUALITY_VERSION}"
+                    f":{passport.id}:{profile_hash}"
                     f":{mode}:{source.id}:{snapshot.content_hash}"
                 )
                 if store.assessed(pair_key) and not force_reassess:

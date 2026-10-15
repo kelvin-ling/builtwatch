@@ -62,11 +62,17 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
     agent_reviews = []
     if hasattr(store, "get"):
         agent_reviews = [
-            review
-            for system in systems
-            if (review := store.get("agent-review#" + system.id))
+            review for system in systems if (review := store.get("agent-review#" + system.id))
         ]
     return {
+        "monitoring": {
+            "method": settings.inference_mode,
+            "model_cost_usd": 0 if settings.inference_mode == "rules" else None,
+            "description": "Rule-based matching of changed passages to declared dependencies. "
+            "No AI interpretation; regulatory applicability is not assessed."
+            if settings.inference_mode == "rules"
+            else "Metered AI assessment.",
+        },
         "quality": quality,
         "systems": [s.model_dump(mode="json") for s in systems],
         "findings": findings,
@@ -160,11 +166,17 @@ def dispatch(
         if path == "/api/scan" and method == "POST":
             if not store.list_systems():
                 return response(409, {"error": "Add a system before checking sources."})
-            if store.spent_this_month() >= settings.limits.max_cost_per_month_usd:
+            if (
+                settings.inference_mode == "bedrock"
+                and store.spent_this_month() >= settings.limits.max_cost_per_month_usd
+            ):
                 return response(
                     429, {"error": "The workspace check limit has been reached. Try again later."}
                 )
-            if store.spent_today() >= settings.limits.max_cost_per_day_usd:
+            if (
+                settings.inference_mode == "bedrock"
+                and store.spent_today() >= settings.limits.max_cost_per_day_usd
+            ):
                 return response(
                     429, {"error": "Today's check limit has been reached. Try again tomorrow."}
                 )

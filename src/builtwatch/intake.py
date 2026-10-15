@@ -102,6 +102,10 @@ def from_text(
     description: str, settings: Settings, meter: CostMeter, system_id: str | None = None
 ) -> SystemPassport:
     """Extract a passport from a plain-text description using Strands + Bedrock."""
+    if settings.inference_mode == "rules":
+        from .rules import draft_profile
+
+        return draft_profile(description, system_id)
     guard = BudgetGuard(meter, settings.assess_model_id, max_iterations=3)
     agent = Agent(
         model=BedrockModel(

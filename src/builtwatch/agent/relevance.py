@@ -97,6 +97,8 @@ class FindingDraft(BaseModel):
 def _bedrock(
     settings: Settings, model_id: str, max_tokens: int | None = None
 ) -> BedrockModel:
+    if settings.inference_mode != "bedrock":
+        raise RuntimeError("Paid inference is disabled. Use the rules engine.")
     return BedrockModel(
         model_id=model_id,
         region_name=settings.region,
@@ -114,6 +116,11 @@ def screen(
 ) -> ScreenVerdict:
     """Stage 1. Returns a verdict; on budget abort, fails open to 'possible'."""
     from ..quality import source_out_of_scope
+
+    if settings.inference_mode == "rules":
+        from ..rules import screen as rule_screen
+
+        return rule_screen(passport, snapshot, source)
 
     if source_out_of_scope(passport, source.id):
         return ScreenVerdict(plausible="no", reason="This vendor is not a recorded dependency.")
@@ -170,6 +177,10 @@ def assess(
     finding is returned downgraded to insufficient_information rather than discarded, so
     the failure is visible instead of looking like silence.
     """
+    if settings.inference_mode == "rules":
+        from ..rules import assess as rule_assess
+
+        return rule_assess(passport, snapshots, sources, scan_run_id)
     ctx = InvestigationContext(
         passport=passport,
         snapshots=snapshots,

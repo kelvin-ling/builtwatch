@@ -193,7 +193,7 @@ def test_screening_receives_business_conditions_without_a_technology_stack(
     monkeypatch.setattr(relevance, "Agent", FakeAgent)
     monkeypatch.setattr(relevance, "_bedrock", lambda *args: None)
     monkeypatch.setattr(relevance.BudgetGuard, "reconcile", lambda *args: None)
-    settings = Settings()
+    settings = Settings(inference_mode="bedrock")
     verdict = relevance.screen(passport, snapshot, source, settings, CostMeter(settings))
     assert verdict.plausible == "possible"
     for fact in [*passport.assumptions, *passport.constraints, "Draft quotes for customers"]:
@@ -228,7 +228,7 @@ def test_assessment_supplies_validated_evidence_without_requiring_tool_use(
     monkeypatch.setattr(relevance, "_bedrock", lambda *args: None)
     monkeypatch.setattr(relevance.BudgetGuard, "reconcile", lambda *args: None)
 
-    settings = Settings()
+    settings = Settings(inference_mode="bedrock")
     finding, problems = relevance.assess(
         passport,
         {snapshot.id: snapshot},

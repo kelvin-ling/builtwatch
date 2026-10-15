@@ -1,3 +1,5 @@
+> **Current operation (October 2026):** The competition freeze is lifted. BuiltWatch defaults to rule-based change matching with no AI inference charges. See [current operation and tradeoffs](OPERATIONS.md). Bedrock descriptions below document the historical submission.
+
 # Independent registration and durable demo
 
 The current release replaces ChatGPT sign-in with AWS Cognito email/password registration. The frontend remains a thin Sites/Cloudflare gateway; AWS owns identity, agent execution and inventory/findings storage. See [ACCOUNTS.md](ACCOUNTS.md) for the authoritative current workflow, limits, agent connection contract and operator pause controls. Earlier architecture decisions below are historical and superseded where they mention ChatGPT sign-in or read-only demos.

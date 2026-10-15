@@ -1,3 +1,5 @@
+> **Current operation (October 2026):** The competition freeze is lifted. BuiltWatch defaults to rule-based change matching with no AI inference charges. See [current operation and tradeoffs](docs/OPERATIONS.md). Bedrock descriptions below document the historical submission.
+
 > **Public pilot:** Independent email registration, private workspaces, an interactive no-account demo, agent-prepared profiles, and revocable daily builder-agent connections. See [the user guide](docs/ACCOUNTS.md) and [pilot architecture and limits](docs/PUBLIC_LAUNCH.md).
 
 # BuiltWatch
