@@ -108,3 +108,13 @@ test('only results that need user action enter the attention list',()=>{
  assert.equal(p.requiresAttention({relevance:'not_relevant',disposition:'open',system_facts:[]},app),false);
  assert.equal(p.requiresAttention({relevance:'relevant',disposition:'acknowledged',system_facts:[]},app),false);
 });
+
+test('an assessment with no specific missing fact is a check-quality notice, not user work',()=>{
+ const app={id:'support-widget',name:'Support widget',purpose:'Answers questions'};
+ const finding={relevance:'insufficient_information',disposition:'open',system_facts:[],
+  evidence:[{passage:'Historical source excerpt for this check.'}],
+  unknowns:['There is no specific information about changes or developments that would directly affect this app.']};
+ assert.equal(p.requiresAttention(finding,app),false);
+ assert.equal(p.diagnosis(finding,app).owner,'BuiltWatch');
+ assert.equal(p.requiresAttention({...finding,relevance:'relevant',validation_issues:['Quote was not verified']},app),false);
+});

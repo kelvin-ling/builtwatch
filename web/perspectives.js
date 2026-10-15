@@ -36,6 +36,7 @@
    review:stale?'Does the finding still apply to the app’s current behavior?':f.relevance==='not_relevant'?'No action requested for this assessment.':f.app_impact?.review_question||f.review_suggestions?.[0]||'Which recorded activity or condition would make this development apply?',
    stale,anchored:!!ref,structured:!!f.app_impact};
  }
+ function hasNoActionableGap(f){return f.relevance==='insufficient_information'&&(f.unknowns||[]).some(x=>/no specific information about (?:changes|developments)|no (?:relevant|specific) (?:change|development|information)|insufficient (?:source )?evidence to (?:assess|determine)/i.test(x));}
  function isEvidenceFailure(f){return (f.relevance!=='not_relevant'&&Array.isArray(f.evidence)&&f.evidence.length===0)||!!f.validation_issues?.length||(f.unknowns||[]).some(x=>/downgraded automatically|could not verify the suggested connection|not grounded|not found verbatim|cited snapshot|snap_[a-f0-9]+/i.test(x));}
  function readableGap(f){
   const gap=(f.unknowns||[]).find(x=>!/downgraded automatically|could not verify the suggested connection|not grounded|not found verbatim|cited snapshot|snap_[a-f0-9]+/i.test(x));
@@ -47,6 +48,7 @@
  function diagnosis(f,system){
   const b=brief(f,system);
   if(b.stale)return {status:'App details changed',problemLabel:"What's wrong",problem:'This result refers to an older version of the app profile.',actionLabel:'What to do next',action:'Update the app profile if needed, then run the check again before changing the app.',owner:'You'};
+  if(hasNoActionableGap(f))return {status:'Check needs more evidence',problemLabel:'Check quality',problem:'This assessment did not identify a specific missing app detail.',actionLabel:'Next step',action:'No app change is requested. A later check needs clearer source evidence.',owner:'BuiltWatch'};
   if(isEvidenceFailure(f))return {status:'BuiltWatch could not verify this',problemLabel:"What's wrong",problem:'The suggested connection is missing a source passage that proves it. BuiltWatch blocked it so it cannot be mistaken for a real alert.',actionLabel:'What to do next',action:'Do not change the app based on this item. BuiltWatch must check the source again; only act on a later result that includes quoted evidence.',owner:'BuiltWatch'};
   if(f.relevance==='insufficient_information')return {status:'Confirm one detail',problemLabel:'Confirm before deciding',problem:readableGap(f),actionLabel:'What to do next',action:'Check the app’s actual setup. Update the profile and run the check again only if the detail is different.',owner:'You'};
   if(f.relevance==='not_relevant')return {status:'No app change needed',problemLabel:'Why it does not apply',problem:b.consequence,actionLabel:'What to do next',action:'Nothing needs fixing for this item. Revisit it only if the app or its dependencies change.',owner:'No action'};
@@ -62,6 +64,7 @@
  }
  function requiresAttention(f,system){
   if((f.disposition||'open')!=='open')return false;
+  if(isEvidenceFailure(f)||hasNoActionableGap(f))return false;
   if(f.relevance==='relevant')return true;
   return f.relevance==='insufficient_information'&&diagnosis(f,system).owner!=='BuiltWatch';
  }

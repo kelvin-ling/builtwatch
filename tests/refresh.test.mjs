@@ -65,3 +65,16 @@ test('a late response cannot overwrite a newer refresh',async()=>{
  resolveOld({demo:false,marker:'old'});await old;
  assert.equal(h.ctx.state.marker,'new');assert.equal(h.draws,1);
 });
+
+test('closing a dialog with Escape releases editing state and restarts refresh',()=>{
+ const h=harness();
+ vm.runInContext('var modalHistory=[{title:"Old form"}],lastFocus={focus(){}};',h.ctx);
+ h.ctx.activeModal={title:'Form closed by browser'};
+ h.ctx.view='systems';
+ const start=app.indexOf('function resetModalState(){'),end=app.indexOf("\n$('#modal').addEventListener('close'",start);
+ vm.runInContext(app.slice(start,end),h.ctx);
+ h.ctx.resetModalState();
+ assert.equal(h.ctx.activeModal,null);
+ assert.equal(h.ctx.modalHistory.length,0);
+ assert.equal(h.timers.size,1);
+});
