@@ -575,3 +575,13 @@ def test_view_preference_preserves_monitoring_and_cannot_grant_access(table):
     assert result["statusCode"] == 200
     assert store.get("preferences")["viewer_lens"] == "operations"
     assert store.get("preferences")["automatic_checks"] is True
+
+
+def test_monitoring_schedule_tracks_toronto_daylight_saving():
+    from datetime import datetime, timezone
+
+    from builtwatch.accounts import monitoring_schedule
+
+    before = datetime(2026, 10, 31, 12, tzinfo=timezone.utc)
+    assert monitoring_schedule(True, before)["next_check_at"] == "2026-11-01T12:00:00+00:00"
+    assert monitoring_schedule(False, before)["next_check_at"] is None

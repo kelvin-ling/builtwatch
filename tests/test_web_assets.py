@@ -29,8 +29,7 @@ def test_frontend_does_not_embed_owner_secret():
     assert "#bulk-json" in styles
     assert ".automation-cards{align-items:stretch}" in styles
     assert (
-        ".automation-cards .system-card{height:100%;display:flex;flex-direction:column}"
-        in styles
+        ".automation-cards .system-card{height:100%;display:flex;flex-direction:column}" in styles
     )
 
 
@@ -102,7 +101,7 @@ def test_bulk_import_keeps_export_when_returning_from_review():
 
     assert "let adminData=null,bulkProfiles=[],bulkInput=''" in app
     assert 'textarea id="bulk-json" required maxlength="24000"' in app
-    assert '${esc(bulkInput)}' in app
+    assert "${esc(bulkInput)}" in app
     assert "bulkInput=$('#bulk-json').value" in app
     assert "if(e.target.id==='bulk-json'){bulkInput=e.target.value;updateBulkValidation();}" in app
 
@@ -129,7 +128,7 @@ def test_imported_systems_show_freshness_and_can_start_a_first_check():
     assert "Waiting for first check" in app
     assert 'data-action="scan"' in app
     assert "Import complete · ${importSummary}. Your first check is starting." in app
-    assert "button[data-action=\"save-bulk\"]" in app
+    assert 'button[data-action="save-bulk"]' in app
     assert ".system-watch-status" in css
     assert ".system-freshness" in css
 
@@ -181,7 +180,7 @@ def test_agent_import_is_primary_and_profiles_show_their_source():
     assert "Imported from ${esc(s.source_agent)}" in app
     add_flow = app[app.index("function add(") : app.index("function reviewDraft(")]
     assert "Agent or workspace name" not in add_flow
-    assert "data-action=\"copy-builder\"" in add_flow
+    assert 'data-action="copy-builder"' in add_flow
     assert "Paste profile JSON" not in add_flow
     assert "visual-import" in app
     assert ".source-badge" in css
@@ -293,14 +292,14 @@ def test_draft_notice_and_context_save_action_remain_visible_on_mobile():
     css = (ROOT / "web/style.css").read_text()
 
     assert 'class="notice info draft-ready"' in app
-    assert '.draft-ready{display:flex' in css
-    assert '.draft-ready{display:grid;grid-template-columns:1fr;gap:12px}' in css
+    assert ".draft-ready{display:flex" in css
+    assert ".draft-ready{display:grid;grid-template-columns:1fr;gap:12px}" in css
     save_action = (
         '<div class="modal-actions"><button class="button primary" '
         'type="submit">Save context</button></div>'
     )
     assert save_action in app
-    assert '.modal-footer{padding-bottom:calc(28px + env(safe-area-inset-bottom))!important}' in css
+    assert ".modal-footer{padding-bottom:calc(28px + env(safe-area-inset-bottom))!important}" in css
 
 
 # Coverage and unchecked profiles are exercised with real state in status.test.mjs.
@@ -371,7 +370,9 @@ def test_sources_view_groups_by_category_and_surfaces_coverage_failures():
         "sources view has no category filter"
     )
     assert '<details class="panel source-group"' in view, "source groups are not collapsible"
-    assert "source-filter-button" in view, "source filter counts are not rendered"
+    assert "BuiltWatchVisuals.categories(state,sourceFilter)" in view
+    visuals = (ROOT / "web/visuals.js").read_text()
+    assert "data-source-filter" in visuals and "sources.length" in visuals
     assert "failed ·" in view, "group header does not report fetch failures"
     assert "pill amber" in view, "fetch failures are not visually distinguished"
     # The whole-registry count must stay honest about what is and is not watched.

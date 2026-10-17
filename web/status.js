@@ -56,9 +56,24 @@ globalThis.BuiltWatchStatus = (() => {
       : 'No open reviews from the checked sources.';
     return {systems,counts,latest,checking,title,coverage:coverage(latest,data.sources)};
   }
+  function health(data, now = Date.now()) {
+    const summary = workspace(data);
+    const successful = ordered(data.runs).find(r => coverage(r,data.sources).complete);
+    const lastSuccess = time(successful?.finished_at || successful?.started_at);
+    const enabled = !data.demo && data.account?.automatic_checks === true;
+    const next = data.monitoring?.schedule?.next_check_at;
+    return {lastSuccess:successful?.finished_at || successful?.started_at || null,
+      next:enabled && time(next)!==null ? next : null, enabled,
+      overdue:enabled && (!lastSuccess || now-lastSuccess>36*60*60*1000),
+      staleProfiles:summary.counts.stale+summary.counts.unknown,
+      failedSources:summary.coverage.failed,
+      unobservedSources:summary.coverage.unchecked,
+      baselines:summary.latest?.baseline_sources?.length || 0,
+      method:data.monitoring?.method || (data.demo?'replay':'unknown')};
+  }
   function pollDelay({signedIn,demo,view,jobStatus,editing=false}) {
     if (!signedIn || demo || !['overview','impact','history','systems','findings','sources'].includes(view)) return null;
     return editing || ['queued','running'].includes(jobStatus) ? 12000 : 600000;
   }
-  return {coverage,system,workspace,pollDelay};
+  return {coverage,system,workspace,health,pollDelay};
 })();

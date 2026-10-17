@@ -101,3 +101,33 @@ build, deployment-package CRC and deployed-code digests passed. Backups of code 
 configuration remain under ignored private `site-source/data/`. No new paid provider,
 subscription or compute instance was created. A signed-in browser visual review was not
 performed; authentication and gateway boundaries were tested through the runtime suite.
+
+## Rules-v2 release — 17 October 2026
+
+The matcher now produces every distinct qualifying changed passage in a system/source
+pair, with all matching dependency facts. Product names and curated aliases replace
+partial-token matching. Only dedicated product feeds supply missing product context;
+broad security/vendor feeds require an explicit identity. Existing mismatched rule
+findings are withheld from the current workspace without deleting history. Matching
+legacy evidence retains its development identity and recorded outcome across the upgrade.
+
+Pairs are marked complete only after every candidate is saved. Unchanged source snapshots
+retain the last diff so an interrupted pair can retry. Candidate overflow aborts visibly
+at 50 per pair. This prevents silent truncation; it does not expand inference or traffic
+allowances. First observations are recorded as baselines, not retroactive change alerts.
+
+Workspace responses include the expected next daily check in America/Toronto, respecting
+daylight-saving changes. The watch desk shows the last fully successful check, schedule,
+stale profiles, fetch failures and coverage limits. Browser review alerts are explicit,
+device-local opt-ins with generic counts and a daily delivery bound. They require an open,
+signed-in page that refreshes. Downloadable Markdown digests need no provider or account.
+Email and background push delivery were not provisioned. See ACCOUNTS.md.
+
+Offline validation before rollout: 169 Python tests, 62 Node/runtime tests, Ruff,
+JavaScript syntax, production build and 30 labeled synthetic benchmark cases passed.
+The synthetic benchmark is a regression gate, not a field-accuracy claim. Browser QA
+verified the demo startup fallback, digest download and desktop/mobile layouts.
+No signed-in production browser walkthrough was performed.
+
+Use docs/DEVELOPMENT.md for the current checkout and CI commands. AWS package/configuration
+backups for this release remain private under ignored data/free-rollout/.

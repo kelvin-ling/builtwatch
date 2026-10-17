@@ -1,3 +1,36 @@
+# Current rules-engine evaluation
+
+The production default is `rules-v2`, without AI inference. Run:
+
+```bash
+python -m builtwatch.evaluation
+```
+
+The committed corpus contains 30 explicitly labeled synthetic cases. It checks complete
+product identities, aliases, shared-vendor collisions, multiple developments, duplicate
+passages, baseline silence, forged quotations, navigation and product-specific routing.
+The current result is 30/30 cases: 17 expected passages retrieved, zero unexpected or
+missed passages. Precision and recall are both 1.0 **on this synthetic corpus only**.
+This is a regression gate, not a field accuracy estimate. The evaluator fails on any
+unexpected passage, missed passage or grounding problem, without network or model calls.
+
+Separate integration tests exercise all findings through SQLite and DynamoDB, including
+interrupted persistence and an unchanged-page retry. Existing source failures remain
+visible and do not become clean assessments. Next evaluation work should add independently
+labeled, representative real source changes and measure results before changing thresholds.
+
+Limitations: implicit dependencies, unlisted aliases, pure deletions and general legal
+applicability remain outside the rules engine. A product-specific source can supply product
+context; broad vendor and security feeds need an explicit product match. Long changed
+paragraphs use overlapping exact evidence windows. Candidate overflow aborts visibly.
+
+---
+
+## Historical AI evaluation
+
+The following results describe the earlier Bedrock engine. They do not measure the current
+rules engine and are preserved for historical comparison.
+
 # Precision: measured, and honestly reported
 
 A watcher that cries wolf is worse than no watcher. This is what BuiltWatch actually

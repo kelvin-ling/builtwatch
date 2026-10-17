@@ -43,3 +43,12 @@ test('reviewed cards and groups identify recorded outcomes instead of new review
  assert.match(html,/1 item reviewed/);assert.match(html,/Outcome recorded/);assert.match(html,/>Reviewed</);
  assert.doesNotMatch(html,/1 item to review/);
 });
+
+test('monitoring panel surfaces failures and baselines without claiming applicability',()=>{
+ const data={...state,demo:false,account:{automatic_checks:true},monitoring:{method:'rules'},
+  runs:[{...state.runs[0],baseline_sources:['gmail'],source_health:[{source_id:'gmail',fetch_status:'network_error'}]}]};
+ const html=v.health(data,Date.parse('2026-10-17T00:00:00Z'));
+ assert.match(html,/Monitoring needs attention/);assert.match(html,/Latest source fetch failures/);
+ assert.match(html,/1 first observations established baselines/);assert.match(html,/Fetching a source does not establish/);
+ assert.doesNotMatch(html,/Your app is safe|fully assessed/);
+});

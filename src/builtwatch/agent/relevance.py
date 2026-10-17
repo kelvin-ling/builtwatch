@@ -170,7 +170,7 @@ def assess(
     scan_run_id: str,
     settings: Settings,
     meter: CostMeter,
-) -> tuple[Finding | None, list[str]]:
+) -> tuple[Finding | list[Finding] | None, list[str]]:
     """Stage 2. Returns (finding, problems).
 
     ``problems`` is non-empty when the draft failed grounding validation. In that case the

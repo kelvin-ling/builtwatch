@@ -11,10 +11,11 @@ import os
 import re
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from http import HTTPStatus
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
@@ -117,7 +118,7 @@ def public_impact(table: Any) -> dict[str, Any]:
                         latest_actions[finding_id] = created
         for finding_id, finding in findings.items():
             if finding.get("relevance") == "relevant":
-                if (finding_id not in latest_actions):
+                if finding_id not in latest_actions:
                     apps_needing_review.add((tenant, str(finding.get("system_id", ""))))
                 # Runs written before metric fields existed still contribute a
                 # visible lower bound: one currently known match is one event.
@@ -255,6 +256,19 @@ def settle_budget(table: Any, month: str, cost: float) -> None:
     )
 
 
+def monitoring_schedule(enabled: bool, now: datetime | None = None) -> dict[str, Any]:
+    zone = ZoneInfo("America/Toronto")
+    local = (now or datetime.now(timezone.utc)).astimezone(zone)
+    next_check = local.replace(hour=7, minute=0, second=0, microsecond=0)
+    if next_check <= local:
+        next_check += timedelta(days=1)
+    return {
+        "timezone": "America/Toronto",
+        "hour": 7,
+        "next_check_at": next_check.astimezone(timezone.utc).isoformat() if enabled else None,
+    }
+
+
 def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
     method = event["requestContext"]["http"]["method"]
     path = event.get("rawPath", "")
@@ -276,6 +290,9 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                 "automatic_checks": (store.get("preferences") or {}).get("automatic_checks", True),
                 "viewer_lens": (store.get("preferences") or {}).get("viewer_lens", "business"),
             }
+            data["monitoring"]["schedule"] = monitoring_schedule(
+                data["account"]["automatic_checks"]
+            )
             result = response(200, data)
         return result
     # Recording a human outcome is independent of source scanning. Keep it
@@ -334,16 +351,11 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                     return response(400, {"error": "Send a valid system profile"})
             if "review" in body:
                 try:
-                    review = AgentReview.model_validate(
-                        {**body["review"], "system_id": system_id}
-                    )
+                    review = AgentReview.model_validate({**body["review"], "system_id": system_id})
                     finding = store.get_finding(review.finding_id)
                     if not finding or finding.system_id != system_id:
                         raise ValueError("Review must match a finding for the connected app")
-                    if (
-                        review.outcome == AgentReviewOutcome.APP_UPDATED
-                        and "profile" not in body
-                    ):
+                    if review.outcome == AgentReviewOutcome.APP_UPDATED and "profile" not in body:
                         raise ValueError("An app-updated review must include the updated profile")
                     store.put(
                         "agent-review#" + system_id,
@@ -440,10 +452,7 @@ def work(event: dict, store: DynamoStore, settings: Any, scan: Any) -> dict:
                 {
                     **job,
                     "status": "paused",
-                    "message": (
-                        "The workspace check limit is temporarily full. "
-                        "Try again later."
-                    ),
+                    "message": ("The workspace check limit is temporarily full. Try again later."),
                 },
             )
             return {"status": "paused"}

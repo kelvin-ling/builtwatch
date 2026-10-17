@@ -215,6 +215,7 @@ class ScanRun(BaseModel):
     # sources added after a run from sources that were actually skipped during it.
     # Older runs may omit this field and safely fall back to source_health.
     sources_at_start: list[str] = Field(default_factory=list)
+    baseline_sources: list[str] = Field(default_factory=list)
     systems_evaluated: list[str] = Field(default_factory=list)
     # Counts used by the live Impact view. Defaults keep older saved runs readable.
     evaluations_performed: int = 0

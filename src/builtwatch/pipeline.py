@@ -81,8 +81,11 @@ def collect_snapshots(
             new_lines = snapshot.content.splitlines()
             matcher = difflib.SequenceMatcher(a=old_lines, b=new_lines, autojunk=False)
             snapshot.added_passages = [
-                line for tag, _, _, start, end in matcher.get_opcodes()
-                if tag in {"insert", "replace"} for line in new_lines[start:end] if line.strip()
+                line
+                for tag, _, _, start, end in matcher.get_opcodes()
+                if tag in {"insert", "replace"}
+                for line in new_lines[start:end]
+                if line.strip()
             ]
             differences = list(
                 difflib.unified_diff(
@@ -96,6 +99,11 @@ def collect_snapshots(
             snapshot.change_context = (
                 "Observed page difference (untrusted data):\n" + "\n".join(differences)[:8000]
             )
+        if previous_hash == snapshot.content_hash and snapshot.succeeded:
+            # Retain the last diff so an interrupted pair can retry on an unchanged page.
+            # Completed pairs still skip through their content/profile/engine cache key.
+            snapshot.added_passages = previous.added_passages
+            snapshot.change_context = previous.change_context
         store.add_snapshot(snapshot)
 
         health = SourceHealth(
@@ -106,6 +114,8 @@ def collect_snapshots(
             snapshot_id=snapshot.id,
         )
         if snapshot.succeeded:
+            if not previous_hash:
+                run.baseline_sources.append(source.id)
             health.changed = snapshot.content_hash != previous_hash
             changed[snapshot.id] = snapshot
         else:
@@ -127,6 +137,8 @@ def run_scan(
     force_reassess: bool = False,
 ) -> ScanResult:
     """Execute one complete watch pass."""
+    from .rules import ENGINE
+
     limits = settings.limits
     listed_sources = enabled_sources(load_registry(settings.registry_path))
     sources = listed_sources[: limits.max_sources_per_run]
@@ -168,6 +180,17 @@ def run_scan(
 
     try:
         for passport in systems:
+            prior_rules = {}
+            if settings.inference_mode == "rules":
+                for prior in store.list_findings(
+                    system_id=passport.id, current_only=False, limit=1000
+                ):
+                    if prior.assessment_method.startswith("rules-"):
+                        identity = (
+                            prior.source_id,
+                            tuple(" ".join(e.passage.lower().split()) for e in prior.evidence),
+                        )
+                        prior_rules.setdefault(identity, prior.development_key)
             for snapshot_id, snapshot in changed.items():
                 source = source_map.get(snapshot.source_id)
                 if source is None:
@@ -181,7 +204,8 @@ def run_scan(
                     ).encode()
                 ).hexdigest()
                 pair_key = (
-                    f"{settings.inference_mode}-v1:quality-v{QUALITY_VERSION}"
+                    f"{ENGINE if settings.inference_mode == 'rules' else 'bedrock-v1'}"
+                    f":quality-v{QUALITY_VERSION}"
                     f":{passport.id}:{profile_hash}"
                     f":{mode}:{source.id}:{snapshot.content_hash}"
                 )
@@ -211,21 +235,33 @@ def run_scan(
                 if finding is None:
                     raise RuntimeError("Assessment incomplete: " + "; ".join(problems))
 
-                finding.quality_version = QUALITY_VERSION
-                stored, is_new = store.save_finding(finding)
+                findings = finding if isinstance(finding, list) else [finding]
+                for candidate in findings:
+                    if candidate.assessment_method.startswith("rules-"):
+                        identity = (
+                            candidate.source_id,
+                            tuple(" ".join(e.passage.lower().split()) for e in candidate.evidence),
+                        )
+                        # Keep v1 outcomes attached when normalizing the new engine's keys.
+                        candidate.development_key = prior_rules.get(
+                            identity, candidate.development_key
+                        )
+                    candidate.quality_version = QUALITY_VERSION
+                    stored, is_new = store.save_finding(candidate)
+                    if not is_new:
+                        result.suppressed_duplicates.append(stored)
+                    elif stored.relevance is Relevance.RELEVANT:
+                        result.new_findings.append(stored)
+                        run.review_events_created += 1
+                    elif stored.relevance is Relevance.INSUFFICIENT_INFORMATION:
+                        result.insufficient.append(stored)
+                        run.detail_needed_evaluations += 1
+                    else:
+                        result.not_relevant.append(stored)
+                        run.no_action_evaluations += 1
+                # A pair is complete only after every candidate is persisted.
                 if not problems:
                     store.mark_assessed(pair_key)
-                if not is_new:
-                    result.suppressed_duplicates.append(stored)
-                elif stored.relevance is Relevance.RELEVANT:
-                    result.new_findings.append(stored)
-                    run.review_events_created += 1
-                elif stored.relevance is Relevance.INSUFFICIENT_INFORMATION:
-                    result.insufficient.append(stored)
-                    run.detail_needed_evaluations += 1
-                else:
-                    result.not_relevant.append(stored)
-                    run.no_action_evaluations += 1
 
         run.status = "complete"
     except BudgetExceeded as exc:

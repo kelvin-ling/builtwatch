@@ -31,13 +31,13 @@ One active connection per workspace. Its token can update one fixed profile, ret
 
 ## Hosting, privacy and limits
 
-AWS Cognito Lite handles registration and passwords. Profiles, findings, source snapshots and checks live in AWS DynamoDB/Lambda/EventBridge; Strands uses Bedrock Nova. The small web gateway runs on Sites/Cloudflare, with D1 request counters, hashed session/connection tokens, account hashes and session email addresses. Passwords pass over TLS to Cognito and are not stored by BuiltWatch. No SMS or paid email sender is enabled.
+AWS Cognito Lite handles registration and passwords. Profiles, findings, source snapshots and checks live in AWS DynamoDB/Lambda/EventBridge; Current checks use local rule-based dependency matching; no AI provider receives app facts. The small web gateway runs on Sites/Cloudflare, with D1 request counters, hashed session/connection tokens, account hashes and session email addresses. Passwords pass over TLS to Cognito and are not stored by BuiltWatch. No SMS or paid email sender is enabled.
 
 Registration is capped at 100 lifetime attempts; account API access admits at most 25 workspaces. Authentication is limited to 200 attempts/day globally, 20/hour per IP and 10/hour per email. Verification/recovery requests share 20 email sends/day. These conservative limits may temporarily block legitimate attempts; the demo is unaffected. The server-only Cognito app-client secret prevents direct unauthenticated API use from bypassing this gateway. No public Cognito app client or hosted signup domain is provisioned.
 
 Live account API traffic is limited to 180/minute and 10,000/day globally and 300/day/account. Each workspace supports ten apps and five agent drafts/day. Shared model reservations are $5/month; account thresholds are $2/month, $0.50/day, $0.25/check and $0.02/intake. In-flight calls may overshoot thresholds. Concurrency is four API/two workers. These are model estimates and request controls, not an exact total AWS bill cap. Storage, hosting and provider-level outages/quotas are separate.
 
-This is a bounded public pilot: curated sources, no independent security audit, no team sharing or email finding notifications, and no service-level guarantee. A failed source fetch or interrupted check is shown separately from “nothing relevant found.”
+This is a bounded public pilot: curated sources, no independent security audit, no team sharing or email finding notifications (optional browser alerts are available), and no service-level guarantee. A failed source fetch or interrupted check is shown separately from “nothing relevant found.”
 
 ## Operations without code changes
 
@@ -62,3 +62,20 @@ profile details and original evidence remain expandable.
 The live source registry adds the US FTC Business Blog's published summaries. It does
 not crawl linked articles or general news. The historical demo keeps its original
 assessments; it does not pretend to have assessed the newly added source.
+
+
+## Review alerts and digest
+
+Open **Needs review → Manage browser alerts**, or workspace settings. Browser alerts are
+off by default and apply only to the current workspace on this device. An explicit click
+requests browser permission. Existing items are seeded as seen; new or materially revised
+open reviews can generate a generic count, limited to one alert per 24 hours. App names,
+source passages and account details are excluded from operating-system notifications.
+
+Keep BuiltWatch open and signed in. Refresh is deferred while hidden, asleep or editing;
+alerts are checked on refresh. This is not background push or email delivery. Disable
+alerts from the same menu. No delivery service, account or subscription was provisioned.
+
+**Download review digest** saves current actionable reviews, exact evidence, adoption
+status, coverage and check time as Markdown. Demo digests identify historical examples.
+The download stays on your device unless you choose to share it.

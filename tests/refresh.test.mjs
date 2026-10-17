@@ -13,7 +13,7 @@ function harness(){
   session:{signed_in:true,admitted:true},state:{demo:false,job:{status:'running'}},view:'guide',
   forceDemo:false,globalImpact:null,pollTimer:null,
   setTimeout:(fn,delay)=>{const id=++timerId;timers.set(id,{fn,delay});return id;},
-  clearTimeout:id=>timers.delete(id),render:()=>draws++,toast:s=>notices.push(s),connectionError:()=>{},
+  clearTimeout:id=>timers.delete(id),render:()=>draws++,toast:s=>notices.push(s),connectionError:()=>{},considerReviewAlerts:()=>{},
   api:async path=>{calls++;return path==='/api/session'?{signed_in:true}:path==='/api/workspace'?{demo:false,job:{status:'complete'}}:{};},
  });
  vm.runInContext(app.slice(app.indexOf('let refreshVersion=0;'),app.indexOf('let modalHistory=')),ctx);
@@ -77,4 +77,9 @@ test('closing a dialog with Escape releases editing state and restarts refresh',
  assert.equal(h.ctx.activeModal,null);
  assert.equal(h.ctx.modalHistory.length,0);
  assert.equal(h.timers.size,1);
+});
+
+test('initial service outage still renders the already-loaded offline demo',async()=>{
+ const h=harness();h.ctx.state={demo:true,systems:[]};h.ctx.api=async()=>{throw Error('Offline');};
+ await h.ctx.refresh();assert.equal(h.draws,1);assert.equal(h.ctx.state.demo,true);
 });

@@ -24,6 +24,7 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
 
     findings = []
     quality = []
+    sources = {s.id: s for s in load_registry(settings.registry_path)}
     systems = store.list_systems()
     ids = {s.id for s in systems}
     for finding in store.list_findings(limit=300):
@@ -46,6 +47,22 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
             profile, " ".join([finding.title, *finding.facts, *finding.inferences])
         ):
             continue
+        if finding.assessment_method.startswith("rules-"):
+            from .rules import dependency_refs
+
+            source = sources.get(finding.source_id)
+            if source is None or not any(
+                dependency_refs(profile, evidence.passage, source) for evidence in finding.evidence
+            ):
+                quality.append(
+                    {
+                        "system_id": finding.system_id,
+                        "source_id": finding.source_id,
+                        "message": "An older product match no longer meets the matching "
+                        "rules and was withheld. No action is requested.",
+                    }
+                )
+                continue
         item = finding.model_dump(mode="json")
         actions = store.dispositions_for(finding.id)
         decisions = [a for a in actions if a.action.value != "exported"]
@@ -77,7 +94,7 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
         "systems": [s.model_dump(mode="json") for s in systems],
         "findings": findings,
         "agent_reviews": agent_reviews,
-        "sources": [s.model_dump(mode="json") for s in load_registry(settings.registry_path)],
+        "sources": [s.model_dump(mode="json") for s in sources.values()],
         "runs": runs,
         "demo": False,
     }

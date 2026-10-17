@@ -32,14 +32,16 @@ def test_only_added_material_passages_create_grounded_candidates(passport, snaps
     snapshot.content += "\n" + passage
     snapshot.added_passages = [passage]
     assert screen(passport, snapshot, source).plausible == "possible"
-    finding, problems = assess(passport, {snapshot.id: snapshot}, {source.id: source}, "run-free")
+    findings, problems = assess(passport, {snapshot.id: snapshot}, {source.id: source}, "run-free")
+    finding = findings[0]
     assert not problems
     assert not finding.validate_grounding(passport)
     assert finding.evidence[0].passage in snapshot.content
-    assert finding.assessment_method == "rules-v1"
+    assert finding.assessment_method == "rules-v2"
     assert "impact has not been assessed" in finding.inferences[0]
     assert finding.adoption_status.value == "unknown"
-    again, _ = assess(passport, {snapshot.id: snapshot}, {source.id: source}, "run-next")
+    repeated, _ = assess(passport, {snapshot.id: snapshot}, {source.id: source}, "run-next")
+    again = repeated[0]
     assert again.development_key == finding.development_key
     assert again.revision_hash == finding.revision_hash
 
@@ -130,3 +132,139 @@ def test_existing_paid_allowance_does_not_block_rules_checks(store, passport):
     )
     assert result["statusCode"] == 202, json.loads(result["body"])
     assert calls == [True]
+
+
+def test_every_changed_development_is_returned(passport, snapshot, source):
+    lines = [
+        "Gmail API requires DKIM authentication for bulk senders.",
+        "Gmail API is retiring the legacy mail sending endpoint.",
+    ]
+    snapshot.content = "\n".join(lines)
+    snapshot.added_passages = lines
+    findings, problems = assess(passport, {snapshot.id: snapshot}, {source.id: source}, "run-all")
+    assert not problems
+    assert isinstance(findings, list)
+    assert {f.evidence[0].passage for f in findings} == set(lines)
+    assert len({f.development_key for f in findings}) == len(lines)
+
+
+def test_partial_product_names_do_not_create_security_matches(passport, snapshot, source):
+    passport.services = ["Microsoft Graph API"]
+    passport.technologies = []
+    source = source.model_copy(update={"id": "cisa-kev", "category": SourceCategory.SECURITY})
+    passage = "Graph visualization library requires a security update for its renderer."
+    snapshot.content = passage
+    snapshot.added_passages = [passage]
+    assert screen(passport, snapshot, source).plausible == "no"
+
+
+def test_known_product_alias_is_matched_without_partial_tokens(passport, snapshot, source):
+    passport.services = ["Microsoft Graph API"]
+    passport.technologies = []
+    source = source.model_copy(update={"id": "cisa-kev", "category": SourceCategory.SECURITY})
+    passage = "Microsoft Graph requires a security update for its authentication endpoint."
+    snapshot.content = passage
+    snapshot.added_passages = [passage]
+    assert screen(passport, snapshot, source).plausible == "possible"
+
+
+def test_pipeline_persists_all_changes_and_retries_interrupted_pair(
+    tmp_path,
+    store,
+    passport,
+    source,
+    monkeypatch,
+):
+    registry = tmp_path / "registry.yaml"
+    registry.write_text(yaml.safe_dump({"sources": [source.model_dump(mode="json")]}))
+    replay = tmp_path / "replay"
+    replay.mkdir()
+    capture = replay / (source.id + ".yaml")
+    capture.write_text(yaml.safe_dump({"content": "An established sender baseline."}))
+    settings = Settings(registry_path=registry, replay_dir=replay)
+    store.upsert_system(passport)
+    baseline = run_scan(store, settings)
+    assert baseline.run.baseline_sources == [source.id]
+    lines = [
+        "Gmail requires DKIM authentication for bulk senders.",
+        "Gmail is retiring the legacy mail sending endpoint.",
+    ]
+    capture.write_text(
+        yaml.safe_dump({"content": "An established sender baseline.\n" + "\n".join(lines)})
+    )
+    original = store.save_finding
+    calls = []
+
+    def interrupt_second(finding):
+        calls.append(finding)
+        if len(calls) == 2:
+            raise RuntimeError("Simulated persistence interruption")
+        return original(finding)
+
+    with monkeypatch.context() as patch:
+        patch.setattr(store, "save_finding", interrupt_second)
+        assert run_scan(store, settings).run.status == "aborted"
+    retry = run_scan(store, settings)
+    assert retry.run.status == "complete"
+    assert len(retry.suppressed_duplicates) == 1
+    assert len(retry.new_findings) == 1
+    assert len(store.list_findings()) == 2
+    assert not run_scan(store, settings).new_findings
+    assert retry.run.model_id is None
+    assert retry.run.estimated_cost_usd == 0
+
+
+def test_long_passages_and_multiple_dependencies_remain_grounded(passport, snapshot, source):
+    passport.services = ["Gmail API", "SendGrid"]
+    passage = "Gmail and SendGrid require a security update for bulk senders."
+    snapshot.content = "Background information. " * 80 + passage
+    snapshot.added_passages = [snapshot.content]
+    findings, problems = assess(passport, {snapshot.id: snapshot}, {source.id: source}, "run-long")
+    assert findings and not problems
+    assert any(passage in e.passage for f in findings for e in f.evidence)
+    for finding in findings:
+        assert len(finding.evidence[0].passage) <= 1200
+        assert not finding.validate_grounding(passport)
+    assert any({ref.value for ref in f.system_facts} == set(passport.services) for f in findings)
+
+
+def test_engine_upgrade_preserves_legacy_identity_and_outcome(
+    tmp_path,
+    store,
+    passport,
+    snapshot,
+    source,
+):
+    import hashlib
+
+    from builtwatch.models import Disposition, DispositionAction
+    from builtwatch.quality import QUALITY_VERSION
+
+    registry = tmp_path / "registry.yaml"
+    registry.write_text(yaml.safe_dump({"sources": [source.model_dump(mode="json")]}))
+    replay = tmp_path / "replay"
+    replay.mkdir()
+    capture = replay / (source.id + ".yaml")
+    capture.write_text(yaml.safe_dump({"content": "Sender baseline only."}))
+    settings = Settings(registry_path=registry, replay_dir=replay)
+    store.upsert_system(passport)
+    run_scan(store, settings)
+    passage = "Gmail requires DKIM authentication for bulk senders."
+    snapshot.content = passage
+    snapshot.added_passages = [passage]
+    candidates, _ = assess(passport, {snapshot.id: snapshot}, {source.id: source}, "legacy-run")
+    old = candidates[0]
+    old.development_key = f"rules:{source.id}:" + hashlib.sha256(passage.encode()).hexdigest()[:20]
+    old.assessment_method = "rules-v1"
+    old.quality_version = QUALITY_VERSION
+    store.save_finding(old)
+    store.add_disposition(
+        Disposition(id="disp_legacy", finding_id=old.id, action=DispositionAction.ACKNOWLEDGED)
+    )
+    capture.write_text(yaml.safe_dump({"content": "Sender baseline only.\n" + passage.upper()}))
+    upgraded = run_scan(store, settings)
+    assert upgraded.run.status == "complete"
+    assert not upgraded.new_findings
+    assert len(upgraded.suppressed_duplicates) == 1
+    assert len(store.list_findings()) == 1
+    assert store.dispositions_for(old.id)[0].action is DispositionAction.ACKNOWLEDGED

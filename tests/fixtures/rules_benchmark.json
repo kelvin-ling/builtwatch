@@ -1,0 +1,462 @@
+{
+  "description": "Explicitly labeled synthetic regression cases; not a real-world accuracy estimate.",
+  "cases": [
+    {
+      "id": "graph-collision",
+      "dependencies": [
+        "Microsoft Graph API"
+      ],
+      "passages": [
+        "Graph visualization library requires a security update for its renderer."
+      ],
+      "expected": [],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "microsoft-collision",
+      "dependencies": [
+        "Microsoft Graph API"
+      ],
+      "passages": [
+        "Microsoft Windows requires a security update for its kernel."
+      ],
+      "expected": [],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "graph-full-product",
+      "dependencies": [
+        "Microsoft Graph API"
+      ],
+      "passages": [
+        "Microsoft Graph requires a security update for its authentication endpoint."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "graph-alias",
+      "dependencies": [
+        "Microsoft Graph API"
+      ],
+      "passages": [
+        "MS Graph is retiring an authentication endpoint next month."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "node-alias",
+      "dependencies": [
+        "Node.js 20"
+      ],
+      "passages": [
+        "Nodejs requires a security update to its HTTP parser."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "node-prefix",
+      "dependencies": [
+        "Node.js"
+      ],
+      "passages": [
+        "Nodegraph library requires a security update to its HTTP parser."
+      ],
+      "expected": [],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "aws-shared-vendor",
+      "dependencies": [
+        "AWS Lambda"
+      ],
+      "passages": [
+        "AWS EC2 requires a security update for Windows instances."
+      ],
+      "expected": [],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "aws-full-product",
+      "dependencies": [
+        "AWS Lambda"
+      ],
+      "passages": [
+        "AWS Lambda requires an update to the Python runtime."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "generic-dependency",
+      "dependencies": [
+        "API",
+        "cloud",
+        "security"
+      ],
+      "passages": [
+        "The cloud API requires a security update for all users."
+      ],
+      "expected": [],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "no-dependencies",
+      "dependencies": [],
+      "passages": [
+        "Gmail requires DKIM authentication for bulk senders."
+      ],
+      "expected": [],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "unrelated-feed",
+      "dependencies": [
+        "Gmail API"
+      ],
+      "passages": [
+        "Windows is retiring a legacy authentication endpoint."
+      ],
+      "expected": [],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "two-developments",
+      "dependencies": [
+        "Gmail API"
+      ],
+      "passages": [
+        "Gmail requires DKIM authentication for bulk senders.",
+        "Gmail is retiring a legacy mail endpoint next month."
+      ],
+      "expected": [
+        0,
+        1
+      ],
+      "source_id": "gmail-sender-guidelines",
+      "category": "communications",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "three-developments",
+      "dependencies": [
+        "Node.js"
+      ],
+      "passages": [
+        "Node.js requires a security update for its HTTP parser.",
+        "Nodejs is retiring release version 18 next month.",
+        "Node.js has a new breaking authentication change."
+      ],
+      "expected": [
+        0,
+        1,
+        2
+      ],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "navigation-only",
+      "dependencies": [
+        "Gmail API"
+      ],
+      "passages": [
+        "Gmail navigation home about contact and help."
+      ],
+      "expected": [],
+      "source_id": "gmail-sender-guidelines",
+      "category": "communications",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "ordinary-release",
+      "dependencies": [
+        "Node.js"
+      ],
+      "passages": [
+        "Node.js adds a new example of basic arithmetic."
+      ],
+      "expected": [],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "baseline",
+      "dependencies": [
+        "Gmail API"
+      ],
+      "passages": [
+        "Gmail requires DKIM authentication for bulk senders."
+      ],
+      "expected": [],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": true,
+      "forged": false
+    },
+    {
+      "id": "forged-evidence",
+      "dependencies": [
+        "Gmail API"
+      ],
+      "passages": [
+        "Gmail requires DKIM authentication for bulk senders."
+      ],
+      "expected": [],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": true
+    },
+    {
+      "id": "repeat-passage",
+      "dependencies": [
+        "Gmail API"
+      ],
+      "passages": [
+        "Gmail requires DKIM authentication for bulk senders.",
+        "Gmail requires DKIM authentication for bulk senders."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "case-and-whitespace",
+      "dependencies": [
+        "Gmail API"
+      ],
+      "passages": [
+        "Gmail requires DKIM authentication for bulk senders.",
+        "GMAIL  requires DKIM authentication for bulk senders."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "nextjs-alias",
+      "dependencies": [
+        "Next.js"
+      ],
+      "passages": [
+        "Nextjs requires a security update for its rendering engine."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "azure-is-not-public-openai",
+      "dependencies": [
+        "Azure OpenAI"
+      ],
+      "passages": [
+        "OpenAI API is retiring a model endpoint next month."
+      ],
+      "expected": [],
+      "source_id": "openai-api-changelog",
+      "category": "api_change",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "azure-specific",
+      "dependencies": [
+        "Azure OpenAI"
+      ],
+      "passages": [
+        "Azure OpenAI requires migration to the new API version."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "azure-openai-whats-new",
+      "category": "api_change",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "dedicated-sender-context",
+      "dependencies": [
+        "Gmail API"
+      ],
+      "passages": [
+        "Bulk senders must authenticate outgoing messages with DKIM."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "gmail-sender-guidelines",
+      "category": "communications",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "security-cannot-inherit-publisher",
+      "dependencies": [
+        "Amazon Bedrock"
+      ],
+      "passages": [
+        "This product requires a security update for its parser."
+      ],
+      "expected": [],
+      "source_id": "aws-bedrock-history",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "cloudflare-unrelated-product",
+      "dependencies": [
+        "Cloudflare Workers"
+      ],
+      "passages": [
+        "Cloudflare Pages requires a migration to the new build image."
+      ],
+      "expected": [],
+      "source_id": "cloudflare-changelog",
+      "category": "api_change",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "cloudflare-scoped-workers",
+      "dependencies": [
+        "Cloudflare Workers"
+      ],
+      "passages": [
+        "Workers requires a migration to the new runtime version."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "cloudflare-changelog",
+      "category": "api_change",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "unknown-full-product",
+      "dependencies": [
+        "Acme Billing SDK"
+      ],
+      "passages": [
+        "Acme Billing requires a migration to the new endpoint."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "custom-feed",
+      "category": "api_change",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "unknown-shared-token",
+      "dependencies": [
+        "Acme Billing SDK"
+      ],
+      "passages": [
+        "Acme Analytics requires a migration to the new endpoint."
+      ],
+      "expected": [],
+      "source_id": "custom-feed",
+      "category": "api_change",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "boundary-substring",
+      "dependencies": [
+        "React"
+      ],
+      "passages": [
+        "Reactive rendering requires a security update for its parser."
+      ],
+      "expected": [],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "multi-dependency-passage",
+      "dependencies": [
+        "Gmail API",
+        "SendGrid"
+      ],
+      "passages": [
+        "Gmail and SendGrid require a security update to their mail sending configuration."
+      ],
+      "expected": [
+        0
+      ],
+      "source_id": "cisa-kev",
+      "category": "security",
+      "baseline": false,
+      "forged": false
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+name: Verify BuiltWatch
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  offline-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BW_INFERENCE_MODE: rules
+      AWS_EC2_METADATA_DISABLED: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: python -m pip install -e '.[dev]'
+      - run: npm ci
+      - run: ruff check src tests infra scripts
+      - run: pytest -q
+      - run: python -m builtwatch.evaluation
+      - run: npm run check
+      - run: npm test
+      - run: npm run build

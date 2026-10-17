@@ -71,3 +71,13 @@ test('poll policy never calls the live service for public demo or Docs',()=>{
  assert.equal(S.pollDelay({signedIn:true,demo:false,view:'systems',jobStatus:'running'}),12000);
  assert.equal(S.pollDelay({signedIn:true,demo:false,view:'systems'}),600000);
 });
+
+test('monitoring health distinguishes stale checks, paused schedules and demo',()=>{
+ const data={demo:false,systems:[profile],runs:[run],sources,account:{automatic_checks:true},
+ monitoring:{method:'rules',schedule:{next_check_at:'2026-09-12T11:00:00Z'}}};
+ assert.equal(S.health(data,Date.parse('2026-09-12T10:00:00Z')).overdue,true);
+ assert.equal(S.health(data,Date.parse('2026-09-10T13:00:00Z')).overdue,false);
+ assert.equal(S.health({...data,account:{automatic_checks:false}}).next,null);
+ assert.equal(S.health({...data,demo:true}).overdue,false);
+ assert.equal(S.health({...data,runs:[]}).overdue,true);
+});

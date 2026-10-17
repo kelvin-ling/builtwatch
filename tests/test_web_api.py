@@ -100,3 +100,27 @@ def test_invalid_evidence_is_a_quality_notice_not_an_action_item(
     assert not payload["findings"]
     assert payload["quality"][0]["system_id"] == passport.id
     assert "snap_0adee73e7511" not in result["body"]
+
+
+def test_legacy_partial_product_match_is_withheld_without_deleting_history(store, passport):
+    from conftest import make_finding
+
+    from builtwatch.models import SourceSnapshot
+    from builtwatch.quality import QUALITY_VERSION
+    from builtwatch.web_api import workspace
+
+    passport.services = ["Microsoft Graph API"]
+    passport.technologies = []
+    store.upsert_system(passport)
+    passage = "Graph visualization library requires a security update for its renderer."
+    snapshot = SourceSnapshot(
+        id="snap_legacy", source_id="cisa-kev", mode="replay", content=passage
+    )
+    finding = make_finding(passport, snapshot, passage=passage, fact_value="Microsoft Graph API")
+    finding.assessment_method = "rules-v1"
+    finding.quality_version = QUALITY_VERSION
+    store.save_finding(finding)
+    data = workspace(store, Settings())
+    assert data["findings"] == []
+    assert data["quality"]
+    assert len(store.list_findings(current_only=False)) == 1
