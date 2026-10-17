@@ -206,7 +206,6 @@ def test_unsigned_demo_can_complete_the_review_flow_in_place():
     assert "Record outcome instead" in app
     assert "!state.demo&&f.disposition==='open'" not in app
     assert 'class="group-title"' in app
-    assert 'class="system-mini-copy"' in app
     assert ".app-finding-group>summary span.group-title:first-child{display:grid" in css
 
 
@@ -277,7 +276,7 @@ def test_impact_page_is_available_in_demo_and_private_workspaces():
     assert "f.relevance==='insufficient_information'" in app
     assert "evaluations_performed" in app
     assert "review_events_created" in app
-    assert "This page refreshes every 10 minutes" in app
+    assert "This page refreshes every 30 minutes" in app
     assert "function globalImpactPanel()" in app
     assert "/api/public-impact" in app
     assert "Impact across participating workspaces" in app
@@ -327,7 +326,7 @@ def test_docs_include_interactive_architecture_map():
     assert "outcome:{eyebrow:'5 · OUTCOME'" in app
     assert 'data-architecture="${key}"' in app
     assert "NEVER SHARED" in app
-    assert "No stage starts a live check unless you choose one." in app
+    assert "Private workspaces use daily rule matching with no AI inference" in app
     assert ".architecture-stage-tabs" in css
     assert "@media(max-width:600px)" in css
 
@@ -370,7 +369,7 @@ def test_sources_view_groups_by_category_and_surfaces_coverage_failures():
         "sources view has no category filter"
     )
     assert '<details class="panel source-group"' in view, "source groups are not collapsible"
-    assert "BuiltWatchVisuals.categories(state,sourceFilter)" in view
+    assert "BuiltWatchVisuals.categories(state,sourceFilter,openFindings())" in view
     visuals = (ROOT / "web/visuals.js").read_text()
     assert "data-source-filter" in visuals and "sources.length" in visuals
     assert "failed ·" in view, "group header does not report fetch failures"
@@ -403,3 +402,30 @@ def test_demo_lists_every_registry_source():
         "Regenerate with scripts/export_demo.py, or the demo understates coverage."
     )
     assert not demo_ids - registry_ids, "demo lists a source the registry does not contain"
+
+
+def test_stylesheet_comments_are_closed_before_the_next_rule():
+    """An unclosed or split comment silently swallows every rule up to the next `*/`.
+
+    A pruning pass once split `/* a, b */` at the comma and left `/* a` behind, which
+    removed a block of review-detail styles without any error.
+    """
+    css = (ROOT / "web/style.css").read_text()
+    depth = 0
+    for i in range(len(css) - 1):
+        pair = css[i : i + 2]
+        if pair == "/*":
+            assert depth == 0, f"nested or unclosed comment near offset {i}"
+            depth = 1
+        elif pair == "*/":
+            assert depth == 1, f"stray comment close near offset {i}"
+            depth = 0
+    assert depth == 0
+    assert css.count("{") == css.count("}")
+
+
+def test_every_open_review_is_pinned_on_the_app_flow():
+    app = (ROOT / "web/app.js").read_text()
+    assert "function automationMap(" not in app
+    assert "flowMap(s,linked" in app
+    assert "focus:f.id" in app

@@ -29,15 +29,16 @@ COST_STATUS_MAX_AGE = 172800
 # reserving a larger amount than a run can spend.
 RESERVATION = Decimal("0.25")
 GLOBAL_MONTH_LIMIT = Decimal("2.00")
+PUBLIC_IMPACT_TTL = 900
 
 
 def public_impact(table: Any) -> dict[str, Any]:
     """Compute anonymous aggregate totals for the public Impact page.
 
     Only coarse counters leave this function. Tenant identifiers, app names,
-    evidence, prompts, and source URLs remain inside the account table. Results
-    are cached for one minute so the public route remains inexpensive while still
-    reflecting newly completed checks quickly.
+    evidence, prompts, and source URLs remain inside the account table. Computing
+    them reads every tenant partition, and the inputs change only when a daily check
+    finishes or an outcome is recorded, so results are cached for fifteen minutes.
     """
     now = time.time()
     cached = table.get_item(Key={"pk": "GLOBAL", "sk": "impact"}).get("Item") or {}
@@ -162,7 +163,7 @@ def public_impact(table: Any) -> dict[str, Any]:
             "pk": "GLOBAL",
             "sk": "impact",
             "payload": json.dumps(payload),
-            "expires_at": Decimal(str(now + 60)),
+            "expires_at": Decimal(str(now + PUBLIC_IMPACT_TTL)),
         }
     )
     return payload

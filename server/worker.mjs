@@ -195,8 +195,8 @@ async function publicImpact(request, env, url, ctx) {
   if (!env.BW_API_URL || !env.BW_AWS_ACCESS_KEY_ID || !env.BW_AWS_SECRET_ACCESS_KEY) {
     return json({error:'Public impact totals are temporarily unavailable.'},503);
   }
-  // Anonymous impact is aggregate telemetry and can be cached safely for one
-  // minute. This keeps repeated refreshes from reaching the AWS-backed endpoint.
+  // Anonymous impact is aggregate telemetry that changes at most a few times a day.
+  // Five minutes here keeps repeated visits from reaching the AWS-backed endpoint.
   if (publicImpactMemory && publicImpactMemory.expires > Date.now()) {
     return new Response(publicImpactMemory.body, {status:publicImpactMemory.status, headers:publicImpactMemory.headers});
   }
@@ -219,12 +219,12 @@ async function publicImpact(request, env, url, ctx) {
     });
     if (upstream.status >= 300 && upstream.status < 400) return json({error:'Public impact service returned an unexpected redirect.'},502);
     const body=await upstream.text();
-    const headers={...security,'Cache-Control':'public, max-age=60, s-maxage=60','Content-Type':'application/json'};
+    const headers={...security,'Cache-Control':'public, max-age=300, s-maxage=300','Content-Type':'application/json'};
     const response=new Response(body,{status:upstream.status,headers});
     // Never cache an outage or throttling response. A transient AWS failure
     // should be visible on the next request rather than replayed for a minute.
     if (upstream.ok) {
-      publicImpactMemory={body,status:upstream.status,headers,expires:Date.now()+60000};
+      publicImpactMemory={body,status:upstream.status,headers,expires:Date.now()+300000};
       if(edgeCache&&cacheKey&&ctx?.waitUntil)ctx.waitUntil(Promise.resolve().then(()=>edgeCache.put(cacheKey,response.clone())).catch(()=>{}));
     }
     return response;

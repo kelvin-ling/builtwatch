@@ -69,7 +69,7 @@ test('poll policy never calls the live service for public demo or Docs',()=>{
  for(const params of [{signedIn:false},{demo:true},{view:'guide'}])
  assert.equal(S.pollDelay({signedIn:true,demo:false,view:'overview',...params}),null);
  assert.equal(S.pollDelay({signedIn:true,demo:false,view:'systems',jobStatus:'running'}),12000);
- assert.equal(S.pollDelay({signedIn:true,demo:false,view:'systems'}),600000);
+ assert.equal(S.pollDelay({signedIn:true,demo:false,view:'systems'}),1800000);
 });
 
 test('monitoring health distinguishes stale checks, paused schedules and demo',()=>{

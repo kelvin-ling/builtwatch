@@ -73,7 +73,9 @@ globalThis.BuiltWatchStatus = (() => {
   }
   function pollDelay({signedIn,demo,view,jobStatus,editing=false}) {
     if (!signedIn || demo || !['overview','impact','history','systems','findings','sources'].includes(view)) return null;
-    return editing || ['queued','running'].includes(jobStatus) ? 12000 : 600000;
+    // Checks run daily, so an idle tab gains nothing from frequent polling; each poll
+    // reaches the AWS backend. Poll quickly only while a check is actually running.
+    return editing || ['queued','running'].includes(jobStatus) ? 12000 : 1800000;
   }
   return {coverage,system,workspace,health,pollDelay};
 })();

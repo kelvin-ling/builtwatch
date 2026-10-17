@@ -25,8 +25,9 @@ test('returning from Docs schedules a refresh and switches from active-job to id
  h.ctx.scheduleRefresh();assert.equal(h.timers.size,0);
  h.ctx.view='systems';h.ctx.scheduleRefresh(true);
  const next=[...h.timers.values()][0];assert.equal(next.delay,12000);
- await next.fn();assert.equal(h.calls,3);
- assert.equal([...h.timers.values()].at(-1).delay,600000);
+ // Aggregate impact totals are fetched only on the Impact page, so a poll is two calls.
+ await next.fn();assert.equal(h.calls,2);
+ assert.equal([...h.timers.values()].at(-1).delay,1800000);
  assert.equal(h.draws,1);
 });
 test('periodic refresh leaves an open form untouched and retries later',async()=>{

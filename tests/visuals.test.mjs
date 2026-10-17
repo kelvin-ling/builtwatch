@@ -52,3 +52,20 @@ test('monitoring panel surfaces failures and baselines without claiming applicab
  assert.match(html,/1 first observations established baselines/);assert.match(html,/Fetching a source does not establish/);
  assert.doesNotMatch(html,/Your app is safe|fully assessed/);
 });
+
+test('watch desk map links a source category to the app it affects, and says so in text',()=>{
+ const data={...state,sources:[{id:'gmail',category:'communications'},{id:'nvd',category:'security'}],systems:[...state.systems,{id:'site',name:'Site',services:[],technologies:['Hugo']}]};
+ const html=v.map(data,[{system_id:'mail',source_id:'gmail'}]);
+ assert.match(html,/data-links="cat:communications&gt;app:mail app:mail&gt;result"/);
+ assert.match(html,/via Platform policies/);
+ assert.match(html,/net-cat hot" data-node="cat:communications"/);
+ assert.doesNotMatch(html,/cat:security&gt;/);
+ assert.match(html,/\+1 more category/);
+});
+
+test('coverage bar reports every bucket in text and never draws an empty run as coverage',()=>{
+ const bar=v.coverageBar({checked:7,failed:2,unchecked:1});
+ assert.match(bar,/7 sources fetched, 2 failed, 1 not covered/);
+ assert.match(bar,/width:70\.0%/);
+ assert.match(v.coverageBar({checked:0,failed:0,unchecked:0}),/no source is covered/);
+});

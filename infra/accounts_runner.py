@@ -33,7 +33,7 @@ def lambda_handler(event, context):
             if event["requestContext"]["http"]["method"] != "GET":
                 return response(405, {"error": "Method not allowed."})
             try:
-                return response(200, public_impact(table), "public, max-age=60")
+                return response(200, public_impact(table), "public, max-age=300")
             except Exception:  # noqa: BLE001 - public telemetry must fail closed
                 return response(503, {"error": "Public impact totals are temporarily unavailable."})
         tenant = verify(event, os.environ.get("BW_PROXY_SECRET", ""), table)

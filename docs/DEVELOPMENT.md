@@ -29,6 +29,19 @@ Tests stub AWS/model calls. The rules benchmark is committed and deterministic. 
 JavaScript tests start local test servers; restricted environments need localhost access.
 GitHub Actions runs these gates on pushes and pull requests without AWS credentials.
 
+## Local preview
+
+`npm run build` writes `dist/server/index.js`. Serve it with Miniflare (already a dev
+dependency) and an empty D1 binding to click through the demo without AWS:
+
+```js
+import {Miniflare} from 'miniflare';
+const mf=new Miniflare({modules:true,scriptPath:'dist/server/index.js',compatibilityDate:'2024-09-23',d1Databases:['DB'],port:8788});
+await mf.ready;
+```
+
+Signed-in routes return 503 locally; the demo, Docs and Impact layout all render.
+
 ## Deployment
 
 AWS changes and the web gateway are separate deployments. Read OPERATIONS.md. Use the
@@ -37,6 +50,10 @@ provisioning scripts for an account backend upgrade. Preserve IAM-only function 
 Bedrock denial, zero model ceilings, schedules, concurrency and tenant records. Back up
 current packages/configuration in ignored private `data/` before updating.
 
-Package the exact pushed Sites source and deploy its saved version. Verify the deployed
+Backend: `.venv/bin/python infra/deploy_free.py --account <expected-account>` (boto3 reads
+`~/.aws`; the Homebrew x86 `aws` CLI does not run on Apple silicon without Rosetta).
+Website: sync changed files into `.builtwatch/github-sync` (the sanitized public mirror),
+push it, then package the exact pushed Sites source and deploy its saved version from
+the Sites helper in Codex/ChatGPT; there is no command-line deploy for Sites. Verify the deployed
 code hashes, public page/assets/API, anonymous workspace rejection, and a controlled
 rules-only scan. Report browser/authentication verification limits explicitly.

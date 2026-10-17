@@ -118,3 +118,23 @@ test('an assessment with no specific missing fact is a check-quality notice, not
  assert.equal(p.diagnosis(finding,app).owner,'BuiltWatch');
  assert.equal(p.requiresAttention({...finding,relevance:'relevant',validation_issues:['Quote was not verified']},app),false);
 });
+
+test('flow pins every open review on the step its matched fact belongs to',()=>{
+ const app={id:'mailer',name:'Mailer',purpose:'Drafts replies',services:['Gmail'],data_categories:[],consequential_actions:[{description:'Sends an approved reply'}],constraints:['A person approves every draft'],assumptions:[],jurisdictions:['Canada']};
+ const sources=[{id:'gmail',category:'communications'},{id:'eu',category:'regulation'}];
+ const service={id:'a',system_id:'mailer',source_id:'gmail',relevance:'relevant',facts:['Sender rules changed'],system_facts:[{key:'services[0]',value:'Gmail'}]};
+ const boundary={id:'b',system_id:'mailer',source_id:'eu',relevance:'relevant',facts:['Approval duty added'],system_facts:[{key:'constraints[0]',value:'A person approves every draft'}],app_impact:{fact_key:'constraints[0]'}};
+ const f=p.flow(app,[service,boundary],sources);
+ assert.deepEqual(f.steps.map(s=>s.key),['input','work','checkpoint','condition']);
+ assert.deepEqual(f.pins.map(x=>[x.n,x.step]),[[1,'input'],[2,'checkpoint']]);
+ assert.equal(f.steps[0].pins.length,1);assert.equal(f.steps[2].pins.length,1);
+ assert.deepEqual(f.topics,['Platform policies','Software & AI regulation']);
+ assert.deepEqual(f.steps[3].items,['Canada']);
+});
+
+test('flow draws only recorded facts and leaves empty steps empty',()=>{
+ const f=p.flow({purpose:'Shows public information'},[]);
+ assert.deepEqual(f.steps.map(s=>s.items.length),[0,1,0,0]);
+ assert.equal(f.steps[1].items[0],'Shows public information');
+ assert.equal(f.pins.length,0);
+});
