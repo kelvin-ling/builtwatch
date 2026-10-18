@@ -1,16 +1,17 @@
 # Current rules-engine evaluation
 
-The production default is `rules-v3`, without AI inference. Run:
+The production default is `rules-v3.1`, without AI inference. Run:
 
 ```bash
 python -m builtwatch.evaluation
 ```
 
-The committed corpus contains 30 explicitly labeled synthetic cases. It checks complete
+The committed corpus contains 30 explicitly labeled synthetic cases and one observed
+production passage. It checks complete
 product identities, aliases, shared-vendor collisions, multiple developments, duplicate
 passages, baseline silence, forged quotations, navigation and product-specific routing.
-The current result is 30/30 cases: 17 expected passages retrieved, zero unexpected or
-missed passages. Precision and recall are both 1.0 **on this synthetic corpus only**.
+The current result is 31/31 cases: 17 expected passages retrieved, zero unexpected or
+missed passages. Precision and recall are both 1.0 **on this small regression corpus only**.
 This is a regression gate, not a field accuracy estimate. The evaluator fails on any
 unexpected passage, missed passage or grounding problem, without network or model calls.
 

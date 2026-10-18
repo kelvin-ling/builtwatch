@@ -37,7 +37,7 @@ def test_only_added_material_passages_create_grounded_candidates(passport, snaps
     assert not problems
     assert not finding.validate_grounding(passport)
     assert finding.evidence[0].passage in snapshot.content
-    assert finding.assessment_method == "rules-v3"
+    assert finding.assessment_method == "rules-v3.1"
     assert "impact has not been assessed" in finding.inferences[0]
     assert finding.adoption_status.value == "unknown"
     repeated, _ = assess(passport, {snapshot.id: snapshot}, {source.id: source}, "run-next")
@@ -165,6 +165,18 @@ def test_known_product_alias_is_matched_without_partial_tokens(passport, snapsho
     passage = "Microsoft Graph requires a security update for its authentication endpoint."
     snapshot.content = passage
     snapshot.added_passages = [passage]
+    assert screen(passport, snapshot, source).plausible == "possible"
+
+
+@pytest.mark.parametrize("prefix", ["Workers AI", "Cloudflare Workers AI"])
+def test_workers_ai_does_not_inherit_workers_runtime_scope(passport, snapshot, source, prefix):
+    passport.services = ["Cloudflare Workers"]
+    passport.technologies = []
+    source = source.model_copy(update={"id": "cloudflare-changelog"})
+    snapshot.content = prefix + " requires a migration to its new model endpoint."
+    snapshot.added_passages = [snapshot.content]
+    assert screen(passport, snapshot, source).plausible == "no"
+    passport.services = ["Cloudflare Workers AI"]
     assert screen(passport, snapshot, source).plausible == "possible"
 
 

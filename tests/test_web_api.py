@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
 from builtwatch.config import Settings
 from builtwatch.web_api import dispatch
 
@@ -102,21 +104,28 @@ def test_invalid_evidence_is_a_quality_notice_not_an_action_item(
     assert "snap_0adee73e7511" not in result["body"]
 
 
-def test_legacy_partial_product_match_is_withheld_without_deleting_history(store, passport):
+@pytest.mark.parametrize("dependency,source_id,passage", [
+    ("Microsoft Graph API", "cisa-kev",
+     "Graph visualization library requires a security update for its renderer."),
+    ("Cloudflare Workers", "cloudflare-changelog",
+     "For more information, refer to the model page and Workers AI pricing."),
+])
+def test_legacy_partial_product_match_is_withheld_without_deleting_history(
+    store, passport, dependency, source_id, passage
+):
     from conftest import make_finding
 
     from builtwatch.models import SourceSnapshot
     from builtwatch.quality import QUALITY_VERSION
     from builtwatch.web_api import workspace
 
-    passport.services = ["Microsoft Graph API"]
+    passport.services = [dependency]
     passport.technologies = []
     store.upsert_system(passport)
-    passage = "Graph visualization library requires a security update for its renderer."
     snapshot = SourceSnapshot(
-        id="snap_legacy", source_id="cisa-kev", mode="replay", content=passage
+        id="snap_legacy", source_id=source_id, mode="replay", content=passage
     )
-    finding = make_finding(passport, snapshot, passage=passage, fact_value="Microsoft Graph API")
+    finding = make_finding(passport, snapshot, passage=passage, fact_value=dependency)
     finding.assessment_method = "rules-v1"
     finding.quality_version = QUALITY_VERSION
     store.save_finding(finding)

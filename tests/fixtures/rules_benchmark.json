@@ -1,5 +1,5 @@
 {
-  "description": "Explicitly labeled synthetic regression cases; not a real-world accuracy estimate.",
+  "description": "30 synthetic cases and one observed production passage; regression checks, not a real-world accuracy estimate.",
   "cases": [
     {
       "id": "graph-collision",
@@ -455,6 +455,20 @@
       ],
       "source_id": "cisa-kev",
       "category": "security",
+      "baseline": false,
+      "forged": false
+    },
+    {
+      "id": "observed-workers-ai-pricing-link",
+      "dependencies": [
+        "Cloudflare Workers"
+      ],
+      "passages": [
+        "For more information, refer to the PhoneLLM Mini model page, Pipecat's model card ↗︎, and Workers AI pricing."
+      ],
+      "expected": [],
+      "source_id": "cloudflare-changelog",
+      "category": "api_change",
       "baseline": false,
       "forged": false
     }

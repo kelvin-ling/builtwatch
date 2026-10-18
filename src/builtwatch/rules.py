@@ -28,7 +28,7 @@ from .store import new_id
 if TYPE_CHECKING:
     from .agent.relevance import ScreenVerdict
 
-ENGINE = "rules-v3"
+ENGINE = "rules-v3.1"
 # Curated registry routing, not inferred dependencies. Broad security feeds require a
 # product name in the changed passage itself instead of a publisher-level match.
 SOURCE_TERMS = {
@@ -77,6 +77,7 @@ PRODUCT_ALIASES = (
     ("microsoft graph api", "microsoft graph", "ms graph"),
     ("azure openai", "azure openai service"),
     ("cloudflare workers", "workers runtime"),
+    ("cloudflare workers ai", "workers ai"),
     ("amazon bedrock", "aws bedrock", "bedrock"),
     ("gmail api", "gmail"),
     ("node.js", "nodejs"),
@@ -110,7 +111,14 @@ def dependency_refs(passport: SystemPassport, passage: str, source: Source) -> l
         if not key.startswith(("services[", "technologies[")):
             continue
         aliases = dependency_aliases(value)
-        mentioned = any(_has(passage, alias) for alias in aliases)
+        # Workers AI is a separate declared product. Its name cannot supply a
+        # runtime match merely because both products contain the word Workers.
+        product_text = (
+            re.sub(r"\b(?:cloudflare\s+)?workers\s+ai\b", "", passage, flags=re.I)
+            if "cloudflare workers" in aliases
+            else passage
+        )
+        mentioned = any(_has(product_text, alias) for alias in aliases)
         # In a product-specific feed, the publisher supplies context. A broad
         # vendor changelog or security feed cannot transfer scope across products.
         routed = (
@@ -121,7 +129,7 @@ def dependency_refs(passport: SystemPassport, passage: str, source: Source) -> l
         scoped = (
             source.id == "cloudflare-changelog"
             and "cloudflare workers" in aliases
-            and _has(passage, "workers")
+            and _has(product_text, "workers")
         )
         if mentioned or routed or scoped:
             refs.append(SystemFactRef(key=key, value=value))
