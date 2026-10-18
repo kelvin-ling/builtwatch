@@ -140,3 +140,11 @@ test('public impact works when the hosting runtime prohibits the default cache',
     if(previous)Object.defineProperty(globalThis,'caches',previous);else delete globalThis.caches;
   }
 });
+test('only hash-matched asset requests are cached as immutable; the page always revalidates',async()=>{
+  const w=createWorker({'/index.html':{content:'page',type:'text/html'},'/app.js':{content:'code',type:'text/javascript',hash:'abc123'}});
+  const get=async path=>(await w.fetch(new Request(origin+path),{})).headers.get('Cache-Control');
+  assert.equal(await get('/'),'no-cache');
+  assert.equal(await get('/app.js?v=abc123'),'public, max-age=31536000, immutable');
+  assert.equal(await get('/app.js?v=stale'),'public, max-age=300');
+  assert.equal(await get('/app.js'),'public, max-age=300');
+});

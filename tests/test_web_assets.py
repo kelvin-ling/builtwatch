@@ -269,8 +269,10 @@ def test_impact_page_is_available_in_demo_and_private_workspaces():
     assert "function monitoredSystemIds()" in app
     assert "r.status==='complete'" in app
     assert "apps:monitored.size" in app
-    assert "Apps evaluated" in app
-    assert "Apps needing review" in app
+    assert "apps'} evaluated" in app
+    assert "apps need'} review" in app
+    # The funnel carries these counts; the duplicate 4-card row was removed.
+    assert 'aria-label="Your workspace impact"' not in app
     assert "f.relevance==='relevant'" in app
     assert "f.relevance==='not_relevant'" in app
     assert "f.relevance==='insufficient_information'" in app

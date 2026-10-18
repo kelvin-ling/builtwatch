@@ -248,7 +248,10 @@ export function createWorker(assets) {
       if (!['GET','HEAD'].includes(request.method)) return json({error:'Method not allowed'},405);
       const asset = assets[url.pathname === '/' ? '/index.html' : url.pathname];
       if (!asset) return json({error:'Page not found'},404);
-      return new Response(request.method === 'HEAD' ? null : asset.content, {headers:{...security,
+      // Hash-stamped references are immutable; the page itself and anything unstamped must
+      // revalidate so a release reaches visitors on their next load.
+      const caching=asset.hash&&url.searchParams.get('v')===asset.hash?'public, max-age=31536000, immutable':asset.hash?'public, max-age=300':'no-cache';
+      return new Response(request.method === 'HEAD' ? null : asset.content, {headers:{...security,'Cache-Control':caching,
         'Content-Type':asset.type,...(url.pathname==='/offline-demo.html'?{'Content-Disposition':'attachment; filename=BuiltWatch-offline-demo.html'}:{}),'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"}});
     }
     if(url.pathname.startsWith('/api/auth/'))return authRoute(request,env,url);

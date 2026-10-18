@@ -31,7 +31,8 @@ GitHub Actions runs these gates on pushes and pull requests without AWS credenti
 
 ## Local preview
 
-`npm run build` writes `dist/server/index.js`. Serve it with Miniflare (already a dev
+`npm run build` writes `dist/server/index.js` and stamps each asset reference in
+`index.html` with its content hash; do not add `?v=` numbers by hand. Serve it with Miniflare (already a dev
 dependency) and an empty D1 binding to click through the demo without AWS:
 
 ```js

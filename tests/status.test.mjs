@@ -81,3 +81,15 @@ test('monitoring health distinguishes stale checks, paused schedules and demo',(
  assert.equal(S.health({...data,demo:true}).overdue,false);
  assert.equal(S.health({...data,runs:[]}).overdue,true);
 });
+test('a completed run with downgraded claims is reported, not hidden as "never checked"',()=>{
+  const S=globalThis.BuiltWatchStatus;
+  const data={demo:false,account:{automatic_checks:true},sources:[{id:'a'}],
+    runs:[{status:'complete',started_at:'2026-10-14T12:00:00Z',finished_at:'2026-10-14T12:01:00Z',sources_at_start:['a'],
+      source_health:[{source_id:'a',fetch_status:'ok'}],validation_failures:2}]};
+  const h=S.health(data,Date.parse('2026-10-14T13:00:00Z'));
+  assert.equal(h.lastSuccess,null);
+  assert.equal(h.lastComplete,'2026-10-14T12:01:00Z');
+  assert.equal(h.lastCompleteNote,'2 claims downgraded');
+  // Still not a clean success, so the overdue warning logic is unchanged.
+  assert.equal(h.overdue,true);
+});

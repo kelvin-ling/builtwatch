@@ -62,7 +62,18 @@ globalThis.BuiltWatchStatus = (() => {
     const lastSuccess = time(successful?.finished_at || successful?.started_at);
     const enabled = !data.demo && data.account?.automatic_checks === true;
     const next = data.monitoring?.schedule?.next_check_at;
+    // A completed run that missed a source or had claims downgraded is not a clean success
+    // (overdue still keys off clean runs), but it did happen; say so instead of "Not recorded".
+    const completed = ordered(data.runs).find(r => r.status === 'complete');
+    const gap = completed && !successful ? coverage(completed,data.sources) : null;
+    const downgraded = Number(completed?.validation_failures) || 0;
+    const lastCompleteNote = !gap ? null
+      : gap.failed ? `${gap.failed} ${gap.failed===1?'source':'sources'} failed`
+      : gap.unchecked ? `${gap.unchecked} ${gap.unchecked===1?'source':'sources'} not covered`
+      : downgraded ? `${downgraded} ${downgraded===1?'claim':'claims'} downgraded`
+      : 'coverage incomplete';
     return {lastSuccess:successful?.finished_at || successful?.started_at || null,
+      lastComplete:gap ? completed.finished_at || completed.started_at || null : null, lastCompleteNote,
       next:enabled && time(next)!==null ? next : null, enabled,
       overdue:enabled && (!lastSuccess || now-lastSuccess>36*60*60*1000),
       staleProfiles:summary.counts.stale+summary.counts.unknown,
