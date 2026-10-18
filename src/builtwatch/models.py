@@ -96,6 +96,9 @@ class SystemArchitecture(BaseModel):
 
     analyzed_by: str | None = Field(None, max_length=120)
     analyzed_at: date | None = None
+    recorded_at: datetime | None = Field(
+        None, description="When BuiltWatch saved this map; set by the server, not the agent."
+    )
     components: list[ArchitectureComponent] = Field(min_length=1, max_length=24)
     flows: list[ArchitectureFlow] = Field(default_factory=list, max_length=48)
 
@@ -174,6 +177,14 @@ class SystemPassport(BaseModel):
                         f"component '{c.id}' {label} {missing[0]!r} is not recorded in the profile"
                     )
         return self
+
+    def stamp_architecture(self) -> SystemPassport:
+        """Record that this request supplied the map, so staleness is judged from the save,
+        not from the agent's (possibly older) analysis date."""
+        if self.architecture is None:
+            return self
+        stamped = self.architecture.model_copy(update={"recorded_at": utcnow()})
+        return self.model_copy(update={"architecture": stamped})
 
     def keep_architecture_from(self, previous: SystemPassport | None) -> SystemPassport:
         """Carry an existing map onto an update that omitted it.

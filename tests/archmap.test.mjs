@@ -65,15 +65,18 @@ test('validation mirrors the server and reports facts a save would add',()=>{
  assert.ok(next.services.includes('Stripe API'));assert.equal(next.provenance.architecture,'agent_extracted');
 });
 
-test('saves keep an omitted map and drop entries whose fact was removed',()=>{
- const kept=A.reconcile({...app,architecture:undefined,services:['Amazon Bedrock']},app);
- assert.equal(kept.architecture.components.length,4);
- assert.deepEqual(kept.architecture.components.find(c=>c.id==='inbox').uses,[]);
- assert.deepEqual(kept.architecture.components.find(c=>c.id==='llm').uses,['Amazon Bedrock']);
- assert.equal(A.reconcile({id:'x',architecture:undefined},undefined).architecture,null);
- // Serialised profiles carry null; that is "not resent", not "remove".
- assert.equal(A.reconcile({...app,architecture:null},app).architecture.components.length,4);
- assert.equal(A.reconcile({...app,remove_architecture:true},app).architecture,null);
+test('saves send a map only when it is new; the server and demo keep the saved one',()=>{
+ // An edit without a new map omits it, so the server keeps the map and its save time.
+ assert.equal('architecture' in A.reconcile({...app,architecture:null}),false);
+ assert.equal('architecture' in A.reconcile({id:'x'}),false);
+ assert.equal(A.reconcile({...app,remove_architecture:true}).architecture,null);
+ // A new map is trimmed to the profile it travels with.
+ const trimmed=A.reconcile({...app,services:['Amazon Bedrock']});
+ assert.deepEqual(trimmed.architecture.components.find(c=>c.id==='inbox').uses,[]);
+ // keep() mirrors the server for the demo: omitted keeps, explicit null removes.
+ const {architecture,...edit}=app;
+ assert.equal(A.keep({...edit,services:['Amazon Bedrock']},app).architecture.components.find(c=>c.id==='llm').uses[0],'Amazon Bedrock');
+ assert.equal(A.keep({...edit,architecture:null},app).architecture,null);
 });
 
 test('the agent request names the profile facts and forbids sending code or secrets',()=>{
@@ -110,6 +113,15 @@ test('the agent handoff and digest say where the change lands',async()=>{
  assert.match(prompt,/Connected components to check next:\n- Triage function/);
  const data={demo:false,systems:[app],sources:[{id:'gmail',name:'Gmail',category:'communications'}],runs:[],findings:[f]};
  assert.match(globalThis.BuiltWatchNotifications.digest(data,[f]),/Lands on: Inbox; check next: Triage function/);
+});
+
+test('pasting an older analysis is not stale; a later profile change is',()=>{
+ const s={...app,architecture:undefined,updated_at:'2026-10-18T17:00:00Z'};
+ const r=A.validate(s,{analyzed_at:'2026-10-15',components:[{id:'x',name:'X',kind:'external',uses:['Gmail API']}]});
+ const saved={...A.apply(s,r),updated_at:new Date().toISOString()};
+ assert.equal(A.stale(saved),false);
+ const later={...saved,updated_at:new Date(Date.now()+3*86400000).toISOString()};
+ assert.equal(A.stale(later),true);
 });
 
 test('a map dated well before the latest profile change is flagged, same-day saves are not',()=>{

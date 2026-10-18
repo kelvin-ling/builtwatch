@@ -33,10 +33,11 @@
    const items=body?.systems;if(!Array.isArray(items)||!items.length||items.length>10)throw Error('Import between one and ten apps.');
    const normalized=items.map(normalizeSystem);if(new Set(normalized.map(x=>x.id)).size!==normalized.length)throw Error('Each app needs a different ID.');
    if(new Set([...desk.systems.map(x=>x.id),...normalized.map(x=>x.id)]).size>10)throw Error('Import up to ten apps in total.');
-   const ids=new Set(normalized.map(x=>x.id)),existing=new Set(desk.systems.map(x=>x.id));desk.systems=desk.systems.filter(x=>!ids.has(x.id)).concat(normalized);return {imported:normalized.length,updated:[...ids].filter(id=>existing.has(id)).length};
+   const kept=normalized.map(x=>root.BuiltWatchArchMap?root.BuiltWatchArchMap.keep(x,desk.systems.find(s=>s.id===x.id)):x);
+   const ids=new Set(kept.map(x=>x.id)),existing=new Set(desk.systems.map(x=>x.id));desk.systems=desk.systems.filter(x=>!ids.has(x.id)).concat(kept);return {imported:normalized.length,updated:[...ids].filter(id=>existing.has(id)).length};
   }
   if(path==='/api/systems'){
-   const normalized=normalizeSystem(body);
+   const normalized=root.BuiltWatchArchMap?root.BuiltWatchArchMap.keep(normalizeSystem(body),desk.systems.find(x=>x.id===body?.id)):normalizeSystem(body);
    if(desk.systems.length>=10&&!desk.systems.some(x=>x.id===normalized.id))throw Error('Try up to ten systems, or reset the demo.');
    desk.systems=desk.systems.filter(x=>x.id!==normalized.id);desk.systems.push(normalized);return {};
   }

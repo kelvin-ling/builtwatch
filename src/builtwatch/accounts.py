@@ -358,7 +358,7 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                 return response(400, {"error": "Invalid connection system"})
             if "profile" in body:
                 try:
-                    profile = SystemPassport.model_validate(body["profile"])
+                    profile = SystemPassport.model_validate(body["profile"]).stamp_architecture()
                     if (
                         profile.id != system_id
                         or not profile.name.strip()

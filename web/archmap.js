@@ -84,7 +84,7 @@
    for(const v of c.data)if(!known.data.has(fold(v)))add('data_categories',v);
    for(const v of c.actions)if(!known.actions.has(fold(v)))add('consequential_actions',v);
   }
-  return {ok:true,errors:[],architecture:{analyzed_by:analyzedBy,analyzed_at:analyzedAt,components,flows},additions};
+  return {ok:true,errors:[],architecture:{analyzed_by:analyzedBy,analyzed_at:analyzedAt,recorded_at:new Date().toISOString(),components,flows},additions};
  }
 
  // Apply a validated map to a profile: record the new facts it introduces (so checks watch
@@ -99,26 +99,39 @@
   return next;
  }
 
- // Before any profile save: keep an existing map when an update omits it, and drop map
- // entries whose fact the person just removed from the profile, so the save stays valid.
- function reconcile(next,previous){
-  if(!next||typeof next!=='object')return next;
-  if(next.remove_architecture===true)return {...next,architecture:null};
-  // Missing and null both mean "not resent"; the server keeps the saved map the same way.
-  const arch=next.architecture??previous?.architecture;
-  if(!arch?.components?.length)return {...next,architecture:arch??null};
-  const deps=new Set([...list(next.services),...list(next.technologies)].map(fold)),data=new Set(list(next.data_categories).map(fold)),
-   actions=new Set((next.consequential_actions||[]).map(a=>fold(a?.description)));
-  const components=arch.components.map(c=>({...c,uses:list(c.uses).filter(v=>deps.has(fold(v))),data:list(c.data).filter(v=>data.has(fold(v))),actions:list(c.actions).filter(v=>actions.has(fold(v)))}));
-  return {...next,architecture:{...arch,components}};
+ // Drop map entries citing a fact the profile no longer records, so a save stays valid.
+ function prune(profile,arch){
+  if(!arch?.components?.length)return arch??null;
+  const deps=new Set([...list(profile.services),...list(profile.technologies)].map(fold)),data=new Set(list(profile.data_categories).map(fold)),
+   actions=new Set((profile.consequential_actions||[]).map(a=>fold(a?.description)));
+  return {...arch,components:arch.components.map(c=>({...c,uses:list(c.uses).filter(v=>deps.has(fold(v))),data:list(c.data).filter(v=>data.has(fold(v))),actions:list(c.actions).filter(v=>actions.has(fold(v)))}))};
  }
 
- // A map dated well before the profile's last change may miss new parts. Same-day edits
- // (saving the map itself updates the profile) do not count.
+ // Before any profile save. An update that does not carry a new map omits it: the server
+ // (and the demo) keep the saved map and its save time, so a profile edit is not mistaken
+ // for a fresh map. A new map is trimmed to the profile it travels with.
+ function reconcile(next){
+  if(!next||typeof next!=='object')return next;
+  if(next.remove_architecture===true)return {...next,architecture:null};
+  if(next.architecture==null){const {architecture,...rest}=next;return rest;}
+  return {...next,architecture:prune(next,next.architecture)};
+ }
+
+ // What the server does for an update without a map: keep the saved one, trimmed. An
+ // explicit null here is a removal (the demo turns remove_architecture into null).
+ function keep(next,previous){
+  if(next.remove_architecture===true||next.architecture!==undefined||!previous?.architecture)return next;
+  return {...next,architecture:prune(next,previous.architecture)};
+ }
+
+ // A map saved well before the profile's last change may miss new parts. Judge from when
+ // BuiltWatch saved the map (recorded_at), not the agent's analysis date: pasting an older
+ // analysis updates the profile in the same save and must not look stale.
  function stale(system){
-  const at=system?.architecture?.analyzed_at,updated=Date.parse(system?.updated_at||'');
-  if(!at||!Number.isFinite(updated))return false;
-  return updated-Date.parse(at+'T23:59:59Z')>24*3600*1000;
+  const arch=system?.architecture,updated=Date.parse(system?.updated_at||'');
+  const saved=arch?.recorded_at?Date.parse(arch.recorded_at):arch?.analyzed_at?Date.parse(arch.analyzed_at+'T23:59:59Z'):NaN;
+  if(!Number.isFinite(saved)||!Number.isFinite(updated))return false;
+  return updated-saved>24*3600*1000;
  }
 
  function neighbours(arch,ids){
@@ -223,5 +236,5 @@
   return `Map the backend of my app "${system.name}" (BuiltWatch id: ${system.id}) from the code and configuration you can access. Read it locally. Do not send code anywhere, call outside services, or include source code, secrets, keys, tokens, internal URLs or customer records. Return only JSON in this shape: {"architecture":{"analyzed_by":"<your agent or workspace name>","analyzed_at":"YYYY-MM-DD","components":[{"id":"short-slug","name":"Readable name","kind":"entry|service|data|model|external","purpose":"One sentence","uses":["vendors, APIs, runtimes or frameworks this component depends on"],"data":["data categories it handles"],"actions":["consequential actions it performs"]}],"flows":[{"source":"component-id","target":"component-id","label":"what moves"}]}}. Kinds: entry = UI, webhook, schedule, inbox or other trigger; service = my own API, worker, function or job; data = database, storage, queue or cache; model = AI model; external = third-party API or vendor. Use at most 24 components and 48 flows; ids are lowercase slugs. Reuse these exact names so outside changes are matched to components. Services: ${names(system.services)}. Technologies: ${names(system.technologies)}. Data: ${names(system.data_categories)}. Actions: ${names((system.consequential_actions||[]).map(a=>a.description))}. Add a new dependency name only if the code really uses it. Keep the JSON under 12 KB.`;
  }
 
- root.BuiltWatchArchMap={COLUMNS,KINDS,derive,architecture,validate,apply,reconcile,place,landing,stale,render,drawEdges,prompt};
+ root.BuiltWatchArchMap={COLUMNS,KINDS,derive,architecture,validate,apply,reconcile,place,landing,stale,prune,keep,render,drawEdges,prompt};
 })(typeof window!=='undefined'?window:globalThis);

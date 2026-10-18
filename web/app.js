@@ -45,7 +45,7 @@ try{sessionStorage.removeItem('bw-token');}catch{}
 const apiBase=()=>window.BUILTWATCH_API.replace(/\/$/,'');
 function toast(message){$('#toast').textContent=message;$('#toast').classList.add('show');setTimeout(()=>$('#toast').classList.remove('show'),4500);}
 // Every profile save keeps the backend map consistent with the profile it travels with.
-function withMap(path,body,method){const prev=id=>state?.systems?.find(x=>x.id===id);if(path==='/api/systems'&&body&&!method)return BuiltWatchArchMap.reconcile(body,prev(body.id));if(path==='/api/systems/bulk'&&Array.isArray(body?.systems))return {...body,systems:body.systems.map(x=>BuiltWatchArchMap.reconcile(x,prev(x?.id)))};return body;}
+function withMap(path,body,method){if(path==='/api/systems'&&body&&!method)return BuiltWatchArchMap.reconcile(body);if(path==='/api/systems/bulk'&&Array.isArray(body?.systems))return {...body,systems:body.systems.map(x=>BuiltWatchArchMap.reconcile(x))};return body;}
 async function api(path,body,method){body=withMap(path,body,method);if(state?.demo&&!['/api/session','/api/workspace','/api/connections','/api/admin','/api/public-impact','/api/feedback'].includes(path)&&!path.startsWith('/api/auth/'))return BuiltWatchDemo.request(path,body,method);return BuiltWatchClient.request(apiBase(),token,path,body,method);}
 function connectionError(err){
   if(err.status===401){session.signed_in=false;state=structuredClone(demo);render();toast('Please sign in again.');return;}

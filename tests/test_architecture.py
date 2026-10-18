@@ -128,3 +128,16 @@ def test_bulk_import_keeps_saved_maps(store, passport, monkeypatch):
         "statusCode"
     ] == 200
     assert store.get_system(passport.id).architecture is not None
+
+
+def test_server_stamps_when_a_map_is_saved_but_not_on_later_edits(store, passport, monkeypatch):
+    monkeypatch.setenv("BW_OWNER_TOKEN", "owner-test-key")
+    settings = Settings()
+    dispatch(_event("/api/systems", "POST", _mapped(passport)), store, settings, None)
+    first = store.get_system(passport.id).architecture.recorded_at
+    assert first is not None
+    edit = passport.model_dump(mode="json")
+    edit.pop("architecture")
+    edit["purpose"] = "Edited purpose"
+    dispatch(_event("/api/systems", "POST", edit), store, settings, None)
+    assert store.get_system(passport.id).architecture.recorded_at == first

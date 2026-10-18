@@ -142,7 +142,10 @@ def dispatch(
                 raise ValueError("Import between one and ten app profiles")
             profiles = [SystemPassport.model_validate(x) for x in items]
             # An import that leaves a map out keeps the one already saved.
-            profiles = [p.keep_architecture_from(store.get_system(p.id)) for p in profiles]
+            profiles = [
+                p.stamp_architecture().keep_architecture_from(store.get_system(p.id))
+                for p in profiles
+            ]
             ids = [x.id for x in profiles]
             if len(set(ids)) != len(ids):
                 raise ValueError("Each imported app needs a different ID")
@@ -156,7 +159,7 @@ def dispatch(
                 store.upsert_system(profile)
             return response(200, {"imported": len(profiles), "updated": len(existing & set(ids))})
         if path == "/api/systems" and method == "POST":
-            passport = SystemPassport.model_validate(body)
+            passport = SystemPassport.model_validate(body).stamp_architecture()
             # Removing a map is explicit; otherwise an update without one keeps the saved map.
             if body.get("remove_architecture") is not True:
                 passport = passport.keep_architecture_from(store.get_system(passport.id))
