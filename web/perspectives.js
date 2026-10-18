@@ -80,22 +80,8 @@
   const b=brief(finding,system);
   return {...map,event:{change:b.change,connection:b.connection,review:b.review,stale:b.stale},anchor:stepAnchors[b.connectionLabel]||'condition'};
  }
- // One app drawn as four recorded steps. Every open review is pinned to the step its
- // matched fact belongs to, so a reader sees where a change lands, not only that one did.
- // Only recorded facts are drawn; an empty step says so instead of inventing a value.
+ // Which kind of recorded fact a review's matched detail belongs to (used by automation()).
  const stepAnchors={Service:'input',Data:'input',Technology:'input',Action:'work',Purpose:'work',Boundary:'checkpoint',Assumption:'condition',Region:'condition'};
- function flow(system,findings=[],sources=[]){
-  const s=system||{},actions=(s.consequential_actions||[]).map(x=>x.description).filter(Boolean);
-  const steps=[
-   {key:'input',label:'Starts with',hint:'Services and data',items:[...(s.services||[]),...(s.data_categories||[])]},
-   {key:'work',label:'Does',hint:'Recorded actions',items:actions.length?actions:(s.purpose?[s.purpose]:[])},
-   {key:'checkpoint',label:'Checked by',hint:'Approvals and limits',items:s.constraints||[]},
-   {key:'condition',label:'Relies on',hint:'Conditions and regions',items:[...(s.assumptions||[]),...(s.jurisdictions||[])]}
-  ].map(step=>({...step,items:step.items.map(x=>shorten(x,90)),pins:[]}));
-  const byKey=Object.fromEntries(steps.map(x=>[x.key,x]));
-  const pins=findings.map((f,i)=>{const b=brief(f,s),step=stepAnchors[b.connectionLabel]||'condition';const pin={n:i+1,id:f.id,step,topic:topic(f,sources),change:shorten(b.change,120),connection:shorten(b.connection,90),stale:b.stale};byKey[step].pins.push(pin);return pin;});
-  return {steps,pins,topics:[...new Set(pins.map(x=>x.topic))]};
- }
  function grouped(items,systems){const groups=new Map();for(const f of items){if(!groups.has(f.system_id))groups.set(f.system_id,{system:systems.find(x=>x.id===f.system_id)||{id:f.system_id,name:f.system_id,purpose:'App profile unavailable'},findings:[]});groups.get(f.system_id).findings.push(f);}return [...groups.values()];}
- root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context,brief,diagnosis,reviewRoute,requiresAttention,automation,flow,grouped};
+ root.BuiltWatchPerspectives={views,topics,normalize,ordered,topic,context,brief,diagnosis,reviewRoute,requiresAttention,automation,grouped};
 })(typeof window!=='undefined'?window:globalThis);

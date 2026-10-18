@@ -31,5 +31,112 @@
     "purpose": "user_stated",
     "services": "user_stated",
     "jurisdictions": "user_stated"
+  },
+  "architecture": {
+    "analyzed_by": "Client operations workspace",
+    "analyzed_at": "2026-09-12",
+    "components": [
+      {
+        "id": "morning-schedule",
+        "name": "Morning schedule",
+        "kind": "entry",
+        "purpose": "Starts a triage run each morning.",
+        "uses": [
+          "EventBridge Scheduler"
+        ]
+      },
+      {
+        "id": "owner-approval",
+        "name": "Owner approval",
+        "kind": "entry",
+        "purpose": "The owner approves each draft before anything is sent."
+      },
+      {
+        "id": "triage",
+        "name": "Triage function",
+        "kind": "service",
+        "purpose": "Reads new client mail, asks the model for drafts and sends approved replies.",
+        "uses": [
+          "AWS Lambda",
+          "Python 3.12"
+        ],
+        "data": [
+          "email message body",
+          "email address",
+          "name"
+        ]
+      },
+      {
+        "id": "drafter",
+        "name": "Reply drafting model",
+        "kind": "model",
+        "purpose": "Writes reply drafts in the business's voice.",
+        "uses": [
+          "Amazon Bedrock"
+        ],
+        "data": [
+          "email message body"
+        ],
+        "actions": [
+          "Generates reply text with an LLM that is presented to clients as coming from the business"
+        ]
+      },
+      {
+        "id": "gmail",
+        "name": "Shared client inbox",
+        "kind": "external",
+        "purpose": "Gmail inbox the bot reads client mail from.",
+        "uses": [
+          "Gmail API"
+        ],
+        "data": [
+          "email address",
+          "email message body"
+        ]
+      },
+      {
+        "id": "sendgrid",
+        "name": "Outbound email (SendGrid)",
+        "kind": "external",
+        "purpose": "Delivers approved replies from the business domain.",
+        "uses": [
+          "SendGrid"
+        ],
+        "data": [
+          "email address",
+          "business contact details"
+        ],
+        "actions": [
+          "Sends email to external clients from the business domain"
+        ]
+      }
+    ],
+    "flows": [
+      {
+        "source": "morning-schedule",
+        "target": "triage",
+        "label": "starts the run"
+      },
+      {
+        "source": "triage",
+        "target": "gmail",
+        "label": "reads new client mail"
+      },
+      {
+        "source": "triage",
+        "target": "drafter",
+        "label": "client email text"
+      },
+      {
+        "source": "owner-approval",
+        "target": "triage",
+        "label": "approved drafts"
+      },
+      {
+        "source": "triage",
+        "target": "sendgrid",
+        "label": "approved reply"
+      }
+    ]
   }
 }

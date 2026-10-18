@@ -26,5 +26,63 @@
     "name": "user_stated",
     "purpose": "user_stated",
     "services": "user_stated"
+  },
+  "architecture": {
+    "analyzed_by": "Support product workspace",
+    "analyzed_at": "2026-09-12",
+    "components": [
+      {
+        "id": "widget",
+        "name": "Chat widget",
+        "kind": "entry",
+        "purpose": "Script on the marketing site that takes visitor questions and shows answers.",
+        "uses": [
+          "TypeScript"
+        ],
+        "data": [
+          "chat message content"
+        ]
+      },
+      {
+        "id": "chat-api",
+        "name": "Chat API (Worker)",
+        "kind": "service",
+        "purpose": "Receives each question, builds the prompt and returns the reply to the visitor.",
+        "uses": [
+          "Cloudflare Workers",
+          "TypeScript"
+        ],
+        "data": [
+          "chat message content"
+        ],
+        "actions": [
+          "Responds to website visitors in natural language on behalf of the company"
+        ]
+      },
+      {
+        "id": "answer-model",
+        "name": "Answer model",
+        "kind": "model",
+        "purpose": "Generates the reply text from the visitor's question.",
+        "uses": [
+          "Amazon Bedrock"
+        ],
+        "data": [
+          "chat message content"
+        ]
+      }
+    ],
+    "flows": [
+      {
+        "source": "widget",
+        "target": "chat-api",
+        "label": "visitor question"
+      },
+      {
+        "source": "chat-api",
+        "target": "answer-model",
+        "label": "prompt with the question"
+      }
+    ]
   }
 }

@@ -75,7 +75,114 @@
       },
       "source_agent": "Client operations workspace",
       "created_at": "2026-09-12T19:39:53.867352Z",
-      "updated_at": "2026-09-12T19:39:53.867476Z"
+      "updated_at": "2026-09-12T19:39:53.867476Z",
+      "architecture": {
+        "analyzed_by": "Client operations workspace",
+        "analyzed_at": "2026-09-12",
+        "components": [
+          {
+            "id": "morning-schedule",
+            "name": "Morning schedule",
+            "kind": "entry",
+            "purpose": "Starts a triage run each morning.",
+            "uses": [
+              "EventBridge Scheduler"
+            ]
+          },
+          {
+            "id": "owner-approval",
+            "name": "Owner approval",
+            "kind": "entry",
+            "purpose": "The owner approves each draft before anything is sent."
+          },
+          {
+            "id": "triage",
+            "name": "Triage function",
+            "kind": "service",
+            "purpose": "Reads new client mail, asks the model for drafts and sends approved replies.",
+            "uses": [
+              "AWS Lambda",
+              "Python 3.12"
+            ],
+            "data": [
+              "email message body",
+              "email address",
+              "name"
+            ]
+          },
+          {
+            "id": "drafter",
+            "name": "Reply drafting model",
+            "kind": "model",
+            "purpose": "Writes reply drafts in the business's voice.",
+            "uses": [
+              "Amazon Bedrock"
+            ],
+            "data": [
+              "email message body"
+            ],
+            "actions": [
+              "Generates reply text with an LLM that is presented to clients as coming from the business"
+            ]
+          },
+          {
+            "id": "gmail",
+            "name": "Shared client inbox",
+            "kind": "external",
+            "purpose": "Gmail inbox the bot reads client mail from.",
+            "uses": [
+              "Gmail API"
+            ],
+            "data": [
+              "email address",
+              "email message body"
+            ]
+          },
+          {
+            "id": "sendgrid",
+            "name": "Outbound email (SendGrid)",
+            "kind": "external",
+            "purpose": "Delivers approved replies from the business domain.",
+            "uses": [
+              "SendGrid"
+            ],
+            "data": [
+              "email address",
+              "business contact details"
+            ],
+            "actions": [
+              "Sends email to external clients from the business domain"
+            ]
+          }
+        ],
+        "flows": [
+          {
+            "source": "morning-schedule",
+            "target": "triage",
+            "label": "starts the run"
+          },
+          {
+            "source": "triage",
+            "target": "gmail",
+            "label": "reads new client mail"
+          },
+          {
+            "source": "triage",
+            "target": "drafter",
+            "label": "client email text"
+          },
+          {
+            "source": "owner-approval",
+            "target": "triage",
+            "label": "approved drafts"
+          },
+          {
+            "source": "triage",
+            "target": "sendgrid",
+            "label": "approved reply"
+          }
+        ]
+      }
     },
     {
       "schema_version": 1,
@@ -148,7 +255,65 @@
       },
       "source_agent": "Support product workspace",
       "created_at": "2026-09-12T19:39:54.442060Z",
-      "updated_at": "2026-09-12T19:39:54.442202Z"
+      "updated_at": "2026-09-12T19:39:54.442202Z",
+      "architecture": {
+        "analyzed_by": "Support product workspace",
+        "analyzed_at": "2026-09-12",
+        "components": [
+          {
+            "id": "widget",
+            "name": "Chat widget",
+            "kind": "entry",
+            "purpose": "Script on the marketing site that takes visitor questions and shows answers.",
+            "uses": [
+              "TypeScript"
+            ],
+            "data": [
+              "chat message content"
+            ]
+          },
+          {
+            "id": "chat-api",
+            "name": "Chat API (Worker)",
+            "kind": "service",
+            "purpose": "Receives each question, builds the prompt and returns the reply to the visitor.",
+            "uses": [
+              "Cloudflare Workers",
+              "TypeScript"
+            ],
+            "data": [
+              "chat message content"
+            ],
+            "actions": [
+              "Responds to website visitors in natural language on behalf of the company"
+            ]
+          },
+          {
+            "id": "answer-model",
+            "name": "Answer model",
+            "kind": "model",
+            "purpose": "Generates the reply text from the visitor's question.",
+            "uses": [
+              "Amazon Bedrock"
+            ],
+            "data": [
+              "chat message content"
+            ]
+          }
+        ],
+        "flows": [
+          {
+            "source": "widget",
+            "target": "chat-api",
+            "label": "visitor question"
+          },
+          {
+            "source": "chat-api",
+            "target": "answer-model",
+            "label": "prompt with the question"
+          }
+        ]
+      }
     }
   ],
   "findings": [

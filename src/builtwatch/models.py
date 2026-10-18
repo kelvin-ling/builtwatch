@@ -18,7 +18,7 @@ from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 def utcnow() -> datetime:
@@ -49,6 +49,68 @@ class ConsequentialAction(BaseModel):
     description: str
     target: str | None = Field(None, description="What it acts on, e.g. 'customer email'.")
     reversible: bool | None = None
+
+
+ComponentKind = Literal["entry", "service", "data", "model", "external"]
+_SLUG = r"^[a-z0-9][a-z0-9_-]{0,39}$"
+MAX_COMPONENT_ITEM = 200
+
+
+def _fold(value: str) -> str:
+    return " ".join(value.split()).lower()
+
+
+class ArchitectureComponent(BaseModel):
+    """One part of the app's backend, as described by the user's own project agent.
+
+    ``uses``, ``data`` and ``actions`` repeat profile facts verbatim. That is what lets a
+    matched fact be placed on a component without guessing.
+    """
+
+    id: str = Field(pattern=_SLUG)
+    name: str = Field(min_length=1, max_length=80)
+    kind: ComponentKind
+    purpose: str = Field("", max_length=200)
+    uses: list[str] = Field(default_factory=list, max_length=12)
+    data: list[str] = Field(default_factory=list, max_length=8)
+    actions: list[str] = Field(default_factory=list, max_length=6)
+
+    @field_validator("uses", "data", "actions")
+    @classmethod
+    def _short_items(cls, v: list[str]) -> list[str]:
+        cleaned = [x.strip() for x in v if x.strip()]
+        if any(len(x) > MAX_COMPONENT_ITEM for x in cleaned):
+            raise ValueError(f"component list items are limited to {MAX_COMPONENT_ITEM} characters")
+        return cleaned
+
+
+class ArchitectureFlow(BaseModel):
+    source: str = Field(pattern=_SLUG)
+    target: str = Field(pattern=_SLUG)
+    label: str = Field("", max_length=80)
+
+
+class SystemArchitecture(BaseModel):
+    """A component graph of the app. Supplied, never fetched: BuiltWatch does not read
+    the app's code or connect to it (invariant 7)."""
+
+    analyzed_by: str | None = Field(None, max_length=120)
+    analyzed_at: date | None = None
+    components: list[ArchitectureComponent] = Field(min_length=1, max_length=24)
+    flows: list[ArchitectureFlow] = Field(default_factory=list, max_length=48)
+
+    @model_validator(mode="after")
+    def _consistent(self) -> SystemArchitecture:
+        ids = [c.id for c in self.components]
+        if len(set(ids)) != len(ids):
+            raise ValueError("architecture component ids must be unique")
+        known = set(ids)
+        for flow in self.flows:
+            if flow.source not in known or flow.target not in known:
+                raise ValueError(f"flow {flow.source} -> {flow.target} names an unknown component")
+            if flow.source == flow.target:
+                raise ValueError("a flow must connect two different components")
+        return self
 
 
 class SystemPassport(BaseModel):
@@ -84,8 +146,34 @@ class SystemPassport(BaseModel):
         description="User-visible label for the agent or workspace that supplied this profile.",
     )
 
+    architecture: SystemArchitecture | None = Field(
+        None, description="Optional backend component map supplied by the user's project agent."
+    )
+
     created_at: datetime = Field(default_factory=utcnow)
     updated_at: datetime = Field(default_factory=utcnow)
+
+    @model_validator(mode="after")
+    def _architecture_is_grounded(self) -> SystemPassport:
+        # A component may only claim a dependency, data category or action the profile
+        # records. Otherwise the map would show something checks never watch.
+        if self.architecture is None:
+            return self
+        deps = {_fold(x) for x in [*self.services, *self.technologies]}
+        data = {_fold(x) for x in self.data_categories}
+        actions = {_fold(a.description) for a in self.consequential_actions}
+        for c in self.architecture.components:
+            for label, values, allowed in (
+                ("uses", c.uses, deps),
+                ("data", c.data, data),
+                ("actions", c.actions, actions),
+            ):
+                missing = [v for v in values if _fold(v) not in allowed]
+                if missing:
+                    raise ValueError(
+                        f"component '{c.id}' {label} {missing[0]!r} is not recorded in the profile"
+                    )
+        return self
 
     @field_validator("id")
     @classmethod

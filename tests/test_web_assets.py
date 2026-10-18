@@ -429,5 +429,5 @@ def test_stylesheet_comments_are_closed_before_the_next_rule():
 def test_every_open_review_is_pinned_on_the_app_flow():
     app = (ROOT / "web/app.js").read_text()
     assert "function automationMap(" not in app
-    assert "flowMap(s,linked" in app
+    assert "BuiltWatchArchMap.render(s,linked" in app
     assert "focus:f.id" in app

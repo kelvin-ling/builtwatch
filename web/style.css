@@ -212,38 +212,14 @@
 .net-result:not(.hot){background:#e9efec;color:var(--ink)}
 .network-key{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}.network-key i{width:22px;height:2px;background:#c98a2e;border-radius:2px}
 @media(max-width:860px){.network-canvas{grid-template-columns:1fr;gap:18px}.network-lines{display:none}.net-cats{display:flex;flex-wrap:wrap;gap:6px}.net-cats .net-col-label{flex-basis:100%}.net-cat{padding:5px 9px;border-radius:99px}.net-cats .net-cat:not(.hot):not(.net-cat-more){display:none}.net-cats .net-cat-more{display:flex}.network-key{display:none}}
-
-/* App flow: four recorded steps with numbered pins where open reviews land. */
-.flow-map{container-type:inline-size;border:1px solid var(--line);border-radius:16px;padding:18px;background:#fbfcfb;margin:4px 0 18px}
-.flow-map.compact{border:0;border-radius:0;background:none;padding:14px 18px 18px;margin:0}
-.flow-map-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}.flow-map-head h3{margin:4px 0 0;font-size:17px}
 .map-status{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:4px 10px;white-space:nowrap;color:var(--muted)}
 .map-status.hot{background:var(--soft-amber);border-color:#e7c48f;color:var(--amber);font-weight:650}
-.flow-outside{display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:relative;padding-bottom:14px;margin-bottom:6px}
-.flow-topic{display:inline-flex;align-items:center;gap:6px;font-size:12px;background:var(--soft-amber);border:1px solid #e7c48f;color:var(--amber);border-radius:99px;padding:4px 10px}
-.flow-topic .bw-icon{width:14px;height:14px}.flow-topic b{background:#fff;border-radius:99px;padding:0 7px;font-size:11px}
-.flow-drop{position:absolute;left:24px;bottom:0;width:2px;height:12px;background:repeating-linear-gradient(#c98a2e 0 3px,transparent 3px 6px)}
-.flow-track{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:12px}
-.flow-step{position:relative;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
-.flow-step+.flow-step::before{content:"";position:absolute;left:24px;top:-13px;width:2px;height:12px;background:#c8d6cf}
-.flow-step.hit{border-color:#e0a95a;background:#fffaf2;box-shadow:0 0 0 3px #fff2dd}
-.flow-step-head{display:flex;align-items:center;gap:10px}
-.flow-step-n{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#e9efec;font-size:12px;font-weight:700}
-.flow-step.hit .flow-step-n{background:var(--green);color:#fff}
-.flow-step-title{display:grid;flex:1;min-width:0}.flow-step-title strong{font-size:14px}.flow-step-title small{font-size:11.5px;color:var(--muted)}
 .flow-pins{position:absolute;top:-9px;right:8px;display:flex;gap:3px}
-.flow-step.hit .flow-step-title{padding-right:calc(var(--pins,1) * 22px)}
 .flow-pin{font:inherit;width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px #0002;display:inline-grid;place-items:center;background:#c47a14;color:#fff;font-size:12px;font-weight:700;flex:none}
 .flow-pin.dim{background:#d9c3a4}.flow-pin.stale{background:#7a8a85}
-.flow-items{list-style:none;margin:8px 0 0 34px;padding:0;display:grid;gap:4px;font-size:13px;line-height:1.4}
-.flow-items li{overflow-wrap:anywhere}.flow-more,.flow-empty{color:var(--muted);font-size:12px}
-.flow-legend{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:6px}
 .flow-pin.static{border:0;box-shadow:none}
 .desk-review .review-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
-.flow-legend button{font:inherit;width:100%;display:flex;gap:10px;align-items:flex-start;text-align:left;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:13px;line-height:1.4}
-.flow-legend small{display:block;font-size:11.5px;color:var(--amber);margin-bottom:2px}
-.flow-caption{display:flex;gap:8px;align-items:center;font-size:13px;margin:12px 0 0;line-height:1.45}.flow-caption.quiet{color:var(--muted)}
-@container (min-width:640px){.flow-track{grid-template-columns:repeat(4,minmax(0,1fr))}.flow-step+.flow-step::before{left:-13px;top:28px;width:12px;height:2px}.flow-items{margin-left:0}.flow-step-head{align-items:flex-start}}
+@container (min-width:640px){}
 
 /* Coverage as one bar rather than a paragraph of counts. */
 .coverage-bar{margin:16px 0 4px}
@@ -283,3 +259,77 @@
 @media(min-width:761px) and (max-height:900px){.sidebar-bottom p,.sidebar-bottom .built-with,.sidebar-bottom .quiet-symbol{display:none}.sidebar-bottom{padding-top:20px}.sidebar-bottom strong{display:block}.sidebar-bottom .text-button{white-space:nowrap;margin-top:4px}.sidebar{scrollbar-gutter:auto}}
 /* Phones: the demo banner already says which mode this is; a clipped pill adds nothing. */
 @media(max-width:600px){.mode-tag{display:none}}
+/* Backend map: columns of components, measured SVG edges, review pins on the hit parts. */
+.arch-map{container-type:inline-size;padding:20px 22px 18px;border-top:1px solid var(--line)}
+.panel>.arch-map:first-child,.modal-body .arch-map{border:1px solid var(--line);border-radius:14px;background:#fff;margin:4px 0 16px}
+.arch-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px}
+.arch-head h3{margin:6px 0 4px;font-size:17px}
+.arch-source{margin:0;font-size:12.5px;color:var(--muted);max-width:56ch}
+.arch-head-side{display:grid;justify-items:end;gap:6px;flex:none}
+.arch-head-side .text-button{font-size:13px;min-height:0;padding:2px 0}
+.arch-canvas{position:relative;display:grid;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));gap:14px 34px;align-items:start;padding:4px 0}
+.arch-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+.arch-lines path{fill:none;stroke:#c3d2ca;stroke-width:1.6}
+.arch-lines circle{fill:#c3d2ca}
+.arch-lines path.hot{stroke:#c58b36;stroke-width:2.2}
+.arch-lines circle.hot{fill:#c58b36}
+.arch-col{position:relative;z-index:1;display:grid;gap:10px;align-content:start}
+.arch-col-label{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.arch-node{position:relative;background:#fff;border:1px solid var(--line);border-left:3px solid #9fb5aa;border-radius:12px;padding:10px 11px;transition:opacity .18s}
+.arch-node.kind-entry{border-left-color:#7893c2}
+.arch-node.kind-service{border-left-color:#3f7a62}
+.arch-node.kind-data{border-left-color:#8a74b8}
+.arch-node.kind-model{border-left-color:#2f8f8a}
+.arch-node.kind-external{border-left-color:#8a9590}
+.arch-node.hit{border-color:#e0a54c;border-left-color:#c47a14;background:var(--soft-amber);box-shadow:0 0 0 3px #f6dfb8}
+.arch-node.near{border-style:dashed;border-color:#d9b27a}
+.arch-node.near.kind-entry,.arch-node.near.kind-service,.arch-node.near.kind-data,.arch-node.near.kind-model,.arch-node.near.kind-external{border-left-style:solid}
+.arch-node.dim{opacity:.45}
+.arch-node-head{display:flex;align-items:center;gap:7px;min-width:0}
+.arch-node-head strong{font-size:13.5px;line-height:1.25;flex:1;min-width:0;overflow-wrap:anywhere}
+.arch-icon{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--paper);color:var(--green);flex:none}
+.arch-icon .bw-icon{width:15px;height:15px}
+.arch-pins{display:flex;gap:3px;flex:none}
+.arch-pins .flow-pin,.arch-whole .flow-pin{min-height:0}
+.arch-node p{margin:6px 0 0;font-size:12px;line-height:1.45;color:var(--muted)}
+.arch-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.arch-chips span{font-size:11px;padding:2px 7px;border-radius:99px;background:var(--paper);border:1px solid var(--line);color:#4f685e;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.arch-chips span.hit{background:#fbe6c4;border-color:#e0a54c;color:#6d3f08;font-weight:650}
+.arch-chips span.more{background:none;border-style:dashed}
+.arch-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px;font-size:12px;color:var(--muted)}
+.arch-legend span{display:inline-flex;align-items:center;gap:6px}
+.arch-legend i{display:inline-block;width:14px;height:10px;border-radius:3px}
+.arch-legend i.direct{background:var(--soft-amber);border:1.5px solid #c47a14}
+.arch-legend i.near{border:1.5px dashed #d9b27a}
+.arch-legend i.line{height:2px;background:#c3d2ca;border-radius:0}
+.arch-landings{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.arch-landings button{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;color:inherit;cursor:pointer}
+.arch-landings button:hover{border-color:#cfdcd5;background:#fff}
+.arch-landings small{display:block;font-size:11.5px;color:var(--muted)}
+.arch-landings strong{display:block;font-size:13.5px;font-weight:600;margin:2px 0}
+.arch-landings em{display:block;font-style:normal;font-size:12.5px;color:#6d3f08}
+.arch-whole,.arch-quiet{margin:12px 0 0;font-size:12.5px;color:var(--muted)}
+.arch-whole .flow-pin{margin-left:3px;cursor:pointer}
+.arch-flows{margin-top:10px;font-size:12.5px}
+.arch-flows summary{cursor:pointer;color:#365647;font-weight:600}
+.arch-flows ul{margin:8px 0 0;padding-left:18px;color:var(--muted)}
+.arch-map.compact{padding:14px 18px 16px}
+.arch-map.compact .arch-head h3{font-size:15px}
+.arch-map.focused .arch-legend{margin-top:10px}
+#arch-preview .arch-map{margin-top:8px}
+/* Cards already title the map in their summary; keep columns and trim chrome. */
+.arch-map.compact .arch-head .eyebrow,.arch-map.compact:not(.focused) .arch-head h3{display:none}
+.arch-canvas.stacked{grid-template-columns:1fr;gap:8px;padding-right:26px}
+.arch-card-actions{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px}
+.arch-card-actions .text-button{font-size:13px;min-height:0;padding:2px 0}
+.arch-map.quiet{padding:12px 18px 14px}
+.arch-map.compact .arch-node{padding:8px 9px}
+.arch-map.compact .arch-node-head strong{font-size:12.5px}
+.arch-map.compact .arch-col-label{font-size:9.5px;letter-spacing:.06em}
+@container (max-width:620px){
+ .arch-map:not(.compact) .arch-canvas{grid-template-columns:1fr;gap:10px;padding-right:26px}
+ .arch-head{flex-direction:column}
+ .arch-head-side{justify-items:start}
+}
+
+.arch-map.compact:not(.focused) .map-status{display:none}

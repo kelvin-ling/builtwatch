@@ -92,6 +92,11 @@ builtwatch system import passports/inbox-triage.json
 
 Extraction is instructed to preserve gaps rather than invent details; users should review the profile. Anything it could not determine lands in `unknowns` and stays visible.
 
+A passport may also carry an optional `architecture`: components (`entry`, `service`,
+`data`, `model`, `external`) and the flows between them. Each component's `uses`, `data`
+and `actions` must repeat facts the passport already records, so the map never shows a
+dependency that checks do not watch, and matching still keys off the same `fact_index`.
+
 ### 2. A curated source registry
 
 `sources/registry.yaml` is the only place a fetchable URL can come from. Nothing a user types, and nothing a fetched document says, can add a URL to it. Coverage spans vendor policies, API changes and deprecations, laws and regulations, privacy and AI requirements, communications restrictions, security incidents, and standards guidance.
@@ -156,6 +161,11 @@ required. The signed-in workspace supports:
 - Review findings, source passages, applicability facts, unknowns, and suggested actions.
 - Acknowledge or dismiss findings; download a Markdown builder handoff or JSON profile.
 - Inspect source coverage and check history, including incomplete checks and model cost.
+- See each app's **backend map**: entry points, services, data stores, AI models and
+  outside services with their data flows. Every open review is pinned on the component
+  whose recorded dependency, data or action it matched, connected components are flagged
+  to check next, and each pin says what to verify. The map comes from the user's own
+  project agent ("Map backend with agent"); BuiltWatch never reads the app's code.
 - Request a live check; automatic checks run daily at 7 a.m. America/Toronto.
 
 No repository connection is required. The recommended flow is to copy BuiltWatch's
