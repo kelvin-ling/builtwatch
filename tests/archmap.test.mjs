@@ -111,3 +111,16 @@ test('the agent handoff and digest say where the change lands',async()=>{
  const data={demo:false,systems:[app],sources:[{id:'gmail',name:'Gmail',category:'communications'}],runs:[],findings:[f]};
  assert.match(globalThis.BuiltWatchNotifications.digest(data,[f]),/Lands on: Inbox; check next: Triage function/);
 });
+
+test('a map dated well before the latest profile change is flagged, same-day saves are not',()=>{
+ const dated={...app,architecture:{...app.architecture,analyzed_at:'2026-10-01'}};
+ assert.equal(A.stale({...dated,updated_at:'2026-10-01T18:00:00Z'}),false);
+ assert.equal(A.stale({...dated,updated_at:'2026-10-05T09:00:00Z'}),true);
+ assert.match(A.render({...dated,updated_at:'2026-10-05T09:00:00Z'},[],{sources}),/profile changed after this map was made/);
+ assert.equal(A.stale(app),false);
+});
+
+test('the overview placemat names the component a change reaches',()=>{
+ const state={demo:false,systems:[app],sources,runs:[],findings:[gmail]};
+ assert.match(globalThis.BuiltWatchVisuals.map(state,[gmail]),/via Platform policies → Inbox/);
+});

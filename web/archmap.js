@@ -113,6 +113,14 @@
   return {...next,architecture:{...arch,components}};
  }
 
+ // A map dated well before the profile's last change may miss new parts. Same-day edits
+ // (saving the map itself updates the profile) do not count.
+ function stale(system){
+  const at=system?.architecture?.analyzed_at,updated=Date.parse(system?.updated_at||'');
+  if(!at||!Number.isFinite(updated))return false;
+  return updated-Date.parse(at+'T23:59:59Z')>24*3600*1000;
+ }
+
  function neighbours(arch,ids){
   const near=new Set();
   for(const f of arch.flows||[]){if(ids.has(f.source)&&!ids.has(f.target))near.add(f.target);if(ids.has(f.target)&&!ids.has(f.source))near.add(f.source);}
@@ -177,7 +185,7 @@
   const placed=pins.filter(p=>p.components.length),whole=pins.filter(p=>!p.components.length);
   const count=focused?0:pins.length;
   const source=arch.derived?'Drawn from the profile only. Map the backend with your agent to see components and data flows.'
-   :`Mapped by ${esc(arch.analyzed_by||'your project agent')}${arch.analyzed_at?` · ${esc(arch.analyzed_at)}`:''}. BuiltWatch never reads your code.`;
+   :`Mapped by ${esc(arch.analyzed_by||'your project agent')}${arch.analyzed_at?` · ${esc(arch.analyzed_at)}`:''}. BuiltWatch never reads your code.${stale(system)?' <strong class="arch-stale">The profile changed after this map was made; update the map so new parts are placed.</strong>':''}`;
   const hidden=subset?arch.components.length-shownComponents.length:0;
   const action=subset?`<button class="text-button" data-system="${esc(system.id)}">${hidden?`Full map · ${hidden} more ${hidden===1?'part':'parts'}`:'Open full map'} →</button>`:mapAction&&!focus?`<button class="text-button" data-arch-map="${esc(system.id)}">${arch.derived?'Map backend with agent':'Update map'} →</button>`:'';
   const canvas=`<div class="arch-canvas ${subset?'stacked':''}" style="--cols:${cols.length}" data-arch-links="${esc(links)}"><svg class="arch-lines" aria-hidden="true" focusable="false"></svg>${cols.map(col=>`<div class="arch-col"><span class="arch-col-label">${esc(col.label)}</span>${col.items.map(c=>nodeHtml(c,{pins:byComponent.get(c.id)||[],lit:lit.has(c.id),near:around.has(c.id),dim:!!focused&&!lit.has(c.id)&&!around.has(c.id),compact,matched:(focused?[focused]:pins).flatMap(p=>p.matched[c.id]||[])})).join('')}</div>`).join('')}</div>`;
@@ -215,5 +223,5 @@
   return `Map the backend of my app "${system.name}" (BuiltWatch id: ${system.id}) from the code and configuration you can access. Read it locally. Do not send code anywhere, call outside services, or include source code, secrets, keys, tokens, internal URLs or customer records. Return only JSON in this shape: {"architecture":{"analyzed_by":"<your agent or workspace name>","analyzed_at":"YYYY-MM-DD","components":[{"id":"short-slug","name":"Readable name","kind":"entry|service|data|model|external","purpose":"One sentence","uses":["vendors, APIs, runtimes or frameworks this component depends on"],"data":["data categories it handles"],"actions":["consequential actions it performs"]}],"flows":[{"source":"component-id","target":"component-id","label":"what moves"}]}}. Kinds: entry = UI, webhook, schedule, inbox or other trigger; service = my own API, worker, function or job; data = database, storage, queue or cache; model = AI model; external = third-party API or vendor. Use at most 24 components and 48 flows; ids are lowercase slugs. Reuse these exact names so outside changes are matched to components. Services: ${names(system.services)}. Technologies: ${names(system.technologies)}. Data: ${names(system.data_categories)}. Actions: ${names((system.consequential_actions||[]).map(a=>a.description))}. Add a new dependency name only if the code really uses it. Keep the JSON under 12 KB.`;
  }
 
- root.BuiltWatchArchMap={COLUMNS,KINDS,derive,architecture,validate,apply,reconcile,place,landing,render,drawEdges,prompt};
+ root.BuiltWatchArchMap={COLUMNS,KINDS,derive,architecture,validate,apply,reconcile,place,landing,stale,render,drawEdges,prompt};
 })(typeof window!=='undefined'?window:globalThis);

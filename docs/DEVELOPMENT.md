@@ -56,5 +56,5 @@ Backend: `.venv/bin/python infra/deploy_free.py --account <expected-account>` (b
 Website: sync changed files into `.builtwatch/github-sync` (the sanitized public mirror),
 push it, then package the exact pushed Sites source and deploy its saved version from
 the Sites helper in Codex/ChatGPT; there is no command-line deploy for Sites. Verify the deployed
-code hashes, public page/assets/API, anonymous workspace rejection, and a controlled
+code hashes (`npm run verify:live` compares every live asset and cache header with this build and exits non-zero on a mismatch), public page/assets/API, anonymous workspace rejection, and a controlled
 rules-only scan. Report browser/authentication verification limits explicitly.
