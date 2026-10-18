@@ -31,7 +31,7 @@
   return {app:system?.name||f.system_id,purpose:system?.purpose||'Purpose not recorded',
    connection:ref?ref.value:'No matching recorded detail establishes the connection yet.',
    connectionLabel:ref?fieldLabels[ref.key.split('[')[0]]||'Recorded detail':'Connection not established',
-   change:shorten(f.facts?.[0]||plainChange(f.title),150),
+   change:shorten(f.facts?.[0]||plainChange(f.title),150),changeFull:f.facts?.[0]||plainChange(f.title),
    consequence:stale?'The app profile changed after this assessment. Recheck the connection before acting.':f.relevance==='not_relevant'?(f.inferences?.[0]||'No applicable connection was established.'):f.relevance==='insufficient_information'?(f.unknowns?.[0]||'The effect on this app is not established.'):(f.app_impact?.consequence||f.inferences?.[0]||'A specific consequence was not established in this assessment.'),
    review:stale?'Does the finding still apply to the app’s current behavior?':f.relevance==='not_relevant'?'No action requested for this assessment.':f.app_impact?.review_question||f.review_suggestions?.[0]||'Which recorded activity or condition would make this development apply?',
    stale,anchored:!!ref,structured:!!f.app_impact};

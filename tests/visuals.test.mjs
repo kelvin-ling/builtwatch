@@ -36,12 +36,14 @@ test('reviewed cards and groups identify recorded outcomes instead of new review
  const app=readFileSync(new URL('../web/app.js',import.meta.url),'utf8');
  const ctx=vm.createContext({BuiltWatchVisuals:v,BuiltWatchPerspectives,esc:v.escape,
   state:{...state,findings:[]}});
- vm.runInContext(app.slice(app.indexOf('function findingRow(f){'),app.indexOf('\nfunction monitoredSystemIds')),ctx);
+ vm.runInContext(app.slice(app.indexOf('function findingRow('),app.indexOf('\nfunction monitoredSystemIds')),ctx);
  const finding={id:'one',system_id:'mail',relevance:'relevant',disposition:'acknowledged',
   title:'Sender update',facts:['Sender guidelines changed.'],system_facts:[],evidence:[{passage:'Exact source passage'}]};
  const html=ctx.groupedFindings([finding]);
  assert.match(html,/1 item reviewed/);assert.match(html,/Outcome recorded/);assert.match(html,/>Reviewed</);
  assert.doesNotMatch(html,/1 item to review/);
+ // The group heading already names the app, so the card leads with the change.
+ assert.match(html,/<h3>Sender update<span/);
 });
 
 test('monitoring panel surfaces failures and baselines without claiming applicability',()=>{
