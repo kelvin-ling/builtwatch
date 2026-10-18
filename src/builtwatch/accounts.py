@@ -28,6 +28,31 @@ COST_STATUS_MAX_AGE = 172800
 # Reserve only the per-run model ceiling. This bounds concurrent work without
 # reserving a larger amount than a run can spend.
 RESERVATION = Decimal("0.25")
+# Returned to connected agents whose app has no backend map yet. Agents already syncing
+# learn about maps from the response; nothing here is fetched or executed by BuiltWatch.
+BACKEND_MAP_REQUEST = (
+    "Optional: include profile.architecture so BuiltWatch can show which part of this app "
+    "each outside change reaches. Shape: {\"analyzed_by\":\"<agent>\",\"analyzed_at\":"
+    "\"YYYY-MM-DD\",\"components\":[{\"id\":\"slug\",\"name\":\"...\",\"kind\":"
+    "\"entry|service|data|model|external\",\"purpose\":\"...\",\"uses\":[],\"data\":[],"
+    "\"actions\":[]}],\"flows\":[{\"source\":\"id\",\"target\":\"id\",\"label\":\"...\"}]}. "
+    "Every uses/data/actions entry must repeat a value already in the profile's services or "
+    "technologies, data_categories or consequential_actions; add it there first. At most 24 "
+    "components and 48 flows; keep the whole request under 24 KB. Read the code locally and "
+    "never include source code, secrets, tokens, internal URLs or customer records."
+)
+
+
+def _first_error(exc: Exception) -> str:
+    """The first validation problem (field and rule), so an agent can fix its request."""
+    errors = getattr(exc, "errors", None)
+    if callable(errors):
+        with contextlib.suppress(Exception):
+            first = errors()[0]
+            where = ".".join(str(x) for x in first.get("loc", ()))
+            message = str(first.get("msg", "invalid value"))
+            return f"{where}: {message}"[:300] if where else message[:300]
+    return str(exc).splitlines()[0][:300]
 GLOBAL_MONTH_LIMIT = Decimal("2.00")
 PUBLIC_IMPACT_TTL = 900
 
@@ -350,8 +375,10 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                     if not profile.source_agent:
                         profile.source_agent = "Connected project agent"
                     store.upsert_system(profile)
-                except (ValueError, TypeError):
-                    return response(400, {"error": "Send a valid system profile"})
+                except (ValueError, TypeError) as exc:
+                    return response(
+                        400, {"error": "Send a valid system profile", "detail": _first_error(exc)}
+                    )
             if "review" in body:
                 try:
                     review = AgentReview.model_validate({**body["review"], "system_id": system_id})
@@ -380,6 +407,11 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                         else None
                     ),
                     "next_sync": "After midnight UTC tomorrow",
+                    **(
+                        {"backend_map_request": BACKEND_MAP_REQUEST}
+                        if (saved := store.get_system(system_id)) and saved.architecture is None
+                        else {}
+                    ),
                     "instructions": "Verify finding evidence before changes.",
                 },
             )

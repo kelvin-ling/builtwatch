@@ -613,3 +613,38 @@ def test_agent_sync_keeps_the_saved_backend_map(table):
     result = serve(event("/api/agent/sync", "POST", body), store, Settings(), None)
     assert result["statusCode"] == 200
     assert store.get_system(system_id).architecture.components[0].uses == ["Gmail API"]
+
+
+def test_agent_sync_asks_for_a_backend_map_and_explains_a_bad_one(table):
+    from builtwatch.models import SystemPassport
+
+    store = DynamoStore(table, tenant_id("agent-map-request"))
+    system_id = "agent-12345678-def"
+    plain = SystemPassport(id=system_id, name="Connected", purpose="Drafts", services=["Gmail API"])
+    body = json.dumps({"system_id": system_id, "profile": plain.model_dump(mode="json")})
+    result = serve(event("/api/agent/sync", "POST", body), store, Settings(), None)
+    payload = json.loads(result["body"])
+    assert "profile.architecture" in payload["backend_map_request"]
+    assert "never include source code" in payload["backend_map_request"]
+
+    bad = plain.model_dump(mode="json")
+    bad["architecture"] = {
+        "components": [{"id": "pay", "name": "Pay", "kind": "external", "uses": ["Stripe API"]}]
+    }
+    result = serve(
+        event("/api/agent/sync", "POST", json.dumps({"system_id": system_id, "profile": bad})),
+        store,
+        Settings(),
+        None,
+    )
+    assert result["statusCode"] == 400
+    assert "not recorded in the profile" in json.loads(result["body"])["detail"]
+
+    good = {**bad, "services": ["Gmail API", "Stripe API"]}
+    result = serve(
+        event("/api/agent/sync", "POST", json.dumps({"system_id": system_id, "profile": good})),
+        store,
+        Settings(),
+        None,
+    )
+    assert "backend_map_request" not in json.loads(result["body"])
