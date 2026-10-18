@@ -21,6 +21,7 @@ The live path is deliberately hostile to misuse:
 from __future__ import annotations
 
 import ipaddress
+import re
 import socket
 import time
 from datetime import date, datetime, timezone
@@ -75,7 +76,19 @@ def extract_text(html: str, limit: int) -> str:
     for tag in ("script", "style", "noscript", "svg", "nav", "footer", "header"):
         for node in tree.css(tag):
             node.decompose()
+    # Inline markup must not split a product name from the requirement it belongs to.
+    # Block elements remain intact so unrelated paragraphs cannot lend each other scope.
+    tree.unwrap_tags([
+        "a", "abbr", "b", "bdi", "bdo", "cite", "code", "data", "del", "dfn",
+        "em", "i", "ins", "kbd", "mark", "q", "s", "samp", "small", "span",
+        "strong", "sub", "sup", "time", "u", "var",
+    ])
     body = tree.body or tree.root
+    if body:
+        body.merge_text_nodes()
+        for node in list(body.traverse(include_text=True)):
+            if node.is_text_node:
+                node.replace_with(re.sub(r"\s+", " ", node.text()))
     text = body.text(separator="\n", strip=True) if body else ""
     lines = [ln.strip() for ln in text.splitlines()]
     cleaned = "\n".join(ln for ln in lines if ln)

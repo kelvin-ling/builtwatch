@@ -40,7 +40,8 @@ test('the rendered map pins reviews, escapes names, and marks hot edges',()=>{
 test('focus highlights one review and dims the rest',()=>{
  const html=A.render(app,[gmail,rule],{sources,focus:'g'});
  assert.match(html,/Where this change lands/);
- assert.match(html,/1 component hit/);
+ assert.match(html,/1 component matched/);
+ assert.match(html,/Matched app fact/);assert.doesNotMatch(html,/Direct impact|impacted component/);
  assert.match(html,/arch-node kind-model[^"]*dim/);
  assert.doesNotMatch(html,/data-arch-map/);
 });

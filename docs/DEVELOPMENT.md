@@ -1,9 +1,8 @@
 # Development and release
 
-The working checkout for the October 17 release is
-`/Users/kelvinling/Downloads/BuiltWatch`. The older `/Users/kelvinling/BuiltWatch`
-checkout and its nested `site-source` are historical checkouts. Work from this repository's
-root; do not edit two copies and assume they synchronize.
+Open the existing project with the Sites source helper before editing and work from its
+returned checkout. Other local copies may be stale; compare their commits before using
+them. Do not edit two copies and assume they synchronize.
 
 The Sites source helper opens and packages the existing project declared in
 `.openai/hosting.json`. Preserve that project ID, the public audience and existing
@@ -51,7 +50,8 @@ provisioning scripts for an account backend upgrade. Preserve IAM-only function 
 Bedrock denial, zero model ceilings, schedules, concurrency and tenant records. Back up
 current packages/configuration in ignored private `data/` before updating.
 
-Backend: `.venv/bin/python infra/deploy_free.py --account <expected-account>` (boto3 reads
+Backend: `.venv/bin/python infra/deploy_free.py --account <expected-account>
+--backup-directory rollout-YYYY-MM-DD` (boto3 reads
 `~/.aws`; the Homebrew x86 `aws` CLI does not run on Apple silicon without Rosetta).
 Website: sync changed files into `.builtwatch/github-sync` (the sanitized public mirror),
 push it, then package the exact pushed Sites source and deploy its saved version from

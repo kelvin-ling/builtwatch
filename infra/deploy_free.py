@@ -66,12 +66,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--account", required=True)
     parser.add_argument("--prepare-only", action="store_true")
+    parser.add_argument("--backup-directory", default="free-rollout")
     args = parser.parse_args()
+    if Path(args.backup_directory).name != args.backup_directory or args.backup_directory in {
+        ".", "..",
+    }:
+        parser.error("--backup-directory must be a folder name inside ignored data/")
     session = boto3.Session(region_name="us-east-1")
     if session.client("sts").get_caller_identity()["Account"] != args.account:
         raise RuntimeError("AWS account does not match --account")
     lam, iam = session.client("lambda"), session.client("iam")
-    directory = ROOT / "data/free-rollout"
+    directory = ROOT / "data" / args.backup_directory
     directory.mkdir(parents=True, exist_ok=True, mode=0o700)
     configs, archives = {}, {}
     for name in FUNCTIONS:

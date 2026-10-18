@@ -18,6 +18,7 @@ import difflib
 import hashlib
 import json
 import logging
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
@@ -30,12 +31,46 @@ from .models import (
     Source,
     SourceHealth,
     SourceSnapshot,
+    SystemPassport,
 )
 from .quality import QUALITY_VERSION
 from .registry import enabled_sources, load_registry
 from .store import Store, new_id
 
 logger = logging.getLogger(__name__)
+
+
+def _canonical_passage(text: str) -> str:
+    # Compare substance across inline-markup, whitespace and casing changes. The
+    # returned value is never evidence: findings always quote the current snapshot.
+    return " " + " ".join(re.findall(r"\w+|[^\w\s]", text.casefold())) + " "
+
+
+def _current_passages(passages: list[str], content: str) -> list[str]:
+    lines = [(line, _canonical_passage(line)) for line in content.splitlines() if line.strip()]
+    retained = []
+    for passage in passages:
+        canonical = _canonical_passage(passage)
+        retained.extend(line for line, current in lines if canonical in current)
+    return list(dict.fromkeys(retained))
+
+
+def _assessment_key(
+    passport: SystemPassport, snapshot: SourceSnapshot, settings: Settings
+) -> str:
+    from .rules import ENGINE
+
+    profile_hash = hashlib.sha256(
+        json.dumps(
+            passport.model_dump(mode="json", exclude={"updated_at", "created_at"}),
+            sort_keys=True,
+        ).encode()
+    ).hexdigest()
+    return (
+        f"{ENGINE if settings.inference_mode == 'rules' else 'bedrock-v1'}"
+        f":quality-v{QUALITY_VERSION}:{passport.id}:{profile_hash}"
+        f":{snapshot.mode}:{snapshot.source_id}:{snapshot.content_hash}"
+    )
 
 
 @dataclass
@@ -72,6 +107,8 @@ def collect_snapshots(
     from .fetch import fetch
 
     changed: dict[str, SourceSnapshot] = {}
+    # A scoped scan must not discard work still pending for another saved app.
+    systems = store.list_systems()
     for source in sources:
         previous = store.latest_snapshot(source.id)
         previous_hash = previous.content_hash if previous and previous.mode == mode else None
@@ -79,13 +116,14 @@ def collect_snapshots(
         if previous_hash and snapshot.succeeded:
             old_lines = previous.content.splitlines()
             new_lines = snapshot.content.splitlines()
+            old_substance = _canonical_passage(previous.content)
             matcher = difflib.SequenceMatcher(a=old_lines, b=new_lines, autojunk=False)
             snapshot.added_passages = [
                 line
                 for tag, _, _, start, end in matcher.get_opcodes()
                 if tag in {"insert", "replace"}
                 for line in new_lines[start:end]
-                if line.strip()
+                if line.strip() and _canonical_passage(line) not in old_substance
             ]
             differences = list(
                 difflib.unified_diff(
@@ -99,10 +137,22 @@ def collect_snapshots(
             snapshot.change_context = (
                 "Observed page difference (untrusted data):\n" + "\n".join(differences)[:8000]
             )
+            if previous.added_passages and any(
+                not store.assessed(_assessment_key(passport, previous, settings))
+                for passport in systems
+            ):
+                # Carry only exact evidence that is still present. Completed deltas
+                # expire on the next edit rather than accumulating indefinitely.
+                pending = _current_passages(previous.added_passages, snapshot.content)
+                snapshot.added_passages = list(dict.fromkeys(pending + snapshot.added_passages))
+                snapshot.change_context = (
+                    "Includes uncompleted additions still present in this observation.\n"
+                    + snapshot.change_context
+                )
         if previous_hash == snapshot.content_hash and snapshot.succeeded:
             # Retain the last diff so an interrupted pair can retry on an unchanged page.
             # Completed pairs still skip through their content/profile/engine cache key.
-            snapshot.added_passages = previous.added_passages
+            snapshot.added_passages = _current_passages(previous.added_passages, snapshot.content)
             snapshot.change_context = previous.change_context
         store.add_snapshot(snapshot)
 
@@ -137,8 +187,6 @@ def run_scan(
     force_reassess: bool = False,
 ) -> ScanResult:
     """Execute one complete watch pass."""
-    from .rules import ENGINE
-
     limits = settings.limits
     listed_sources = enabled_sources(load_registry(settings.registry_path))
     sources = listed_sources[: limits.max_sources_per_run]
@@ -197,18 +245,7 @@ def run_scan(
                     continue
 
                 # A source hash alone misses new/edited systems and skips aborted pairs.
-                profile_hash = hashlib.sha256(
-                    json.dumps(
-                        passport.model_dump(mode="json", exclude={"updated_at", "created_at"}),
-                        sort_keys=True,
-                    ).encode()
-                ).hexdigest()
-                pair_key = (
-                    f"{ENGINE if settings.inference_mode == 'rules' else 'bedrock-v1'}"
-                    f":quality-v{QUALITY_VERSION}"
-                    f":{passport.id}:{profile_hash}"
-                    f":{mode}:{source.id}:{snapshot.content_hash}"
-                )
+                pair_key = _assessment_key(passport, snapshot, settings)
                 if store.assessed(pair_key) and not force_reassess:
                     continue
                 run.evaluations_performed += 1

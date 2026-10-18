@@ -49,6 +49,17 @@ def test_extract_text_drops_scripts_and_truncates():
     assert len(extract_text("<body>" + "x" * 5000 + "</body>", limit=100)) == 100
 
 
+def test_inline_markup_preserves_paragraphs_and_readable_whitespace():
+    assert extract_text(
+        '<p>A security vulnerability requires an urgent update to\n  '
+        '<a href="/openssl"><strong>OpenSSL</strong></a>.</p>'
+        '<p>Another <code>separate</code> paragraph.</p>', 1000
+    ) == (
+        "A security vulnerability requires an urgent update to OpenSSL.\n"
+        "Another separate paragraph."
+    )
+
+
 def test_missing_replay_file_is_a_recorded_failure(tmp_path, source):
     """A source with no snapshot must not look like a successful quiet check."""
     snap = fetch_replay(source, tmp_path, Limits())

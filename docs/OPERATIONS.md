@@ -1,5 +1,7 @@
 # BuiltWatch after the competition
 
+Latest reliability follow-up: [18 October release notes](RELEASE_2026-10-18b.md).
+
 The owner ended the competition freeze and authorized changes and deployment on
 14 October 2026. The submission documents are historical; they do not constrain new
 product changes. Concurrency locks still protect simultaneous writes to private data.

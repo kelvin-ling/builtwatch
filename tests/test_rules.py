@@ -37,7 +37,7 @@ def test_only_added_material_passages_create_grounded_candidates(passport, snaps
     assert not problems
     assert not finding.validate_grounding(passport)
     assert finding.evidence[0].passage in snapshot.content
-    assert finding.assessment_method == "rules-v2"
+    assert finding.assessment_method == "rules-v3"
     assert "impact has not been assessed" in finding.inferences[0]
     assert finding.adoption_status.value == "unknown"
     repeated, _ = assess(passport, {snapshot.id: snapshot}, {source.id: source}, "run-next")
@@ -212,6 +212,127 @@ def test_pipeline_persists_all_changes_and_retries_interrupted_pair(
     assert not run_scan(store, settings).new_findings
     assert retry.run.model_id is None
     assert retry.run.estimated_cost_usd == 0
+
+
+@pytest.mark.parametrize("filtered_retry", [False, True])
+def test_interrupted_changes_survive_later_page_edits(
+    tmp_path, store, passport, source, monkeypatch, filtered_retry
+):
+    from builtwatch import pipeline
+
+    registry = tmp_path / "registry.yaml"
+    registry.write_text(yaml.safe_dump({"sources": [source.model_dump(mode="json")]}))
+    replay = tmp_path / "replay"
+    replay.mkdir()
+    capture = replay / (source.id + ".yaml")
+    baseline = "An established sender baseline."
+    requirement = "Gmail requires DKIM authentication for bulk senders."
+    settings = Settings(registry_path=registry, replay_dir=replay)
+    store.upsert_system(passport)
+    other = passport.model_copy(update={"id": "second-app"}, deep=True)
+    store.upsert_system(other)
+    capture.write_text(yaml.safe_dump({"content": baseline}))
+    run_scan(store, settings)
+    capture.write_text(yaml.safe_dump({"content": baseline + "\n" + requirement}))
+    with monkeypatch.context() as patch:
+        def interrupt(*args, **kwargs):
+            raise RuntimeError("Simulated assessment interruption")
+        patch.setattr(pipeline, "screen", interrupt)
+        assert run_scan(store, settings).run.status == "aborted"
+    capture.write_text(yaml.safe_dump({"content": baseline + "\n" + requirement + "\nContact us."}))
+    retry = run_scan(store, settings, system_ids=[passport.id] if filtered_retry else None)
+    assert retry.run.status == "complete"
+    assert len(retry.new_findings) == (1 if filtered_retry else 2)
+    if filtered_retry:
+        # Another edit and a scoped scan must not consume a different app's pending work.
+        capture.write_text(
+            yaml.safe_dump({"content": baseline + "\n" + requirement + "\nContact us.\nHelp."})
+        )
+        run_scan(store, settings, system_ids=[passport.id])
+        assert len(run_scan(store, settings, system_ids=[other.id]).new_findings) == 1
+    capture.write_text(
+        yaml.safe_dump({"content": baseline + "\n" + requirement + "\nUpdated contact."})
+    )
+    completed = run_scan(store, settings)
+    assert not completed.new_findings
+    assert not completed.suppressed_duplicates  # Completed deltas do not accumulate forever.
+    assert completed.run.estimated_cost_usd == 0
+
+
+def test_linked_security_product_matches_with_exact_grounding(passport, snapshot, source):
+    from builtwatch.fetch import extract_text
+
+    passport.services = ["OpenSSL"]
+    source = source.model_copy(update={"category": SourceCategory.SECURITY})
+    snapshot.content = extract_text(
+        '<p>A security vulnerability requires an urgent update to '
+        '<a href="/openssl"><strong>OpenSSL</strong></a>.</p>', 1000
+    )
+    snapshot.added_passages = snapshot.content.splitlines()
+    assert screen(passport, snapshot, source).plausible == "possible"
+    findings, problems = assess(passport, {snapshot.id: snapshot}, {source.id: source}, "linked")
+    assert not problems
+    assert len(findings) == 1
+    assert not findings[0].validate_grounding(passport)
+    assert findings[0].evidence[0].passage in snapshot.content
+    snapshot.content = extract_text(
+        '<p>A security vulnerability requires an urgent update to Windows.</p>'
+        '<p><a href="/openssl">OpenSSL</a> documentation and examples.</p>', 1000
+    )
+    snapshot.added_passages = snapshot.content.splitlines()
+    assert screen(passport, snapshot, source).plausible == "no"
+
+
+@pytest.mark.parametrize("cosmetic", [str.upper, lambda text: text.replace(" ", "  ")])
+def test_cosmetic_edit_rebinds_interrupted_evidence(
+    tmp_path, store, passport, source, monkeypatch, cosmetic
+):
+    from builtwatch import pipeline
+
+    registry = tmp_path / "registry.yaml"
+    registry.write_text(yaml.safe_dump({"sources": [source.model_dump(mode="json")]}))
+    replay = tmp_path / "replay"
+    replay.mkdir()
+    capture = replay / (source.id + ".yaml")
+    baseline = "An established sender baseline."
+    passage = "Gmail requires DKIM authentication for bulk senders."
+    settings = Settings(registry_path=registry, replay_dir=replay)
+    store.upsert_system(passport)
+    capture.write_text(yaml.safe_dump({"content": baseline}))
+    run_scan(store, settings)
+    capture.write_text(yaml.safe_dump({"content": baseline + "\n" + passage}))
+    with monkeypatch.context() as patch:
+        def interrupt(*args, **kwargs):
+            raise RuntimeError("Simulated assessment interruption")
+        patch.setattr(pipeline, "screen", interrupt)
+        assert run_scan(store, settings).run.status == "aborted"
+    capture.write_text(yaml.safe_dump({"content": cosmetic(baseline + "\n" + passage)}))
+    retry = run_scan(store, settings)
+    assert len(retry.new_findings) == 1
+    assert retry.new_findings[0].evidence[0].passage == cosmetic(passage)
+    assert not retry.new_findings[0].validate_grounding(passport)
+    assert not run_scan(store, settings).new_findings
+
+
+def test_extractor_upgrade_does_not_manufacture_an_external_change(
+    tmp_path, store, passport, source
+):
+    registry = tmp_path / "registry.yaml"
+    registry.write_text(yaml.safe_dump({"sources": [source.model_dump(mode="json")]}))
+    replay = tmp_path / "replay"
+    replay.mkdir()
+    capture = replay / (source.id + ".yaml")
+    old = "Gmail requires DKIM authentication for\nbulk senders\n."
+    new = "Gmail requires DKIM authentication for bulk senders."
+    settings = Settings(registry_path=registry, replay_dir=replay)
+    store.upsert_system(passport)
+    capture.write_text(yaml.safe_dump({"content": old}))
+    run_scan(store, settings)
+    capture.write_text(yaml.safe_dump({"content": new}))
+    assert not run_scan(store, settings).new_findings
+    actual = "Gmail is retiring its legacy message endpoint."
+    capture.write_text(yaml.safe_dump({"content": new + "\n" + actual}))
+    assert run_scan(store, settings).new_findings[0].evidence[0].passage == actual
 
 
 def test_long_passages_and_multiple_dependencies_remain_grounded(passport, snapshot, source):

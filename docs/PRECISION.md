@@ -1,6 +1,6 @@
 # Current rules-engine evaluation
 
-The production default is `rules-v2`, without AI inference. Run:
+The production default is `rules-v3`, without AI inference. Run:
 
 ```bash
 python -m builtwatch.evaluation

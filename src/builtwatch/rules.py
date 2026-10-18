@@ -28,7 +28,7 @@ from .store import new_id
 if TYPE_CHECKING:
     from .agent.relevance import ScreenVerdict
 
-ENGINE = "rules-v2"
+ENGINE = "rules-v3"
 # Curated registry routing, not inferred dependencies. Broad security feeds require a
 # product name in the changed passage itself instead of a publisher-level match.
 SOURCE_TERMS = {
