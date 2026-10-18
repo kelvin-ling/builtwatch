@@ -103,7 +103,9 @@
  // entries whose fact the person just removed from the profile, so the save stays valid.
  function reconcile(next,previous){
   if(!next||typeof next!=='object')return next;
-  const arch=next.architecture===undefined?previous?.architecture:next.architecture;
+  if(next.remove_architecture===true)return {...next,architecture:null};
+  // Missing and null both mean "not resent"; the server keeps the saved map the same way.
+  const arch=next.architecture??previous?.architecture;
   if(!arch?.components?.length)return {...next,architecture:arch??null};
   const deps=new Set([...list(next.services),...list(next.technologies)].map(fold)),data=new Set(list(next.data_categories).map(fold)),
    actions=new Set((next.consequential_actions||[]).map(a=>fold(a?.description)));
@@ -134,6 +136,15 @@
   });
   const direct=new Set(pins.flatMap(p=>p.components));
   return {arch,pins,direct,near:neighbours(arch,direct)};
+ }
+
+ // One review's placement in words, for cards, handoffs and digests. Only a supplied map
+ // is quoted; a derived map would just repeat the matched detail.
+ function landing(system,finding){
+  const {arch,pins}=place(system,[finding]),pin=pins[0];
+  if(arch.derived)return null;
+  const byId=Object.fromEntries(arch.components.map(c=>[c.id,c])),hit=new Set(pin.components);
+  return {parts:pin.components.map(id=>byId[id]),near:[...neighbours(arch,hit)].map(id=>byId[id]),whole:!pin.components.length};
  }
 
  function nodeHtml(c,{pins,lit,near,dim,compact,matched}){
@@ -204,5 +215,5 @@
   return `Map the backend of my app "${system.name}" (BuiltWatch id: ${system.id}) from the code and configuration you can access. Read it locally. Do not send code anywhere, call outside services, or include source code, secrets, keys, tokens, internal URLs or customer records. Return only JSON in this shape: {"architecture":{"analyzed_by":"<your agent or workspace name>","analyzed_at":"YYYY-MM-DD","components":[{"id":"short-slug","name":"Readable name","kind":"entry|service|data|model|external","purpose":"One sentence","uses":["vendors, APIs, runtimes or frameworks this component depends on"],"data":["data categories it handles"],"actions":["consequential actions it performs"]}],"flows":[{"source":"component-id","target":"component-id","label":"what moves"}]}}. Kinds: entry = UI, webhook, schedule, inbox or other trigger; service = my own API, worker, function or job; data = database, storage, queue or cache; model = AI model; external = third-party API or vendor. Use at most 24 components and 48 flows; ids are lowercase slugs. Reuse these exact names so outside changes are matched to components. Services: ${names(system.services)}. Technologies: ${names(system.technologies)}. Data: ${names(system.data_categories)}. Actions: ${names((system.consequential_actions||[]).map(a=>a.description))}. Add a new dependency name only if the code really uses it. Keep the JSON under 12 KB.`;
  }
 
- root.BuiltWatchArchMap={COLUMNS,KINDS,derive,architecture,validate,apply,reconcile,place,render,drawEdges,prompt};
+ root.BuiltWatchArchMap={COLUMNS,KINDS,derive,architecture,validate,apply,reconcile,place,landing,render,drawEdges,prompt};
 })(typeof window!=='undefined'?window:globalThis);

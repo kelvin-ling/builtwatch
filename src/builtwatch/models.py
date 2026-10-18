@@ -175,6 +175,33 @@ class SystemPassport(BaseModel):
                     )
         return self
 
+    def keep_architecture_from(self, previous: SystemPassport | None) -> SystemPassport:
+        """Carry an existing map onto an update that omitted it.
+
+        Profile updates (a connected agent's sync, an edit) usually do not resend the map;
+        dropping it silently would erase the user's analysis. Entries citing a fact the
+        update removed are trimmed so the result stays grounded. A missing or null map
+        both mean "not resent" (serialised profiles carry null); removal is a separate,
+        explicit request.
+        """
+        if self.architecture is not None or previous is None or previous.architecture is None:
+            return self
+        deps = {_fold(x) for x in [*self.services, *self.technologies]}
+        data = {_fold(x) for x in self.data_categories}
+        actions = {_fold(a.description) for a in self.consequential_actions}
+        components = [
+            c.model_copy(
+                update={
+                    "uses": [v for v in c.uses if _fold(v) in deps],
+                    "data": [v for v in c.data if _fold(v) in data],
+                    "actions": [v for v in c.actions if _fold(v) in actions],
+                }
+            )
+            for c in previous.architecture.components
+        ]
+        kept = previous.architecture.model_copy(update={"components": components})
+        return self.model_copy(update={"architecture": kept})
+
     @field_validator("id")
     @classmethod
     def _slug(cls, v: str) -> str:

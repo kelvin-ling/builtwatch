@@ -15,6 +15,8 @@
   normalized.consequential_actions=(item.consequential_actions||[]).map(action=>{if(!action||typeof action!=='object'||typeof action.description!=='string'||!action.description.trim())throw Error('Each important action needs a description.');return {...clone(action),description:action.description.trim()};});
   normalized.provenance=item.provenance&&typeof item.provenance==='object'&&!Array.isArray(item.provenance)?clone(item.provenance):{};
   normalized.source_agent=typeof item.source_agent==='string'&&item.source_agent.trim()?item.source_agent.trim().slice(0,120):null;
+  if(normalized.remove_architecture===true)normalized.architecture=null;
+  delete normalized.remove_architecture;
   // Same rule as the server: a backend map may only cite facts the profile records.
   if(normalized.architecture){const r=root.BuiltWatchArchMap?.validate(normalized,normalized.architecture);if(r&&!r.ok)throw Error(r.errors[0]);if(r&&Object.values(r.additions).flat().length)throw Error('The backend map names a dependency, data category or action the profile does not record.');}
   return normalized;

@@ -92,3 +92,39 @@ def test_example_and_demo_maps_are_valid():
     assert {s["id"] for s in mapped} == {"support-widget", "inbox-triage"}
     for system in mapped:
         SystemPassport.model_validate(system)
+
+
+def test_update_without_a_map_keeps_it_trimmed_to_remaining_facts(store, passport, monkeypatch):
+    monkeypatch.setenv("BW_OWNER_TOKEN", "owner-test-key")
+    settings = Settings()
+    dispatch(_event("/api/systems", "POST", _mapped(passport)), store, settings, None)
+    update = passport.model_dump(mode="json")  # serialised profiles carry "architecture": null
+    removed = (passport.services or passport.technologies)[0]
+    for key in ("services", "technologies"):
+        update[key] = [x for x in update[key] if x != removed]
+    assert dispatch(_event("/api/systems", "POST", update), store, settings, None)[
+        "statusCode"
+    ] == 200
+    kept = store.get_system(passport.id).architecture
+    assert kept is not None and [c.id for c in kept.components] == ["api", "ext"]
+    assert all(not c.uses for c in kept.components)
+
+
+def test_map_is_removed_only_on_explicit_request(store, passport, monkeypatch):
+    monkeypatch.setenv("BW_OWNER_TOKEN", "owner-test-key")
+    settings = Settings()
+    dispatch(_event("/api/systems", "POST", _mapped(passport)), store, settings, None)
+    body = {**passport.model_dump(mode="json"), "remove_architecture": True}
+    dispatch(_event("/api/systems", "POST", body), store, settings, None)
+    assert store.get_system(passport.id).architecture is None
+
+
+def test_bulk_import_keeps_saved_maps(store, passport, monkeypatch):
+    monkeypatch.setenv("BW_OWNER_TOKEN", "owner-test-key")
+    settings = Settings()
+    dispatch(_event("/api/systems", "POST", _mapped(passport)), store, settings, None)
+    bulk = {"systems": [passport.model_dump(mode="json")]}
+    assert dispatch(_event("/api/systems/bulk", "POST", bulk), store, settings, None)[
+        "statusCode"
+    ] == 200
+    assert store.get_system(passport.id).architecture is not None

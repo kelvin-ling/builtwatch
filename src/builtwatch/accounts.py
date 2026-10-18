@@ -345,6 +345,8 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                         return response(409, {"error": "Your workspace supports ten systems"})
                     if existing:
                         profile.created_at = existing.created_at
+                        # A daily agent sync rarely resends the backend map; keep it.
+                        profile = profile.keep_architecture_from(existing)
                     if not profile.source_agent:
                         profile.source_agent = "Connected project agent"
                     store.upsert_system(profile)

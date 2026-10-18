@@ -585,3 +585,31 @@ def test_monitoring_schedule_tracks_toronto_daylight_saving():
     before = datetime(2026, 10, 31, 12, tzinfo=timezone.utc)
     assert monitoring_schedule(True, before)["next_check_at"] == "2026-11-01T12:00:00+00:00"
     assert monitoring_schedule(False, before)["next_check_at"] is None
+
+
+def test_agent_sync_keeps_the_saved_backend_map(table):
+    from builtwatch.models import SystemPassport
+
+    store = DynamoStore(table, tenant_id("agent-map-owner"))
+    system_id = "agent-12345678-abc"
+    mapped = SystemPassport.model_validate(
+        {
+            "id": system_id,
+            "name": "Connected",
+            "purpose": "Draft replies",
+            "services": ["Gmail API"],
+            "architecture": {
+                "components": [
+                    {"id": "inbox", "name": "Inbox", "kind": "external", "uses": ["Gmail API"]}
+                ]
+            },
+        }
+    )
+    store.upsert_system(mapped)
+    resend = SystemPassport(
+        id=system_id, name="Connected", purpose="Draft replies", services=["Gmail API"]
+    )
+    body = json.dumps({"system_id": system_id, "profile": resend.model_dump(mode="json")})
+    result = serve(event("/api/agent/sync", "POST", body), store, Settings(), None)
+    assert result["statusCode"] == 200
+    assert store.get_system(system_id).architecture.components[0].uses == ["Gmail API"]

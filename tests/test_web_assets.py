@@ -431,3 +431,10 @@ def test_every_open_review_is_pinned_on_the_app_flow():
     assert "function automationMap(" not in app
     assert "BuiltWatchArchMap.render(s,linked" in app
     assert "focus:f.id" in app
+
+
+def test_review_cards_are_not_mapped_with_the_array_index():
+    """`items.map(findingRow)` passes the index as `inGroup`, retitling every card after
+    the first with the change headline instead of the app name."""
+    app = (ROOT / "web/app.js").read_text()
+    assert "map(findingRow)" not in app

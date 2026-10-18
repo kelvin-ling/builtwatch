@@ -71,6 +71,9 @@ test('saves keep an omitted map and drop entries whose fact was removed',()=>{
  assert.deepEqual(kept.architecture.components.find(c=>c.id==='inbox').uses,[]);
  assert.deepEqual(kept.architecture.components.find(c=>c.id==='llm').uses,['Amazon Bedrock']);
  assert.equal(A.reconcile({id:'x',architecture:undefined},undefined).architecture,null);
+ // Serialised profiles carry null; that is "not resent", not "remove".
+ assert.equal(A.reconcile({...app,architecture:null},app).architecture.components.length,4);
+ assert.equal(A.reconcile({...app,remove_architecture:true},app).architecture,null);
 });
 
 test('the agent request names the profile facts and forbids sending code or secrets',()=>{
@@ -88,4 +91,23 @@ test('card maps show only hit parts and neighbours, or a one-line summary when q
  const quiet=A.render(app,[],{sources,compact:true});
  assert.match(quiet,/No open review lands on this app/);
  assert.match(quiet,/1 entry point · 1 service · 1 data store or model · 1 outside service/);
+});
+
+test('landing names the hit and connected parts for supplied maps only',()=>{
+ const l=A.landing(app,gmail);
+ assert.deepEqual(l.parts.map(c=>c.name),['Inbox']);
+ assert.deepEqual(l.near.map(c=>c.name),['Triage function']);
+ assert.equal(A.landing(app,rule).whole,true);
+ const {architecture,...plain}=app;
+ assert.equal(A.landing(plain,gmail),null);
+});
+
+test('the agent handoff and digest say where the change lands',async()=>{
+ await import('../web/handoff.js');await import('../web/notifications.js');
+ const f={...gmail,title:'Sender rules',inferences:[],unknowns:[],review_suggestions:[],evidence:[],adoption_status:'unknown'};
+ const prompt=globalThis.BuiltWatchHandoff.findingPrompt(f,app,sources);
+ assert.match(prompt,/Where it lands in the backend map:\n- Inbox \(external\)/);
+ assert.match(prompt,/Connected components to check next:\n- Triage function/);
+ const data={demo:false,systems:[app],sources:[{id:'gmail',name:'Gmail',category:'communications'}],runs:[],findings:[f]};
+ assert.match(globalThis.BuiltWatchNotifications.digest(data,[f]),/Lands on: Inbox; check next: Triage function/);
 });
