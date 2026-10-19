@@ -349,12 +349,13 @@
 .when-box q{display:block;margin-top:6px;font-size:12.5px;color:var(--muted);font-style:italic}
 .deadline-timeline{padding:22px 24px;margin:0 0 22px}
 .deadline-timeline .section-heading p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.deadline-timeline .section-heading{flex-wrap:wrap;margin-top:0}.deadline-timeline .section-heading .button{font-size:13px}.deadline-timeline .section-heading .button .bw-icon{width:16px;height:16px}
 .deadline-timeline ol{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
-.deadline-timeline button{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-left:4px solid #9fb5aa;border-radius:12px;padding:10px 14px;font:inherit;color:inherit;cursor:pointer}
+.deadline-timeline ol button{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-left:4px solid #9fb5aa;border-radius:12px;padding:10px 14px;font:inherit;color:inherit;cursor:pointer}
 .deadline-timeline li.soon button{border-left-color:#c2412a}.deadline-timeline li.upcoming button{border-left-color:#c47a14}
 .deadline-timeline li.passed button{background:var(--paper)}
 .tl-date{display:grid;min-width:118px;flex:none}
 .tl-date b{font-size:14px}.tl-date small{font-size:11.5px;color:var(--muted)}
 .tl-copy{display:grid;gap:2px;min-width:0}
 .tl-copy strong{font-size:13.5px}.tl-copy span{font-size:12.5px;color:#4f685e}.tl-copy small{font-size:11.5px;color:#6d3f08}
-@media(max-width:600px){.deadline-timeline button{flex-direction:column;align-items:flex-start;gap:6px}}
+@media(max-width:600px){.deadline-timeline ol button{flex-direction:column;align-items:flex-start;gap:6px}}

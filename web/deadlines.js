@@ -51,5 +51,17 @@
  const fmt=iso=>new Date(iso+'T12:00:00Z').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
  function chip(d){if(!d)return '';const esc=root.BuiltWatchVisuals.escape;return `<span class="deadline-chip ${d.urgency}" title="${esc('Quoted: “'+d.phrase+'”')}">${root.BuiltWatchVisuals.icon('clock')}${d.passed?`Took effect ${esc(fmt(d.date))}`:`${esc(fmt(d.date))} · ${d.days===0?'today':`in ${d.days} ${d.days===1?'day':'days'}`}`}</span>`;}
 
- root.BuiltWatchDeadlines={inText,of,chip,fmt};
+ // An iCalendar (RFC 5545) file of upcoming take-effect dates as all-day events. Each event
+ // carries the exact quoted phrase; dates that already passed are left out. Rows are
+ // {id,date,phrase,summary,detail}; `note` (e.g. demo replay) is prefixed to each description.
+ const icsText=v=>String(v??'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n');
+ const fold=line=>{const out=[];let cur='',n=0;for(const ch of line){const b=new TextEncoder().encode(ch).length;if(n+b>(out.length?74:75)){out.push(cur);cur='';n=0;}cur+=ch;n+=b;}out.push(cur);return out.join('\r\n ');};
+ const compact=iso=>iso.replace(/-/g,'');
+ function ics(rows,{now=Date.now(),note=''}={}){
+  const today=day(new Date(now)).toISOString().slice(0,10),stamp=new Date(now).toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
+  const events=(rows||[]).filter(r=>r?.date&&r.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).map(r=>{const end=new Date(Date.parse(r.date+'T00:00:00Z')+86400000).toISOString().slice(0,10);return ['BEGIN:VEVENT',`UID:${icsText(r.id)}-${compact(r.date)}@builtwatch`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${compact(r.date)}`,`DTEND;VALUE=DATE:${compact(end)}`,`SUMMARY:${icsText(r.summary)}`,`DESCRIPTION:${icsText([note,`Quoted: “${r.phrase}”`,r.detail].filter(Boolean).join('\n'))}`,'TRANSP:TRANSPARENT','END:VEVENT'];});
+  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//BuiltWatch//Take-effect dates//EN','CALSCALE:GREGORIAN','X-WR-CALNAME:BuiltWatch take-effect dates',...events.flat(),'END:VCALENDAR'].map(fold).join('\r\n')+'\r\n';
+ }
+
+ root.BuiltWatchDeadlines={inText,of,chip,fmt,ics};
 })(typeof window!=='undefined'?window:globalThis);

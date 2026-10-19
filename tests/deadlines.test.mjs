@@ -47,3 +47,24 @@ test('handoff and digest carry the date with its quoted phrase',async()=>{
  const data={demo:false,systems:[app],sources:[],runs:[],findings:[f]};
  assert.match(globalThis.BuiltWatchNotifications.digest(data,[f]),/Takes effect: 2099-11-01 \(takes effect in \d+ days\); quoted: "Starting November 1, 2099"/);
 });
+
+test('calendar export holds only upcoming dates, quotes each phrase, and is valid iCalendar',()=>{
+ const now=Date.parse('2026-10-19T12:00:00Z');
+ const rows=[
+  {id:'find_b',date:'2027-03-01',phrase:'by March 1, 2027',summary:'Billing API: TLS, keys; rotation',detail:'Source: vendor\nLands on: Payments'},
+  {id:'find_a',date:'2026-11-01',phrase:'Starting November 1, 2026',summary:'Support widget: v1 retired',detail:''},
+  {id:'find_old',date:'2026-03-01',phrase:'Starting March 1, 2026',summary:'Past change',detail:''},
+ ];
+ const out=D.ics(rows,{now,note:'HISTORICAL DEMO'});
+ assert.ok(out.startsWith('BEGIN:VCALENDAR\r\nVERSION:2.0\r\n'));assert.ok(out.endsWith('END:VCALENDAR\r\n'));
+ assert.ok(!/[^\r]\n/.test(out),'every line ends in CRLF');
+ for(const line of out.split('\r\n'))assert.ok(new TextEncoder().encode(line).length<=75,`folded: ${line}`);
+ const unfolded=out.replace(/\r\n /g,'');
+ assert.equal((unfolded.match(/BEGIN:VEVENT/g)||[]).length,2);assert.doesNotMatch(unfolded,/Past change/);
+ assert.ok(unfolded.indexOf('DTSTART;VALUE=DATE:20261101')<unfolded.indexOf('DTSTART;VALUE=DATE:20270301'),'soonest first');
+ assert.match(unfolded,/DTSTART;VALUE=DATE:20270301\r\nDTEND;VALUE=DATE:20270302/);
+ assert.match(unfolded,/UID:find_b-20270301@builtwatch/);
+ assert.match(unfolded,/SUMMARY:Billing API: TLS\\, keys\\; rotation/);
+ assert.match(unfolded,/DESCRIPTION:HISTORICAL DEMO\\nQuoted: “by March 1\\, 2027”\\nSource: vendor\\nLands on: Payments/);
+ assert.equal((D.ics([],{now}).match(/VEVENT/g)||[]).length,0);
+});
