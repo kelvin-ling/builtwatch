@@ -38,8 +38,8 @@ globalThis.BuiltWatchNotifications = (() => {
    const app=data.systems.find(s=>s.id===f.system_id),source=data.sources.find(s=>s.id===f.source_id);
    text+=`## ${clean(app?.name||f.system_id)}\n\n${clean(f.title)}\nSource: ${clean(source?.name||f.source_id)}\n${source?.url&&/^https:\/\//.test(source.url)?source.url+'\n':''}Method: ${clean(f.assessment_method||'Historical assessment')}\nAdoption status: ${clean(f.adoption_status||'unknown')}\n`;
    for(const e of f.evidence||[])text+=`\n> ${String(e.passage||'').replaceAll('\n','\n> ')}\n`;
-   const where=app&&globalThis.BuiltWatchArchMap?.landing(app,f);
-   text+=`\nRecorded dependency: ${(f.system_facts||[]).map(x=>clean(x.value)).join(', ')||'Not recorded'}\n${where?`Lands on: ${where.whole?'whole app':clean(where.parts.map(c=>c.name).join(', '))}${where.near.length?`; check next: ${clean(where.near.map(c=>c.name).join(', '))}`:''}\n`:''}Next step: ${clean(f.app_impact?.review_question||'Verify the evidence against the app before making changes.')}\n\n`;
+   const where=app&&globalThis.BuiltWatchArchMap?.landing(app,f),w=globalThis.BuiltWatchDeadlines?.of(f,date.getTime());
+   text+=`\nRecorded dependency: ${(f.system_facts||[]).map(x=>clean(x.value)).join(', ')||'Not recorded'}\n${where?`Lands on: ${where.whole?'whole app':clean(where.parts.map(c=>c.name).join(', '))}${where.near.length?`; check next: ${clean(where.near.map(c=>c.name).join(', '))}`:''}\n`:''}${w?`Takes effect: ${w.date} (${w.label}); quoted: "${clean(w.phrase)}"\n`:''}Next step: ${clean(f.app_impact?.review_question||'Verify the evidence against the app before making changes.')}\n\n`;
   }
   return text+'A review candidate does not establish impact, safety, or compliance. First observations establish baselines; a quiet inbox is not proof of complete coverage.\n';
  }
