@@ -279,6 +279,46 @@ class Store:
         self.conn.commit()
         return finding, True
 
+    def update_finding(self, finding: Finding) -> None:
+        """Rewrite a stored finding's payload (used to attach an AI brief)."""
+        self.conn.execute(
+            "UPDATE findings SET payload=? WHERE id=?", (_dump(finding), finding.id)
+        )
+        self.conn.commit()
+
+    def _brief_meta(self) -> None:
+        self.conn.execute("CREATE TABLE IF NOT EXISTS web_meta (key TEXT PRIMARY KEY, value TEXT)")
+
+    def claim_brief(self, month: str, count: int, usd: float, reserve: float) -> bool:
+        """Reserve one AI brief within this month's count and USD allowance."""
+        self._brief_meta()
+        row = self.conn.execute(
+            "SELECT value FROM web_meta WHERE key=?", ("briefs#" + month,)
+        ).fetchone()
+        used = json.loads(row[0]) if row else {"briefs": 0, "cost": 0.0}
+        if used["briefs"] >= count or used["cost"] + reserve > usd:
+            return False
+        used = {"briefs": used["briefs"] + 1, "cost": used["cost"] + reserve}
+        self.conn.execute(
+            "INSERT OR REPLACE INTO web_meta (key, value) VALUES (?, ?)",
+            ("briefs#" + month, json.dumps(used)),
+        )
+        self.conn.commit()
+        return True
+
+    def settle_brief(self, month: str, reserve: float, cost: float) -> None:
+        self._brief_meta()
+        row = self.conn.execute(
+            "SELECT value FROM web_meta WHERE key=?", ("briefs#" + month,)
+        ).fetchone()
+        used = json.loads(row[0]) if row else {"briefs": 0, "cost": 0.0}
+        used["cost"] = max(0.0, used["cost"] - reserve + cost)
+        self.conn.execute(
+            "INSERT OR REPLACE INTO web_meta (key, value) VALUES (?, ?)",
+            ("briefs#" + month, json.dumps(used)),
+        )
+        self.conn.commit()
+
     def get_finding(self, finding_id: str) -> Finding | None:
         row = self.conn.execute(
             "SELECT payload FROM findings WHERE id=?", (finding_id,)

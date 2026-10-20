@@ -5,6 +5,7 @@ import '../web/perspectives.js';
 import '../web/visuals.js';
 import '../web/archmap.js';
 import '../web/deadlines.js';
+import '../web/briefs.js';
 const v=globalThis.BuiltWatchVisuals;
 const state={demo:true,systems:[{id:'mail',name:'Mail <helper>',services:['Gmail API'],technologies:[]}],sources:[{id:'gmail',category:'communications'}],runs:[{id:'run',status:'complete',started_at:'2026-10-14T12:00:00Z',finished_at:'2026-10-14T12:01:00Z',systems_evaluated:['mail'],source_health:[{source_id:'gmail',fetch_status:'ok'}]}]};
 test('visual metrics and app map use real counts and escape imported content',()=>{
@@ -36,7 +37,7 @@ test('app map shows how to reach systems beyond its four-row preview',()=>{
 test('reviewed cards and groups identify recorded outcomes instead of new review work',async()=>{
  const {readFileSync}=await import('node:fs');const vm=await import('node:vm');
  const app=readFileSync(new URL('../web/app.js',import.meta.url),'utf8');
- const ctx=vm.createContext({BuiltWatchVisuals:v,BuiltWatchPerspectives,BuiltWatchArchMap,BuiltWatchDeadlines,esc:v.escape,
+ const ctx=vm.createContext({BuiltWatchVisuals:v,BuiltWatchPerspectives,BuiltWatchArchMap,BuiltWatchDeadlines,BuiltWatchBriefs,esc:v.escape,
   state:{...state,findings:[]}});
  vm.runInContext(app.slice(app.indexOf('function findingRow('),app.indexOf('\nfunction monitoredSystemIds')),ctx);
  const finding={id:'one',system_id:'mail',relevance:'relevant',disposition:'acknowledged',

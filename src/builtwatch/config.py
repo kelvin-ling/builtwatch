@@ -122,6 +122,20 @@ class Settings:
     )
     replay_dir: Path = field(default_factory=lambda: Path(os.environ.get("BW_REPLAY", "replay")))
     limits: Limits = field(default_factory=Limits)
+    # AI impact briefs: one small model call per new rules review, under their own hard
+    # monthly caps (count and USD) shared by every workspace. Off unless switched on.
+    ai_briefs: bool = field(
+        default_factory=lambda: os.environ.get("BW_AI_BRIEFS", "").lower() in {"1", "on", "true"}
+    )
+    brief_model_id: str = field(
+        default_factory=lambda: os.environ.get("BW_AI_BRIEF_MODEL", "us.amazon.nova-lite-v1:0")
+    )
+    brief_month_count: int = field(
+        default_factory=lambda: int(os.environ.get("BW_AI_BRIEF_MONTH_COUNT", "300"))
+    )
+    brief_month_usd: float = field(
+        default_factory=lambda: _env_float("BW_AI_BRIEF_MONTH_USD", 0.50)
+    )
 
     def __post_init__(self) -> None:
         if self.inference_mode not in {"rules", "bedrock"}:

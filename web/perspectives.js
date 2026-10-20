@@ -7,7 +7,9 @@
  };
  const topics={business_news:'Software business updates',communications:'Platform policies',regulation:'Software & AI regulation',privacy_ai:'Privacy & AI rules',vendor_policy:'AI service policies',api_change:'API & platform changes',security:'Security advisories',standards:'Engineering guidance'};
  const normalize=value=>Object.hasOwn(views,value)?value:'business';
- function ordered(items,sources,lens){const order=views[normalize(lens)].order;const categories=new Map(sources.map(x=>[x.id,x.category]));return [...items].sort((a,b)=>{const rank=x=>{const index=order.indexOf(categories.get(x.source_id));return index<0?99:index;};return rank(a)-rank(b);});}
+ // An AI brief can move a review up ("likely affects") or down ("unlikely"); it never hides one.
+ const briefRank=f=>({likely_affects:0,unclear:1,unlikely:3})[f?.ai_brief?.verdict]??2;
+ function ordered(items,sources,lens){const order=views[normalize(lens)].order;const categories=new Map(sources.map(x=>[x.id,x.category]));return [...items].sort((a,b)=>{const rank=x=>{const index=order.indexOf(categories.get(x.source_id));return index<0?99:index;};return briefRank(a)-briefRank(b)||rank(a)-rank(b);});}
  function topic(f,sources){return topics[sources.find(x=>x.id===f.source_id)?.category]||'Other developments';}
  function context(system){return {actions:(system.consequential_actions||[]).map(x=>x.description),assumptions:system.assumptions||[],limits:system.constraints||[],regions:system.jurisdictions||[]};}
  const shorten=(value,max=112)=>{const text=String(value||'').trim().replace(/\s+/g,' ');if(text.length<=max)return text;const cut=text.slice(0,max-1),word=cut.slice(0,cut.lastIndexOf(' '));return (word||cut)+'…';};

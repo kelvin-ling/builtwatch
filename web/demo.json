@@ -788,7 +788,20 @@
       "created_at": "2026-09-12T19:42:32.896526Z",
       "revision_hash": "a0fab206e1c9a298a20dca5b924f0449658ff483906dd2829eee0743f6b1a3e9",
       "quality_version": 4,
-      "disposition": "open"
+      "disposition": "open",
+      "ai_brief": {
+        "verdict": "likely_affects",
+        "component_id": "widget",
+        "what_changes": "Transparency obligations for AI systems interacting with natural persons.",
+        "why_it_matters": "The chat widget must inform visitors that they are interacting with an AI system, affecting how it responds to website visitors.",
+        "check_first": "Verify if the chat widget includes a disclosure that it is an AI system.",
+        "support_quote": "Providers shall ensure that AI systems intended to interact directly with natural persons are designed and developed in such a way that the natural persons concerned are informed that they are interacting with an AI system.",
+        "model_id": "us.amazon.nova-lite-v1:0",
+        "input_tokens": 812,
+        "output_tokens": 144,
+        "cost_usd": 8.3e-05,
+        "created_at": "2026-10-20T05:07:29.523693Z"
+      }
     },
     {
       "id": "find_cd06ef6825f0",
@@ -1673,7 +1686,20 @@
       "created_at": "2026-09-12T19:40:35.063489Z",
       "revision_hash": "7cd51231f107a7c5bc3e8273ac307676a0635a40d4f1d0e122ca8d98e4561cb3",
       "quality_version": 4,
-      "disposition": "open"
+      "disposition": "open",
+      "ai_brief": {
+        "verdict": "likely_affects",
+        "component_id": "sendgrid",
+        "what_changes": "Gmail requires TLS for email transmission starting February 1, 2024.",
+        "why_it_matters": "The app uses SendGrid to send emails to Gmail accounts, so it must comply with Gmail's TLS requirement to ensure email delivery.",
+        "check_first": "Verify that TLS is set up for the domain used in the app's email sending process.",
+        "support_quote": "Use a TLS connection for transmitting email.",
+        "model_id": "us.amazon.nova-lite-v1:0",
+        "input_tokens": 1468,
+        "output_tokens": 131,
+        "cost_usd": 0.00012,
+        "created_at": "2026-10-20T05:07:30.590740Z"
+      }
     },
     {
       "id": "find_e15332f51162",
@@ -2312,5 +2338,11 @@
   ],
   "demo": true,
   "replay_date": "12 September 2026",
-  "demo_note": "Saved results from a real source replay run on 12 September 2026. Historical material; not a live change alert."
+  "demo_note": "Saved results from a real source replay run on 12 September 2026. Historical material; not a live change alert.",
+  "monitoring": {
+    "method": "replay",
+    "ai_briefs": true,
+    "ai_brief_model": "us.amazon.nova-lite-v1:0",
+    "description": "Saved replay. The two open reviews carry real Amazon Nova Lite briefs generated on 20 October 2026 from their saved evidence."
+  }
 }

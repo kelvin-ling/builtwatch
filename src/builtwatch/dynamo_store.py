@@ -139,6 +139,46 @@ class DynamoStore:
         self.put("finding#" + finding.id, finding.model_dump(mode="json"))
         return finding, True
 
+    def update_finding(self, finding: Finding) -> None:
+        """Rewrite a stored finding (used to attach an AI brief)."""
+        self.put("finding#" + finding.id, finding.model_dump(mode="json"))
+
+    def claim_brief(self, month: str, count: int, usd: float, reserve: float) -> bool:
+        """Atomically reserve one AI brief from the allowance shared by all workspaces.
+
+        The owner's manual pause stops briefs as it stops every other paid call.
+        """
+        control = self.table.get_item(Key={"pk": "ADMIN", "sk": "control"}).get("Item", {})
+        if control.get("paused") or reserve > usd or count < 1:
+            return False
+        amount = Decimal(str(round(reserve, 6)))
+        try:
+            self.table.update_item(
+                Key={"pk": "BUDGET", "sk": "briefs#" + month},
+                UpdateExpression="ADD briefs :one, cost :amount",
+                ConditionExpression=(
+                    "attribute_not_exists(briefs) OR (briefs < :count AND cost <= :remaining)"
+                ),
+                ExpressionAttributeValues={
+                    ":one": 1,
+                    ":amount": amount,
+                    ":count": count,
+                    ":remaining": Decimal(str(usd)) - amount,
+                },
+            )
+            return True
+        except ClientError as exc:
+            if exc.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                return False
+            raise
+
+    def settle_brief(self, month: str, reserve: float, cost: float) -> None:
+        self.table.update_item(
+            Key={"pk": "BUDGET", "sk": "briefs#" + month},
+            UpdateExpression="ADD cost :delta",
+            ExpressionAttributeValues={":delta": Decimal(str(round(cost - reserve, 6)))},
+        )
+
     def get_finding(self, finding_id: str) -> Finding | None:
         value = self.get("finding#" + finding_id)
         return Finding.model_validate(value) if value else None

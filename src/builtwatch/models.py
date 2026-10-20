@@ -422,6 +422,27 @@ class AppImpact(BaseModel):
     review_question: str = Field(min_length=10, max_length=400)
 
 
+class AIBrief(BaseModel):
+    """A short model-written impact brief for one rules review.
+
+    Optional and advisory. It is kept only when its supporting quote appears verbatim in
+    the review's evidence and its component exists in the app's backend map; otherwise the
+    plain rules review stands alone. It never changes relevance or closes a review.
+    """
+
+    verdict: Literal["likely_affects", "unlikely", "unclear"]
+    component_id: str | None = None
+    what_changes: str = Field(min_length=1, max_length=240)
+    why_it_matters: str = Field(min_length=1, max_length=360)
+    check_first: str = Field(min_length=1, max_length=240)
+    support_quote: str = Field(min_length=1, max_length=400)
+    model_id: str
+    input_tokens: int = 0
+    output_tokens: int = 0
+    cost_usd: float = 0.0
+    created_at: datetime = Field(default_factory=utcnow)
+
+
 class Finding(BaseModel):
     id: str
     scan_run_id: str
@@ -444,6 +465,7 @@ class Finding(BaseModel):
     review_suggestions: list[str] = Field(default_factory=list)
 
     app_impact: AppImpact | None = None
+    ai_brief: AIBrief | None = None
     validation_issues: list[str] = Field(default_factory=list)
     adoption_status: AdoptionStatus = AdoptionStatus.UNKNOWN
     created_at: datetime = Field(default_factory=utcnow)

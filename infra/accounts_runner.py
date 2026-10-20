@@ -112,6 +112,29 @@ def lambda_handler(event, context):
             if "LastEvaluatedKey" not in page:
                 return {"workspaces": count}
             args["ExclusiveStartKey"] = page["LastEvaluatedKey"]
+    if event.get("task") == "briefs":
+        # Operator backfill (direct IAM invoke only): brief open rules reviews that have
+        # none, within the shared monthly allowance. Never changes relevance.
+        from builtwatch.briefs import attach_briefs
+
+        args = {"KeyConditionExpression": Key("pk").eq("DIRECTORY")}
+        totals: dict[str, int] = {}
+        while True:
+            page = table.query(**args)
+            for item in page.get("Items", []):
+                store = DynamoStore(table, item["sk"])
+                open_reviews = [
+                    f
+                    for f in store.list_findings(relevance="relevant")
+                    if f.assessment_method.startswith("rules-")
+                    and f.ai_brief is None
+                    and not store.is_disposed(f.dedup_key())
+                ]
+                for key, value in attach_briefs(store, settings, open_reviews, limit=20).items():
+                    totals[key] = totals.get(key, 0) + value
+            if "LastEvaluatedKey" not in page:
+                return totals
+            args["ExclusiveStartKey"] = page["LastEvaluatedKey"]
     if event.get("task") == "intake":
         from builtwatch.web_intake import draft_profile
 

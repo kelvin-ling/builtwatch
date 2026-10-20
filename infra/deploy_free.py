@@ -24,6 +24,42 @@ DENY = {
         {"Sid": "NoPaidInference", "Effect": "Deny", "Action": ["bedrock:*"], "Resource": "*"},
     ],
 }
+BRIEF_WORKER = "builtwatch-accounts-worker"
+BRIEF_MODEL = "amazon.nova-lite-v1:0"
+
+
+def brief_policy(account: str) -> dict:
+    """Bedrock stays denied except one cheap model, invoked by the scan worker only."""
+    allowed = [
+        f"arn:aws:bedrock:*:{account}:inference-profile/us.{BRIEF_MODEL}",
+        f"arn:aws:bedrock:*::foundation-model/{BRIEF_MODEL}",
+    ]
+    return {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "OnlyBriefModel",
+                "Effect": "Deny",
+                "Action": ["bedrock:*"],
+                "NotResource": allowed,
+            },
+            {
+                "Sid": "BriefModelInvoke",
+                "Effect": "Allow",
+                "Action": ["bedrock:InvokeModel"],
+                "Resource": allowed,
+            },
+        ],
+    }
+
+
+# AI impact briefs: a hard monthly allowance shared by every workspace.
+BRIEF_ENV = {
+    "BW_AI_BRIEFS": "on",
+    "BW_AI_BRIEF_MODEL": f"us.{BRIEF_MODEL}",
+    "BW_AI_BRIEF_MONTH_COUNT": "300",
+    "BW_AI_BRIEF_MONTH_USD": "0.50",
+}
 FREE_ENV = {
     "BW_INFERENCE_MODE": "rules",
     "BW_MAX_RUN_USD": "0",
@@ -67,6 +103,21 @@ def main() -> None:
     parser.add_argument("--account", required=True)
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--backup-directory", default="free-rollout")
+    briefs = parser.add_mutually_exclusive_group()
+    briefs.add_argument(
+        "--ai-briefs",
+        dest="ai_briefs",
+        action="store_const",
+        const=True,
+        help="Allow the scan worker to call Nova Lite for capped AI impact briefs.",
+    )
+    briefs.add_argument(
+        "--no-ai-briefs",
+        dest="ai_briefs",
+        action="store_const",
+        const=False,
+        help="Turn AI impact briefs off and deny all Bedrock again.",
+    )
     args = parser.parse_args()
     if Path(args.backup_directory).name != args.backup_directory or args.backup_directory in {
         ".", "..",
@@ -103,7 +154,22 @@ def main() -> None:
         for function in page["Functions"]:
             if function["FunctionName"].startswith("builtwatch-"):
                 roles.add(function["Role"].rsplit("/", 1)[-1])
+    if args.ai_briefs is None:
+        # Neither flag: keep whatever the live worker has, so a routine code deploy never
+        # silently switches briefs on or off.
+        live = lam.get_function_configuration(FunctionName=BRIEF_WORKER)
+        live_env = live.get("Environment", {}).get("Variables", {})
+        args.ai_briefs = live_env.get("BW_AI_BRIEFS") == "on"
+    print(f"AI impact briefs: {'on (Nova Lite, capped)' if args.ai_briefs else 'off'}", flush=True)
+    worker_role = configs[BRIEF_WORKER]["Role"].rsplit("/", 1)[-1]
     for role in sorted(roles):
+        if args.ai_briefs and role == worker_role:
+            policy = brief_policy(args.account)
+            iam.put_role_policy(
+                RoleName=role, PolicyName=POLICY_NAME, PolicyDocument=json.dumps(policy)
+            )
+            print(f"Denied Bedrock on {role} except {BRIEF_MODEL} for AI briefs", flush=True)
+            continue
         iam.put_role_policy(RoleName=role, PolicyName=POLICY_NAME, PolicyDocument=json.dumps(DENY))
         print(f"Denied Bedrock on {role}", flush=True)
     for name in FUNCTIONS:
@@ -112,7 +178,15 @@ def main() -> None:
             FunctionName=name,
             RevisionId=current["RevisionId"],
             Environment={
-                "Variables": {**current.get("Environment", {}).get("Variables", {}), **FREE_ENV}
+                "Variables": {
+                    **{
+                        k: v
+                        for k, v in current.get("Environment", {}).get("Variables", {}).items()
+                        if not k.startswith("BW_AI_BRIEF")
+                    },
+                    **FREE_ENV,
+                    **(BRIEF_ENV if args.ai_briefs else {}),
+                }
             },
         )
         lam.get_waiter("function_updated_v2").wait(FunctionName=name)

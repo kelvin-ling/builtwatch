@@ -314,6 +314,15 @@ def run_scan(
         run.abort_reason = f"{type(exc).__name__}: {exc}"
         logger.exception("scan aborted on unexpected error")
 
+    if settings.ai_briefs and result.new_findings:
+        from .briefs import attach_briefs
+
+        try:
+            stats = attach_briefs(store, settings, result.new_findings)
+            logger.info("AI briefs: %s", stats)
+        except Exception:
+            logger.exception("AI briefs failed; rules reviews are unaffected")
+
     run.validation_failures = len(result.grounding_problems)
     run.input_tokens = meter.input_tokens
     run.output_tokens = meter.output_tokens

@@ -87,8 +87,13 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
             "model_cost_usd": 0 if settings.inference_mode == "rules" else None,
             "description": "Rule-based matching of changed passages to declared dependencies. "
             "No AI interpretation; regulatory applicability is not assessed."
+            if settings.inference_mode == "rules" and not settings.ai_briefs
+            else "Rule-based matching finds candidates; a capped AI model writes one advisory "
+            "impact brief per new match."
             if settings.inference_mode == "rules"
             else "Metered AI assessment.",
+            "ai_briefs": settings.ai_briefs,
+            "ai_brief_model": settings.brief_model_id if settings.ai_briefs else None,
         },
         "quality": quality,
         "systems": [s.model_dump(mode="json") for s in systems],
