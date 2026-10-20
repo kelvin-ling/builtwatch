@@ -302,7 +302,13 @@ export function createWorker(assets) {
     if(adminRequest&&(agentRequest||account!==env.BW_OWNER_ACCOUNT||user.email?.toLowerCase()!==env.BW_OWNER_EMAIL?.toLowerCase()))return json({error:'Owner access required.'},403);
     try{if(!(adminRequest?await claimRequest(env.DB,'admin-requests',new Date().toISOString().slice(0,10),100):await withinEdgeAllowance(env.DB,account)))return json({error:'The pilot request allowance is reached. The demo still works; your data is saved.'},429);}catch{return json({error:'The workspace limiter is temporarily unavailable. The demo still works.'},503);}
     if(url.pathname==='/api/connections'){
-      try{return await connectionRoute(request,env,user,url);}catch{return json({error:'Connection could not be updated.'},400);}
+      try{return await connectionRoute(request,env,user,url);}catch(e){
+        // Only a malformed request is the caller's fault; a storage failure must read as one.
+        if(e instanceof SyntaxError||e instanceof TypeError)return json({error:'Connection could not be updated.'},400);
+        if(e.message==='too_large')return json({error:'Use valid text under 24 KB.'},413);
+        console.error('connection_update_failed',e.name);
+        return json({error:'Connections are temporarily unavailable. Please try again.'},503);
+      }
     }
     if(env.BW_LIVE_ENABLED==='false'&&!adminRequest)return json({error:'Live service is paused. The interactive demo remains available.'},503);
     if(!env.BW_API_URL||!env.BW_PROXY_SECRET)return json({error:'Workspace setup is incomplete.'},503);

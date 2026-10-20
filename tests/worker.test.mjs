@@ -194,3 +194,13 @@ test('expired public impact totals are served at once and refreshed in the backg
     assert.equal((await (await fresh.fetch(new Request(origin+'/api/public-impact'),env,ctx)).json()).systems_monitored,3);
   }finally{globalThis.fetch=original;Date.now=originalNow;}
 });
+test('a connection storage outage reads as unavailable, not as a bad request',async()=>{
+  const outage={...env,DB:{prepare:sql=>({bind:()=>({
+    first:async()=>{if(sql.startsWith('SELECT account,email'))return {account:'a'.repeat(64),email:'alice@example.com'};if(sql.includes('request_quota'))return {used:1};throw new Error('D1_ERROR: storage unavailable');},
+    all:async()=>{throw new Error('D1_ERROR: storage unavailable');}})})}};
+  const headers={Cookie:'__Host-bw_session='+'b'.repeat(64),Origin:origin,'X-BuiltWatch-Request':'1'};
+  assert.equal((await worker.fetch(new Request(origin+'/api/connections',{headers}),outage)).status,503);
+  assert.equal((await worker.fetch(new Request(origin+'/api/connections',{method:'POST',headers,body:'{}'}),outage)).status,503);
+  assert.equal((await worker.fetch(new Request(origin+'/api/connections',{method:'DELETE',headers,body:'{'}),outage)).status,400);
+  assert.equal((await worker.fetch(new Request(origin+'/api/connections',{method:'DELETE',headers,body:'null'}),outage)).status,400);
+});
