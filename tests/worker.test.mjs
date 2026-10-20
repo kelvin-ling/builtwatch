@@ -150,3 +150,8 @@ test('only hash-matched asset requests are cached as immutable; the page always 
   assert.equal(await get('/app.js?v=stale'),'public, max-age=300');
   assert.equal(await get('/app.js'),'public, max-age=300');
 });
+test('pages refuse to be framed by another site',async()=>{
+  const r=await worker.fetch(new Request(origin+'/'),env);
+  assert.match(r.headers.get('Content-Security-Policy'),/frame-ancestors 'none'/);
+  assert.equal(r.headers.get('X-Frame-Options'),'DENY');
+});
