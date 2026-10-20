@@ -177,18 +177,27 @@ def dispatch(
         if path.startswith("/api/systems/") and method == "DELETE":
             return response(200, {"deleted": store.delete_system(path.split("/")[-1])})
         if path == "/api/dispositions" and method == "POST":
-            if not store.get_finding(body.get("finding_id", "")):
+            finding = store.get_finding(body.get("finding_id", ""))
+            if not finding:
                 return response(404, {"error": "Finding not found"})
             action = DispositionAction(body.get("action"))
             reason = str(body.get("reason", ""))[:1000]
             if action == DispositionAction.DISMISSED and not reason.strip():
                 raise ValueError("Add a reason for dismissing this finding")
+            # A retry after a lost response repeats the latest decision; recording it again
+            # would count one human outcome twice in history and the public totals.
+            decisions = [
+                d
+                for d in store.dispositions_for(finding.id)
+                if d.action != DispositionAction.EXPORTED
+            ]
+            if decisions and (decisions[-1].action, decisions[-1].reason) == (action, reason):
+                return response(200, {"saved": True})
             item = Disposition(
                 id=new_id("disp"), finding_id=body["finding_id"], action=action, reason=reason
             )
             store.add_disposition(item)
             if hasattr(store, "get") and hasattr(store, "delete"):
-                finding = store.get_finding(body["finding_id"])
                 pending = store.get("agent-review#" + finding.system_id)
                 if pending and pending.get("finding_id") == body["finding_id"]:
                     store.delete("agent-review#" + pending["system_id"])

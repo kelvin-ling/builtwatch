@@ -86,3 +86,34 @@ def test_workspace_reads_do_not_grow_with_findings_or_apps(table, passport, snap
     # One query per record family and one read per workspace setting, whatever the size.
     assert calls["query"] <= 6, calls
     assert calls["get_item"] <= 4, calls
+
+
+def test_repeating_an_outcome_records_it_once(table, passport, snapshot):
+    from builtwatch.accounts import public_impact
+
+    store = DynamoStore(table, tenant_id("alice"))
+    store.upsert_system(passport)
+    store.register()
+    finding, _ = store.save_finding(make_finding(passport, snapshot))
+
+    def record(action, reason="Reviewed; no app change needed."):
+        body = json.dumps({"finding_id": finding.id, "action": action, "reason": reason})
+        event = {
+            "rawPath": "/api/dispositions",
+            "requestContext": {"http": {"method": "POST"}},
+            "body": body,
+        }
+        result = serve(event, store, Settings(), None)
+        assert result["statusCode"] == 200
+
+    # A retry after a timed-out response must not count as a second decision.
+    record("acknowledged")
+    record("acknowledged")
+    assert len(store.dispositions_for(finding.id)) == 1
+    assert public_impact(table)["outcomes_recorded"] == 1
+    # A changed decision is still recorded.
+    record("dismissed", "We no longer use this service.")
+    assert [d.action.value for d in store.dispositions_for(finding.id)] == [
+        "acknowledged",
+        "dismissed",
+    ]
