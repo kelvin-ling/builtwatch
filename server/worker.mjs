@@ -222,7 +222,8 @@ async function publicImpact(request, env, url, ctx) {
     });
     if (upstream.status >= 300 && upstream.status < 400) return json({error:'Public impact service returned an unexpected redirect.'},502);
     const body=await upstream.text();
-    const headers={...security,'Cache-Control':'public, max-age=300, s-maxage=300','Content-Type':'application/json'};
+    // Only a success may be cached anywhere, including the visitor's browser.
+    const headers={...security,'Cache-Control':upstream.ok?'public, max-age=300, s-maxage=300':'no-store','Content-Type':'application/json'};
     const response=new Response(body,{status:upstream.status,headers});
     // Never cache an outage or throttling response. A transient AWS failure
     // should be visible on the next request rather than replayed for a minute.

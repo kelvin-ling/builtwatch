@@ -31,6 +31,8 @@ test('public impact outages are not cached',async()=>{
     assert.equal(first.status,503);
     assert.equal(second.status,503);
     assert.equal(calls,2);
+    // Browsers and shared caches must not replay the outage either.
+    assert.equal(first.headers.get('Cache-Control'),'no-store');
   }finally{globalThis.fetch=original;}
 });
 test('public impact totals do not require a session or expose a tenant header',async()=>{
