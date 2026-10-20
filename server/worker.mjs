@@ -259,8 +259,13 @@ async function fetchPublicImpact(env,url,ctx){
 }
 
 export function createWorker(assets) {
-  return {async fetch(request, env, ctx) {
+  const worker={async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    // Uptime monitors and link checkers probe with HEAD; answer the public reads like GET.
+    if (request.method === 'HEAD' && (url.pathname === '/api/session' || url.pathname === '/api/public-impact')) {
+      const r = await worker.fetch(new Request(request, {method:'GET'}), env, ctx);
+      return new Response(null, {status:r.status, headers:r.headers});
+    }
     // Keep the competition-facing custom domain canonical. The Sites-generated
     // hostname remains useful as a deployment origin, but should not serve a
     // second indexable copy of the application.
@@ -353,4 +358,5 @@ export function createWorker(assets) {
       return json({error:'The workspace service is temporarily unavailable. Please try again.'},503);
     }
   }};
+  return worker;
 }

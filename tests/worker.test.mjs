@@ -204,3 +204,17 @@ test('a connection storage outage reads as unavailable, not as a bad request',as
   assert.equal((await worker.fetch(new Request(origin+'/api/connections',{method:'DELETE',headers,body:'{'}),outage)).status,400);
   assert.equal((await worker.fetch(new Request(origin+'/api/connections',{method:'DELETE',headers,body:'null'}),outage)).status,400);
 });
+test('HEAD on the public session and impact reads answers like GET without a body',async()=>{
+  const original=globalThis.fetch;
+  try{
+    globalThis.fetch=async()=>new Response('{"systems_monitored":4}');
+    for(const path of ['/api/session','/api/public-impact']){
+      const r=await worker.fetch(new Request(origin+path,{method:'HEAD'}),env);
+      assert.equal(r.status,200,path);
+      assert.equal(r.headers.get('Content-Type'),'application/json');
+      assert.equal(await r.text(),'');
+    }
+    // Workspace data still requires a session whatever the method.
+    assert.equal((await worker.fetch(new Request(origin+'/api/workspace',{method:'HEAD'}),env)).status,401);
+  }finally{globalThis.fetch=original;}
+});
