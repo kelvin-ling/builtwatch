@@ -357,6 +357,9 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
             system_id = body.get("system_id", "")
             if not re.fullmatch(r"agent-[a-f0-9-]{12}", system_id):
                 return response(400, {"error": "Invalid connection system"})
+            # Validate the profile and the review before writing either: a 400 must mean
+            # nothing was applied, or a retrying agent cannot tell what was saved.
+            profile = review = None
             if "profile" in body:
                 try:
                     profile = SystemPassport.model_validate(body["profile"]).stamp_architecture()
@@ -375,7 +378,6 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                         profile = profile.keep_architecture_from(existing)
                     if not profile.source_agent:
                         profile.source_agent = "Connected project agent"
-                    store.upsert_system(profile)
                 except (ValueError, TypeError) as exc:
                     return response(
                         400, {"error": "Send a valid system profile", "detail": _first_error(exc)}
@@ -386,14 +388,14 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                     finding = store.get_finding(review.finding_id)
                     if not finding or finding.system_id != system_id:
                         raise ValueError("Review must match a finding for the connected app")
-                    if review.outcome == AgentReviewOutcome.APP_UPDATED and "profile" not in body:
+                    if review.outcome == AgentReviewOutcome.APP_UPDATED and profile is None:
                         raise ValueError("An app-updated review must include the updated profile")
-                    store.put(
-                        "agent-review#" + system_id,
-                        review.model_dump(mode="json"),
-                    )
                 except (ValueError, TypeError):
                     return response(400, {"error": "Send a valid review result"})
+            if profile is not None:
+                store.upsert_system(profile)
+            if review is not None:
+                store.put("agent-review#" + system_id, review.model_dump(mode="json"))
             result = workspace(store, settings)
             return response(
                 200,

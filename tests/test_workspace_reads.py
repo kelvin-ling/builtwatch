@@ -117,3 +117,28 @@ def test_repeating_an_outcome_records_it_once(table, passport, snapshot):
         "acknowledged",
         "dismissed",
     ]
+
+
+def test_rejected_agent_sync_saves_nothing(table):
+    from builtwatch.models import SystemPassport
+
+    store = DynamoStore(table, tenant_id("agent-owner"))
+    profile = SystemPassport(id="agent-12345678-123", name="Connected", purpose="Draft replies")
+    body = {
+        "system_id": profile.id,
+        "profile": profile.model_dump(mode="json"),
+        "review": {
+            "finding_id": "find-missing",
+            "outcome": "no_change_needed",
+            "summary": "The project does not use the affected feature.",
+        },
+    }
+    event = {
+        "rawPath": "/api/agent/sync",
+        "requestContext": {"http": {"method": "POST"}},
+        "body": json.dumps(body),
+    }
+    result = serve(event, store, Settings(), None)
+    # The agent is told the request failed, so none of it may have been applied.
+    assert result["statusCode"] == 400
+    assert store.get_system(profile.id) is None
