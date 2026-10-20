@@ -312,9 +312,10 @@ def serve(event: dict, store: DynamoStore, settings: Any, invoke: Any) -> dict:
                     "The check stopped early. See check history; the demo remains available."
                 )
             data["draft"] = store.get("intake-draft")
+            preferences = store.get("preferences") or {}
             data["account"] = {
-                "automatic_checks": (store.get("preferences") or {}).get("automatic_checks", True),
-                "viewer_lens": (store.get("preferences") or {}).get("viewer_lens", "business"),
+                "automatic_checks": preferences.get("automatic_checks", True),
+                "viewer_lens": preferences.get("viewer_lens", "business"),
             }
             data["monitoring"]["schedule"] = monitoring_schedule(
                 data["account"]["automatic_checks"]

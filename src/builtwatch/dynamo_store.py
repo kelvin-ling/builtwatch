@@ -92,8 +92,9 @@ class DynamoStore:
     def delete_system(self, system_id: str) -> bool:
         exists = self.get_system(system_id) is not None
         self.delete("system#" + system_id)
+        outcomes = self.dispositions_by_finding()
         for finding in self.list_findings(system_id=system_id, current_only=False, limit=10000):
-            for action in self.dispositions_for(finding.id):
+            for action in outcomes.get(finding.id, []):
                 self.delete("disposition#" + action.id)
             self.delete("finding#" + finding.id)
         return exists
@@ -216,6 +217,21 @@ class DynamoStore:
             [d for d in self.models("disposition#", Disposition) if d.finding_id == finding_id],
             key=lambda d: d.created_at,
         )
+
+    def dispositions_by_finding(self) -> dict[str, list[Disposition]]:
+        """Every outcome in one partition query, so callers never query once per finding."""
+        grouped: dict[str, list[Disposition]] = {}
+        for item in self.models("disposition#", Disposition):
+            grouped.setdefault(item.finding_id, []).append(item)
+        for actions in grouped.values():
+            actions.sort(key=lambda d: d.created_at)
+        return grouped
+
+    def agent_reviews(self) -> dict[str, dict]:
+        return {
+            item["sk"].removeprefix("agent-review#"): json.loads(item["payload"])
+            for item in self.items("agent-review#")
+        }
 
     def is_disposed(self, dedup_key: str) -> bool:
         """Reporting helper. Not used for suppression — see store.Store.is_disposed."""

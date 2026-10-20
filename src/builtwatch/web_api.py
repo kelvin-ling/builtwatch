@@ -27,6 +27,7 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
     sources = {s.id: s for s in load_registry(settings.registry_path)}
     systems = store.list_systems()
     ids = {s.id for s in systems}
+    outcomes = store.dispositions_by_finding()
     for finding in store.list_findings(limit=300):
         if finding.system_id not in ids:
             continue
@@ -64,7 +65,7 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
                 )
                 continue
         item = finding.model_dump(mode="json")
-        actions = store.dispositions_for(finding.id)
+        actions = outcomes.get(finding.id, [])
         decisions = [a for a in actions if a.action.value != "exported"]
         item["disposition"] = decisions[-1].action.value if decisions else "open"
         findings.append(item)
@@ -77,10 +78,9 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
             if health.get("error"):
                 health["error"] = "This source could not be retrieved. Coverage is incomplete."
     agent_reviews = []
-    if hasattr(store, "get"):
-        agent_reviews = [
-            review for system in systems if (review := store.get("agent-review#" + system.id))
-        ]
+    if hasattr(store, "agent_reviews"):
+        pending = store.agent_reviews()
+        agent_reviews = [pending[system.id] for system in systems if system.id in pending]
     return {
         "monitoring": {
             "method": settings.inference_mode,

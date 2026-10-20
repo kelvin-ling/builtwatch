@@ -376,6 +376,13 @@ class Store:
         ).fetchall()
         return [Disposition.model_validate_json(r["payload"]) for r in rows]
 
+    def dispositions_by_finding(self) -> dict[str, list[Disposition]]:
+        grouped: dict[str, list[Disposition]] = {}
+        for row in self.conn.execute("SELECT payload FROM dispositions ORDER BY created_at"):
+            item = Disposition.model_validate_json(row["payload"])
+            grouped.setdefault(item.finding_id, []).append(item)
+        return grouped
+
     def is_disposed(self, dedup_key: str) -> bool:
         """Whether any revision of this development was acknowledged or dismissed.
 

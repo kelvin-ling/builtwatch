@@ -1,0 +1,88 @@
+"""The workspace read is the hot path: every page load and refresh makes it."""
+
+from __future__ import annotations
+
+import json
+
+import boto3
+import pytest
+from conftest import make_finding
+from moto import mock_aws
+
+from builtwatch.accounts import serve
+from builtwatch.config import Settings
+from builtwatch.dynamo_store import DynamoStore, tenant_id
+from builtwatch.models import Disposition, DispositionAction
+
+
+@pytest.fixture
+def table():
+    with mock_aws():
+        yield boto3.resource("dynamodb", region_name="us-east-1").create_table(
+            TableName="test-accounts",
+            BillingMode="PAY_PER_REQUEST",
+            KeySchema=[
+                {"AttributeName": key, "KeyType": kind}
+                for key, kind in [("pk", "HASH"), ("sk", "RANGE")]
+            ],
+            AttributeDefinitions=[
+                {"AttributeName": key, "AttributeType": "S"} for key in ["pk", "sk"]
+            ],
+        )
+
+
+def _count_calls(table, names):
+    calls = {name: 0 for name in names}
+    for name in names:
+        original = getattr(table, name)
+
+        def counted(*args, _name=name, _original=original, **kwargs):
+            calls[_name] += 1
+            return _original(*args, **kwargs)
+
+        setattr(table, name, counted)
+    return calls
+
+
+def _workspace(store):
+    event = {"rawPath": "/api/workspace", "requestContext": {"http": {"method": "GET"}}}
+    result = serve(event, store, Settings(), None)
+    assert result["statusCode"] == 200
+    return json.loads(result["body"])
+
+
+def test_workspace_reads_do_not_grow_with_findings_or_apps(table, passport, snapshot):
+    store = DynamoStore(table, tenant_id("alice"))
+    apps = [passport.model_copy(update={"id": f"app-{n}", "name": f"App {n}"}) for n in range(4)]
+    for app in apps:
+        store.upsert_system(app)
+    for n in range(24):
+        finding, _ = store.save_finding(
+            make_finding(
+                apps[n % 4],
+                snapshot,
+                finding_id=f"find_{n:02d}",
+                development_key=f"development-{n}",
+            )
+        )
+        if n % 3 == 0:
+            store.add_disposition(
+                Disposition(id=f"disp_{n:02d}", finding_id=finding.id, action="acknowledged")
+            )
+    store.add_disposition(
+        Disposition(id="disp_zz", finding_id="find_03", action=DispositionAction.EXPORTED)
+    )
+    store.put("agent-review#app-1", {"system_id": "app-1", "finding_id": "find_01"})
+
+    calls = _count_calls(table, ["query", "get_item"])
+    data = _workspace(store)
+
+    by_id = {f["id"]: f["disposition"] for f in data["findings"]}
+    assert len(by_id) == 24
+    assert by_id["find_00"] == "acknowledged"
+    assert by_id["find_03"] == "acknowledged"  # an export is not a decision
+    assert by_id["find_01"] == "open"
+    assert [r["system_id"] for r in data["agent_reviews"]] == ["app-1"]
+    # One query per record family and one read per workspace setting, whatever the size.
+    assert calls["query"] <= 6, calls
+    assert calls["get_item"] <= 4, calls
