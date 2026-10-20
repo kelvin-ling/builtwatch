@@ -200,17 +200,34 @@ async function publicImpact(request, env, url, ctx) {
   }
   // Anonymous impact is aggregate telemetry that changes at most a few times a day.
   // Five minutes here keeps repeated visits from reaching the AWS-backed endpoint.
-  if (publicImpactMemory && publicImpactMemory.expires > Date.now()) {
-    return new Response(publicImpactMemory.body, {status:publicImpactMemory.status, headers:publicImpactMemory.headers});
+  const now=Date.now();
+  if (publicImpactMemory && publicImpactMemory.expires > now) return impactResponse(publicImpactMemory);
+  // A recompute reads every tenant partition and takes seconds. Within the hour, answer
+  // with the last good totals and refresh them behind the response.
+  if (publicImpactMemory && publicImpactMemory.expires + PUBLIC_IMPACT_STALE_MS > now && ctx?.waitUntil) {
+    ctx.waitUntil(refreshPublicImpact(env,url,ctx));
+    return impactResponse(publicImpactMemory);
   }
   // Sites may prohibit the default cache even when the Cache API exists.
   // Aggregate data also has a backend cache; edge caching is only an optimization.
-  let edgeCache,cacheKey;
   try{
-    edgeCache=globalThis.caches?.default;
-    cacheKey=edgeCache?new Request(new URL('/api/public-impact',url.origin),{method:'GET'}):null;
-    if(edgeCache&&cacheKey){const hit=await edgeCache.match(cacheKey);if(hit)return hit;}
-  }catch{edgeCache=null;}
+    const edgeCache=globalThis.caches?.default;
+    const hit=edgeCache&&await edgeCache.match(publicImpactCacheKey(url));
+    if(hit)return hit;
+  }catch{}
+  return impactResponse(await refreshPublicImpact(env,url,ctx));
+}
+const PUBLIC_IMPACT_STALE_MS=3600000;
+let publicImpactPending=null;
+const publicImpactCacheKey=url=>new Request(new URL('/api/public-impact',url.origin),{method:'GET'});
+const impactResponse=record=>new Response(record.body,{status:record.status,headers:record.headers});
+// Concurrent misses share one upstream request instead of each starting a full recompute.
+function refreshPublicImpact(env,url,ctx){
+  publicImpactPending??=fetchPublicImpact(env,url,ctx).finally(()=>{publicImpactPending=null;});
+  return publicImpactPending;
+}
+async function fetchPublicImpact(env,url,ctx){
+  const unavailable={body:JSON.stringify({error:'Public impact totals are temporarily unavailable.'}),status:503,headers:{...security,'Content-Type':'application/json'}};
   try {
     const target = new URL('/api/public-impact', env.BW_API_URL);
     const authorization = await awsHeaders(target, 'GET', '', env);
@@ -220,21 +237,24 @@ async function publicImpact(request, env, url, ctx) {
       signal:AbortSignal.timeout(15000),
       redirect:'manual',
     });
-    if (upstream.status >= 300 && upstream.status < 400) return json({error:'Public impact service returned an unexpected redirect.'},502);
+    if (upstream.status >= 300 && upstream.status < 400) return {...unavailable,status:502,body:JSON.stringify({error:'Public impact service returned an unexpected redirect.'})};
     const body=await upstream.text();
     // Only a success may be cached anywhere, including the visitor's browser.
     const headers={...security,'Cache-Control':upstream.ok?'public, max-age=300, s-maxage=300':'no-store','Content-Type':'application/json'};
-    const response=new Response(body,{status:upstream.status,headers});
+    const record={body,status:upstream.status,headers};
     // Never cache an outage or throttling response. A transient AWS failure
     // should be visible on the next request rather than replayed for a minute.
     if (upstream.ok) {
-      publicImpactMemory={body,status:upstream.status,headers,expires:Date.now()+300000};
-      if(edgeCache&&cacheKey&&ctx?.waitUntil)ctx.waitUntil(Promise.resolve().then(()=>edgeCache.put(cacheKey,response.clone())).catch(()=>{}));
+      publicImpactMemory={...record,expires:Date.now()+300000};
+      try{
+        const edgeCache=globalThis.caches?.default;
+        if(edgeCache&&ctx?.waitUntil)ctx.waitUntil(edgeCache.put(publicImpactCacheKey(url),impactResponse(record)).catch(()=>{}));
+      }catch{}
     }
-    return response;
+    return record;
   } catch (error) {
     console.error('public_impact_failed', error.name);
-    return json({error:'Public impact totals are temporarily unavailable.'},503);
+    return unavailable;
   }
 }
 

@@ -155,3 +155,42 @@ test('pages refuse to be framed by another site',async()=>{
   assert.match(r.headers.get('Content-Security-Policy'),/frame-ancestors 'none'/);
   assert.equal(r.headers.get('X-Frame-Options'),'DENY');
 });
+test('concurrent public impact misses share one upstream recompute',async()=>{
+  const original=globalThis.fetch;
+  let calls=0,release;
+  const gate=new Promise(r=>{release=r;});
+  try{
+    globalThis.fetch=async()=>{calls++;await gate;return new Response('{"systems_monitored":3}');};
+    const fresh=(await import('../server/worker.mjs?coalesce')).createWorker({});
+    const pending=Array.from({length:5},()=>fresh.fetch(new Request(origin+'/api/public-impact'),env));
+    await new Promise(r=>setTimeout(r,10));
+    release();
+    const responses=await Promise.all(pending);
+    assert.equal(calls,1);
+    for(const r of responses){assert.equal(r.status,200);assert.equal((await r.json()).systems_monitored,3);}
+  }finally{globalThis.fetch=original;}
+});
+test('expired public impact totals are served at once and refreshed in the background',async()=>{
+  const original=globalThis.fetch,originalNow=Date.now;
+  let calls=0,clock=originalNow();
+  try{
+    Date.now=()=>clock;
+    globalThis.fetch=async()=>{calls++;return new Response(JSON.stringify({systems_monitored:calls}));};
+    const fresh=(await import('../server/worker.mjs?stale')).createWorker({});
+    const waits=[];const ctx={waitUntil:p=>waits.push(p)};
+    assert.equal((await (await fresh.fetch(new Request(origin+'/api/public-impact'),env,ctx)).json()).systems_monitored,1);
+    clock+=301000;
+    // The visitor gets the previous totals without waiting on the recompute.
+    globalThis.fetch=async()=>{calls++;await new Promise(r=>setTimeout(r,50));return new Response(JSON.stringify({systems_monitored:calls}));};
+    const started=originalNow();
+    const stale=await fresh.fetch(new Request(origin+'/api/public-impact'),env,ctx);
+    assert.ok(originalNow()-started<40);
+    assert.equal((await stale.json()).systems_monitored,1);
+    await Promise.all(waits);
+    assert.equal(calls,2);
+    assert.equal((await (await fresh.fetch(new Request(origin+'/api/public-impact'),env,ctx)).json()).systems_monitored,2);
+    // Beyond an hour the totals are too old to show; the visitor waits for new ones.
+    clock+=301000+3600000;
+    assert.equal((await (await fresh.fetch(new Request(origin+'/api/public-impact'),env,ctx)).json()).systems_monitored,3);
+  }finally{globalThis.fetch=original;Date.now=originalNow;}
+});
