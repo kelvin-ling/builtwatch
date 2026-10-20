@@ -58,11 +58,13 @@ async function claimRequest(db,key,period,limit){
     WHERE request_quota.period<excluded.period OR (request_quota.period=excluded.period AND request_quota.used<?) RETURNING used`)
     .bind(key,period,limit).first();
 }
+// Narrowest limit first: a request refused for its own account or address must not
+// spend the shared allowance that every other visitor depends on.
 async function withinEdgeAllowance(db,account){
   const now=new Date();
-  return await claimRequest(db,'global-day',now.toISOString().slice(0,10),10000)
+  return await claimRequest(db,'account-'+account,now.toISOString().slice(0,10),300)
     && await claimRequest(db,'global-minute',now.toISOString().slice(0,16),180)
-    && await claimRequest(db,'account-'+account,now.toISOString().slice(0,10),300);
+    && await claimRequest(db,'global-day',now.toISOString().slice(0,10),10000);
 }
 async function boundedBody(request){
   if(Number(request.headers.get('Content-Length'))>24000) throw Error('too_large');
@@ -120,13 +122,14 @@ async function authRoute(request,env,url){
     if(email.length>254||!/^\S+@\S+\.\S+$/.test(email))return json({error:'Enter a valid email address.'},400);
     const day=new Date().toISOString().slice(0,10),hour=new Date().toISOString().slice(0,13);
     const ip=await digest(request.headers.get('CF-Connecting-IP')||'unknown');
-    if(!await claimRequest(env.DB,'auth-global',day,200)||!await claimRequest(env.DB,'auth-ip-'+ip,hour,20)||!await claimRequest(env.DB,'auth-email-'+await digest(email),hour,10))return json({error:'Sign-in attempts are temporarily limited. Please try later; the demo remains available.'},429);
+    if(!await claimRequest(env.DB,'auth-ip-'+ip,hour,20)||!await claimRequest(env.DB,'auth-email-'+await digest(email),hour,10)||!await claimRequest(env.DB,'auth-global',day,200))return json({error:'Sign-in attempts are temporarily limited. Please try later; the demo remains available.'},429);
     const secretHash=btoa(String.fromCharCode(...new Uint8Array(await hmacBytes(env.BW_COGNITO_CLIENT_SECRET,email+env.BW_COGNITO_CLIENT_ID))));
     const common={ClientId:env.BW_COGNITO_CLIENT_ID,Username:email,SecretHash:secretHash};
-    if(['signup','forgot','resend'].includes(action)&&!await claimRequest(env.DB,'auth-email-sends',day,20))return json({error:'Today’s verification email allowance is reached. Please return tomorrow or use the demo.'},429);
+    // Refuse what cannot succeed before claiming the shared verification email allowance.
+    if(action==='signup'&&env.BW_REGISTRATION_ENABLED==='false')return json({error:'Registration is paused. Please use the demo.'},429);
     if(['signup','reset'].includes(action)&&(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{12,128}$/.test(body.password||'')))return json({error:'Use 12–128 characters with uppercase, lowercase and a number.'},400);
+    if(['signup','forgot','resend'].includes(action)&&!await claimRequest(env.DB,'auth-email-sends',day,20))return json({error:'Today’s verification email allowance is reached. Please return tomorrow or use the demo.'},429);
     if(action==='signup'){
-      if(env.BW_REGISTRATION_ENABLED==='false')return json({error:'Registration is paused. Please use the demo.'},429);
       // A lifetime ceiling, never reset by retries or deleted accounts, bounds Cognito MAUs.
       if(!await claimRequest(env.DB,'registrations','lifetime',100))return json({error:'Registration capacity is reached. The demo is still open.'},429);
       await cognito(env,'SignUp',{...common,Password:body.password,UserAttributes:[{Name:'email',Value:email}]});
