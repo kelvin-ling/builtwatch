@@ -84,3 +84,16 @@ test('initial service outage still renders the already-loaded offline demo',asyn
  const h=harness();h.ctx.state={demo:true,systems:[]};h.ctx.api=async()=>{throw Error('Offline');};
  await h.ctx.refresh();assert.equal(h.draws,1);assert.equal(h.ctx.state.demo,true);
 });
+
+test('unreadable successful session or workspace responses preserve the last private view',async()=>{
+ const transport=readFileSync(new URL('../web/client.js',import.meta.url),'utf8');
+ for(const broken of ['/api/session','/api/workspace']){
+  const h=harness(),original=h.ctx.state;h.ctx.view='systems';
+  Object.assign(h.ctx,{AbortController,fetch:async path=>new Response(path===broken?'<html>Temporary upstream page</html>':JSON.stringify({signed_in:true}),{status:200})});
+  vm.runInContext(transport,h.ctx);
+  h.ctx.api=path=>h.ctx.BuiltWatchClient.request('','',path);
+  await h.ctx.refresh();
+  assert.equal(h.ctx.state,original);assert.equal(h.ctx.session.signed_in,true);assert.equal(h.draws,0);
+  assert.equal(h.notices.length,1);assert.equal(h.timers.size,1);
+ }
+});

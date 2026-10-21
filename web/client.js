@@ -12,17 +12,22 @@
         signal: controller.signal,
       });
       let data;
-      try { data = await result.json(); } catch { data = {}; }
+      try { data = await result.json(); } catch { data = null; }
       if (!result.ok) {
         const fallback = result.status === 401
           ? 'Please sign in again to open your workspace.'
           : result.status === 429
             ? 'Your workspace is busy with a check. Wait a few minutes and refresh. Your connection has been kept.'
             : 'The workspace service is unavailable. Try again shortly. Your connection has been kept.';
-        const error = new Error(data.error || fallback);
+        const error = new Error(typeof data?.error === 'string' && data.error || fallback);
         error.status = result.status;
-        error.code = data.code;
+        error.code = data?.code;
         throw error;
+      }
+      // A proxy's HTML/partial body is an unknown outcome, not a successful
+      // save or a signed-out session. Never retry a mutation automatically.
+      if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        throw new Error('The workspace returned an unreadable response. Refresh to check the current state before trying the action again.');
       }
       return data;
     } catch (error) {
