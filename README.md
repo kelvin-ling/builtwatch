@@ -295,3 +295,9 @@ verify, not guarantees of impact.
 
 The current hosting is AWS application services plus a Sites/Cloudflare website and
 gateway. A custom domain can attach to the same Site; see [cutover steps](docs/CUSTOM_DOMAIN.md).
+
+
+During a submitted form action, the dialog pauses editing and dismissal until
+the request completes. A failed request keeps the entered values and restores
+controls. Refresh before retrying an action whose outcome could not be confirmed;
+BuiltWatch does not automatically repeat mutations.
