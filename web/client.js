@@ -29,6 +29,14 @@
       if (!data || typeof data !== 'object' || Array.isArray(data)) {
         throw new Error('The workspace returned an unreadable response. Refresh to check the current state before trying the action again.');
       }
+      // These reads control session identity and replace the entire visible desk.
+      // Missing fields are a transport failure, never evidence of sign-out/emptiness.
+      const read = (method || (body ? 'POST' : 'GET')) === 'GET';
+      if (read && ((path === '/api/session' && typeof data.signed_in !== 'boolean')
+        || (path === '/api/workspace' && (data.demo !== false
+          || !['systems', 'findings', 'sources', 'runs'].every(key => Array.isArray(data[key])))))) {
+        throw new Error('The workspace returned an incomplete response. Your last view has been kept. Refresh to try again.');
+      }
       return data;
     } catch (error) {
       if (error.name === 'AbortError') {
