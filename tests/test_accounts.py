@@ -8,31 +8,13 @@ import uuid
 from decimal import Decimal
 from types import SimpleNamespace
 
-import boto3
 import pytest
 from conftest import make_finding
-from moto import mock_aws
 
 from builtwatch.accounts import public_impact, reserve_budget, serve, settle_budget, verify, work
 from builtwatch.config import Settings
 from builtwatch.dynamo_store import DynamoStore, tenant_id
 from builtwatch.models import ScanRun
-
-
-@pytest.fixture
-def table():
-    with mock_aws():
-        yield boto3.resource("dynamodb", region_name="us-east-1").create_table(
-            TableName="test-accounts",
-            BillingMode="PAY_PER_REQUEST",
-            KeySchema=[
-                {"AttributeName": key, "KeyType": kind}
-                for key, kind in [("pk", "HASH"), ("sk", "RANGE")]
-            ],
-            AttributeDefinitions=[
-                {"AttributeName": key, "AttributeType": "S"} for key in ["pk", "sk"]
-            ],
-        )
 
 
 def event(path="/api/workspace", method="GET", body=""):
@@ -87,7 +69,7 @@ def test_public_impact_returns_aggregate_totals_without_workspace_details(table,
             "finished_at": "2026-09-11T12:00:00+00:00",
         },
     )
-    result = public_impact(table)
+    result = public_impact(table, Settings())
     assert result["workspaces"] == 1
     assert result["systems_monitored"] == 1
     assert result["evaluations_performed"] == 3

@@ -11,6 +11,8 @@ import os
 import re
 import time
 import uuid
+from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from http import HTTPStatus
@@ -20,8 +22,11 @@ from zoneinfo import ZoneInfo
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 
-from .dynamo_store import DynamoStore
-from .web_api import dispatch, response
+from .config import Settings
+from .dynamo_store import DynamoStore, current_findings, group_dispositions
+from .models import Disposition, Finding, Relevance, Source, SystemPassport
+from .registry import load_registry
+from .web_api import WORKSPACE_FINDINGS, dispatch, response, shown_reviews
 
 SIGNATURE_AGE = 300
 COST_STATUS_MAX_AGE = 172800
@@ -55,15 +60,109 @@ def _first_error(exc: Exception) -> str:
     return str(exc).splitlines()[0][:300]
 GLOBAL_MONTH_LIMIT = Decimal("2.00")
 PUBLIC_IMPACT_TTL = 900
+# The only record families the totals need, in the order _tenant_totals unpacks them.
+# Every daily check adds a full page snapshot per source to each partition, so reading
+# whole partitions grew without bound.
+IMPACT_RECORDS = ("system#", "run#", "finding#", "disposition#")
+# Workspaces read at once; under botocore's default pool of 10 connections.
+IMPACT_READERS = 8
 
 
-def public_impact(table: Any) -> dict[str, Any]:
+def _records(table: Any, pk: str, prefix: str) -> list[dict]:
+    """The readable JSON records of one family in one partition.
+
+    Uses the table's client, which is thread-safe where the table resource is not. Like
+    the resource, it takes and returns plain Python values rather than typed attributes.
+    """
+    records = []
+    pages = table.meta.client.get_paginator("query").paginate(
+        TableName=table.name,
+        KeyConditionExpression="pk = :pk AND begins_with(sk, :prefix)",
+        ExpressionAttributeValues={":pk": pk, ":prefix": prefix},
+        ProjectionExpression="payload",
+    )
+    for page in pages:
+        for item in page.get("Items", []):
+            with contextlib.suppress(TypeError, json.JSONDecodeError):
+                value = json.loads(item.get("payload", "{}"))
+                if isinstance(value, dict):
+                    records.append(value)
+    return records
+
+
+def _parsed(model: Any, values: list[dict]) -> list[Any]:
+    """Valid records only: one unreadable record must not take the public totals down."""
+    parsed = []
+    for value in values:
+        with contextlib.suppress(ValueError):
+            parsed.append(model.model_validate(value))
+    return parsed
+
+
+def _tenant_totals(table: Any, tenant: str, sources: dict[str, Source]) -> tuple[Counter, float]:
+    """One workspace's anonymous counters and the time its last check finished."""
+    pk = "USER#" + tenant
+    systems, runs, findings, actions = (_records(table, pk, prefix) for prefix in IMPACT_RECORDS)
+    totals: Counter = Counter(systems=len(systems))
+    last_activity = 0.0
+    has_review_metric = has_detail_metric = False
+    for run in runs:
+        if run.get("status") != "complete":
+            continue
+        raw_evaluations = run.get("evaluations_performed")
+        if raw_evaluations is None:
+            raw_evaluations = len(run.get("systems_evaluated", []))
+        totals["evaluations"] += int(raw_evaluations)
+        raw_reviews = run.get("review_events_created")
+        if raw_reviews is not None:
+            has_review_metric = True
+            totals["reviews"] += int(raw_reviews)
+        raw_no_action = run.get("no_action_evaluations")
+        if raw_no_action is not None:
+            totals["no_action"] += int(raw_no_action)
+        raw_detail = run.get("detail_needed_evaluations")
+        if raw_detail is not None:
+            has_detail_metric = True
+            totals["detail_needed"] += int(raw_detail)
+        stamp = run.get("finished_at")
+        if stamp:
+            with contextlib.suppress(TypeError, ValueError):
+                finished = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+                last_activity = max(last_activity, finished.timestamp())
+    totals["outcomes"] = sum(
+        1
+        for action in actions
+        if action.get("finding_id") and action.get("action") in {"acknowledged", "dismissed"}
+    )
+    relevance = [f.get("relevance") for f in findings]
+    # Runs written before metric fields existed still contribute a visible lower
+    # bound: one currently known match is one event.
+    if not has_review_metric:
+        totals["reviews"] += relevance.count("relevant")
+    if not has_detail_metric:
+        totals["detail_needed"] += relevance.count("insufficient_information")
+    if "relevant" in relevance:
+        shown, _ = shown_reviews(
+            _parsed(SystemPassport, systems),
+            current_findings(_parsed(Finding, findings), limit=WORKSPACE_FINDINGS),
+            group_dispositions(_parsed(Disposition, actions)),
+            sources,
+        )
+        undecided = [f for f, decision in shown if decision == "open"]
+        totals["apps_needing_review"] = len(
+            {f.system_id for f in undecided if f.relevance is Relevance.RELEVANT}
+        )
+    return totals, last_activity
+
+
+def public_impact(table: Any, settings: Settings) -> dict[str, Any]:
     """Compute anonymous aggregate totals for the public Impact page.
 
     Only coarse counters leave this function. Tenant identifiers, app names,
     evidence, prompts, and source URLs remain inside the account table. Computing
-    them reads every tenant partition, and the inputs change only when a daily check
-    finishes or an outcome is recorded, so results are cached for fifteen minutes.
+    them reads four record families from every tenant partition, several workspaces
+    at a time, and the inputs change only when a daily check finishes or an outcome
+    is recorded, so results are cached for fifteen minutes.
     """
     now = time.time()
     cached = table.get_item(Key={"pk": "GLOBAL", "sk": "impact"}).get("Item") or {}
@@ -82,79 +181,20 @@ def public_impact(table: Any) -> dict[str, Any]:
             break
         args["ExclusiveStartKey"] = page["LastEvaluatedKey"]
 
-    systems = evaluations = reviews = no_action = detail_needed = outcomes = 0
-    apps_needing_review: set[tuple[str, str]] = set()
+    tenants = [
+        tenant
+        for directory in directories
+        if re.fullmatch(r"[a-f0-9]{64}", tenant := str(directory.get("sk", "")))
+    ]
+    sources = {s.id: s for s in load_registry(settings.registry_path)}
+    totals: Counter = Counter()
     last_activity = 0.0
-    for directory in directories:
-        tenant = str(directory.get("sk", ""))
-        if not re.fullmatch(r"[a-f0-9]{64}", tenant):
-            continue
-        pk = "USER#" + tenant
-        rows: list[dict] = []
-        query = {"KeyConditionExpression": Key("pk").eq(pk), "ProjectionExpression": "sk, payload"}
-        while True:
-            page = table.query(**query)
-            rows.extend(page.get("Items", []))
-            if "LastEvaluatedKey" not in page:
-                break
-            query["ExclusiveStartKey"] = page["LastEvaluatedKey"]
-        findings: dict[str, dict] = {}
-        latest_actions: dict[str, str] = {}
-        legacy_review_events = 0
-        has_review_metric = False
-        has_detail_metric = False
-        legacy_detail_events = 0
-        for item in rows:
-            key = str(item.get("sk", ""))
-            try:
-                value = json.loads(item.get("payload", "{}"))
-            except (TypeError, json.JSONDecodeError):
-                continue
-            if key.startswith("system#"):
-                systems += 1
-            elif key.startswith("run#") and value.get("status") == "complete":
-                raw_evaluations = value.get("evaluations_performed")
-                if raw_evaluations is None:
-                    raw_evaluations = len(value.get("systems_evaluated", []))
-                evaluations += int(raw_evaluations)
-                raw_reviews = value.get("review_events_created")
-                if raw_reviews is not None:
-                    has_review_metric = True
-                    reviews += int(raw_reviews)
-                raw_no_action = value.get("no_action_evaluations")
-                if raw_no_action is not None:
-                    no_action += int(raw_no_action)
-                raw_detail = value.get("detail_needed_evaluations")
-                if raw_detail is not None:
-                    has_detail_metric = True
-                    detail_needed += int(raw_detail)
-                stamp = value.get("finished_at")
-                if stamp:
-                    with contextlib.suppress(TypeError, ValueError):
-                        finished = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
-                        last_activity = max(last_activity, finished.timestamp())
-            elif key.startswith("finding#"):
-                findings[str(value.get("id", key[8:]))] = value
-            elif key.startswith("disposition#"):
-                finding_id = str(value.get("finding_id", ""))
-                if finding_id and value.get("action") in {"acknowledged", "dismissed"}:
-                    outcomes += 1
-                    created = str(value.get("created_at", ""))
-                    if created > latest_actions.get(finding_id, ""):
-                        latest_actions[finding_id] = created
-        for finding_id, finding in findings.items():
-            if finding.get("relevance") == "relevant":
-                if finding_id not in latest_actions:
-                    apps_needing_review.add((tenant, str(finding.get("system_id", ""))))
-                # Runs written before metric fields existed still contribute a
-                # visible lower bound: one currently known match is one event.
-                if not has_review_metric:
-                    legacy_review_events += 1
-            elif finding.get("relevance") == "insufficient_information":
-                legacy_detail_events += 1
-        reviews += legacy_review_events
-        if not has_detail_metric:
-            detail_needed += legacy_detail_events
+    with ThreadPoolExecutor(max_workers=IMPACT_READERS) as pool:
+        for counts, finished in pool.map(lambda t: _tenant_totals(table, t, sources), tenants):
+            totals.update(counts)
+            last_activity = max(last_activity, finished)
+    evaluations, reviews = totals["evaluations"], totals["reviews"]
+    no_action, detail_needed = totals["no_action"], totals["detail_needed"]
 
     if last_activity <= 0:
         last_activity = now
@@ -169,11 +209,11 @@ def public_impact(table: Any) -> dict[str, Any]:
     payload = {
         "scope": "all_participating_workspaces",
         "workspaces": len(directories),
-        "systems_monitored": systems,
+        "systems_monitored": totals["systems"],
         "evaluations_performed": evaluations,
         "review_events_created": reviews,
-        "apps_needing_review": len(apps_needing_review),
-        "outcomes_recorded": outcomes,
+        "apps_needing_review": totals["apps_needing_review"],
+        "outcomes_recorded": totals["outcomes"],
         "no_action_evaluations": no_action,
         "detail_needed_evaluations": detail_needed,
         "last_activity": datetime.fromtimestamp(last_activity, timezone.utc).isoformat(),

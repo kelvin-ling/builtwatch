@@ -4,31 +4,12 @@ from __future__ import annotations
 
 import json
 
-import boto3
-import pytest
 from conftest import make_finding
-from moto import mock_aws
 
 from builtwatch.accounts import serve
 from builtwatch.config import Settings
 from builtwatch.dynamo_store import DynamoStore, tenant_id
 from builtwatch.models import Disposition, DispositionAction
-
-
-@pytest.fixture
-def table():
-    with mock_aws():
-        yield boto3.resource("dynamodb", region_name="us-east-1").create_table(
-            TableName="test-accounts",
-            BillingMode="PAY_PER_REQUEST",
-            KeySchema=[
-                {"AttributeName": key, "KeyType": kind}
-                for key, kind in [("pk", "HASH"), ("sk", "RANGE")]
-            ],
-            AttributeDefinitions=[
-                {"AttributeName": key, "AttributeType": "S"} for key in ["pk", "sk"]
-            ],
-        )
 
 
 def _count_calls(table, names):
@@ -110,7 +91,7 @@ def test_repeating_an_outcome_records_it_once(table, passport, snapshot):
     record("acknowledged")
     record("acknowledged")
     assert len(store.dispositions_for(finding.id)) == 1
-    assert public_impact(table)["outcomes_recorded"] == 1
+    assert public_impact(table, Settings())["outcomes_recorded"] == 1
     # A changed decision is still recorded.
     record("dismissed", "We no longer use this service.")
     assert [d.action.value for d in store.dispositions_for(finding.id)] == [

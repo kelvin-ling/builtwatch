@@ -58,6 +58,26 @@ def store(tmp_path, request):
 
 
 @pytest.fixture
+def table():
+    """A mocked account table with the production key schema."""
+    import boto3
+    from moto import mock_aws
+
+    with mock_aws():
+        yield boto3.resource("dynamodb", region_name="us-east-1").create_table(
+            TableName="test-accounts",
+            BillingMode="PAY_PER_REQUEST",
+            KeySchema=[
+                {"AttributeName": key, "KeyType": kind}
+                for key, kind in [("pk", "HASH"), ("sk", "RANGE")]
+            ],
+            AttributeDefinitions=[
+                {"AttributeName": key, "AttributeType": "S"} for key in ["pk", "sk"]
+            ],
+        )
+
+
+@pytest.fixture
 def passport() -> SystemPassport:
     return SystemPassport(
         id="inbox-triage",

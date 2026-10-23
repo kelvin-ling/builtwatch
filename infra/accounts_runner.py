@@ -13,7 +13,6 @@ from builtwatch.accounts import public_impact, serve, verify, work
 from builtwatch.admission import admit, allow_request
 from builtwatch.config import Settings
 from builtwatch.dynamo_store import DynamoStore
-from builtwatch.pipeline import run_scan
 from builtwatch.web_api import response
 
 
@@ -33,7 +32,7 @@ def lambda_handler(event, context):
             if event["requestContext"]["http"]["method"] != "GET":
                 return response(405, {"error": "Method not allowed."})
             try:
-                return response(200, public_impact(table), "public, max-age=300")
+                return response(200, public_impact(table, settings), "public, max-age=300")
             except Exception:  # noqa: BLE001 - public telemetry must fail closed
                 return response(503, {"error": "Public impact totals are temporarily unavailable."})
         tenant = verify(event, os.environ.get("BW_PROXY_SECRET", ""), table)
@@ -141,6 +140,9 @@ def lambda_handler(event, context):
         os.environ["BW_DEADLINE"] = str(time.time() + 90)
         return draft_profile(event, DynamoStore(table, event["tenant"]), settings)
     if event.get("task") == "scan":
+        # Only scans need the pipeline and its agent SDK; API cold starts skip both.
+        from builtwatch.pipeline import run_scan
+
         os.environ["BW_DEADLINE"] = str(time.time() + 480)
         return work(event, DynamoStore(table, event["tenant"]), settings, run_scan)
     return response(400, {"error": "Unknown event"})

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Iterable
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any
@@ -27,6 +28,41 @@ def tenant_id(identity: str) -> str:
     if not identity or len(identity) > MAX_IDENTITY_LENGTH:
         raise ValueError("Invalid authenticated identity")
     return hashlib.sha256(identity.encode()).hexdigest()
+
+
+def current_findings(
+    records: Iterable[Finding],
+    system_id: str | None = None,
+    relevance: str | None = None,
+    current_only: bool = True,
+    limit: int = 100,
+) -> list[Finding]:
+    """Newest first; when current_only, one per development under the current rules."""
+    seen = set()
+    result = []
+    for finding in sorted(records, key=lambda f: f.created_at, reverse=True):
+        # Superseded assessment rules mean a superseded verdict; see store.py.
+        if current_only and finding.quality_version < QUALITY_VERSION:
+            continue
+        if current_only and finding.dedup_key() in seen:
+            continue
+        seen.add(finding.dedup_key())
+        if system_id and finding.system_id != system_id:
+            continue
+        if relevance and finding.relevance.value != relevance:
+            continue
+        result.append(finding)
+    return result[:limit]
+
+
+def group_dispositions(records: Iterable[Disposition]) -> dict[str, list[Disposition]]:
+    """Outcomes per finding, oldest first, so the last one is the current decision."""
+    grouped: dict[str, list[Disposition]] = {}
+    for item in records:
+        grouped.setdefault(item.finding_id, []).append(item)
+    for actions in grouped.values():
+        actions.sort(key=lambda d: d.created_at)
+    return grouped
 
 
 class DynamoStore:
@@ -191,22 +227,9 @@ class DynamoStore:
         current_only: bool = True,
         limit: int = 100,
     ) -> list[Finding]:
-        records = sorted(self.models("finding#", Finding), key=lambda f: f.created_at, reverse=True)
-        seen = set()
-        result = []
-        for finding in records:
-            # Superseded assessment rules mean a superseded verdict; see store.py.
-            if current_only and finding.quality_version < QUALITY_VERSION:
-                continue
-            if current_only and finding.dedup_key() in seen:
-                continue
-            seen.add(finding.dedup_key())
-            if system_id and finding.system_id != system_id:
-                continue
-            if relevance and finding.relevance.value != relevance:
-                continue
-            result.append(finding)
-        return result[:limit]
+        return current_findings(
+            self.models("finding#", Finding), system_id, relevance, current_only, limit
+        )
 
     def add_disposition(self, disposition: Disposition) -> Disposition:
         self.put("disposition#" + disposition.id, disposition.model_dump(mode="json"))
@@ -220,12 +243,7 @@ class DynamoStore:
 
     def dispositions_by_finding(self) -> dict[str, list[Disposition]]:
         """Every outcome in one partition query, so callers never query once per finding."""
-        grouped: dict[str, list[Disposition]] = {}
-        for item in self.models("disposition#", Disposition):
-            grouped.setdefault(item.finding_id, []).append(item)
-        for actions in grouped.values():
-            actions.sort(key=lambda d: d.created_at)
-        return grouped
+        return group_dispositions(self.models("disposition#", Disposition))
 
     def agent_reviews(self) -> dict[str, dict]:
         return {

@@ -10,28 +10,35 @@ from datetime import datetime, timezone
 from typing import Any
 
 from .config import Settings
-from .models import Disposition, DispositionAction, SystemPassport
+from .models import Disposition, DispositionAction, Finding, Source, SystemPassport
 from .registry import load_registry
 from .store import Store, new_id
 
 MAX_PROFILE_BYTES = 24000
 MAX_WEB_SYSTEMS = 10
+# Newest current findings a workspace considers; the public Impact count uses the same.
+WORKSPACE_FINDINGS = 300
 SCAN_COOLDOWN_SECONDS = 1800
 
 
-def workspace(store: Store, settings: Settings) -> dict[str, Any]:
-    from .quality import dependency_mismatch, friendly_failure, unverified
+def shown_reviews(
+    systems: list[SystemPassport],
+    current: list[Finding],
+    outcomes: dict[str, list[Disposition]],
+    sources: dict[str, Source],
+) -> tuple[list[tuple[Finding, str]], list[dict]]:
+    """The reviews a workspace shows, each with its current decision, and a note for each
+    one withheld. The public Impact count reads this too, so the two cannot disagree."""
+    from .quality import dependency_mismatch, unverified
+    from .rules import dependency_refs
 
-    findings = []
+    shown = []
     quality = []
-    sources = {s.id: s for s in load_registry(settings.registry_path)}
-    systems = store.list_systems()
-    ids = {s.id for s in systems}
-    outcomes = store.dispositions_by_finding()
-    for finding in store.list_findings(limit=300):
-        if finding.system_id not in ids:
+    profiles = {s.id: s for s in systems}
+    for finding in current:
+        profile = profiles.get(finding.system_id)
+        if profile is None:
             continue
-        profile = next(s for s in systems if s.id == finding.system_id)
         if unverified(finding):
             quality.append(
                 {
@@ -49,8 +56,6 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
         ):
             continue
         if finding.assessment_method.startswith("rules-"):
-            from .rules import dependency_refs
-
             source = sources.get(finding.source_id)
             if source is None or not any(
                 dependency_refs(profile, evidence.passage, source) for evidence in finding.evidence
@@ -64,11 +69,26 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
                     }
                 )
                 continue
-        item = finding.model_dump(mode="json")
-        actions = outcomes.get(finding.id, [])
-        decisions = [a for a in actions if a.action.value != "exported"]
-        item["disposition"] = decisions[-1].action.value if decisions else "open"
-        findings.append(item)
+        decisions = [a for a in outcomes.get(finding.id, []) if a.action.value != "exported"]
+        shown.append((finding, decisions[-1].action.value if decisions else "open"))
+    return shown, quality
+
+
+def workspace(store: Store, settings: Settings) -> dict[str, Any]:
+    from .quality import friendly_failure
+
+    sources = {s.id: s for s in load_registry(settings.registry_path)}
+    systems = store.list_systems()
+    shown, quality = shown_reviews(
+        systems,
+        store.list_findings(limit=WORKSPACE_FINDINGS),
+        store.dispositions_by_finding(),
+        sources,
+    )
+    findings = [
+        {**f.model_dump(mode="json"), "disposition": decision}
+        for f, decision in shown
+    ]
     runs = [r.model_dump(mode="json") for r in store.list_runs()]
     for run in runs:
         run["abort_reason"] = friendly_failure(run["abort_reason"])
