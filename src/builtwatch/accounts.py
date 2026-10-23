@@ -205,9 +205,11 @@ def public_impact(
     if isinstance(saved, dict) and usable:
         if not fresh:
             # Stale totals beat a visitor waiting on a recompute, and beat an error.
-            with contextlib.suppress(Exception):
+            try:
                 if _claim_impact_refresh(table, now):
                     refresh()
+            except Exception as exc:  # noqa: BLE001 - logged; the saved totals still answer
+                print("public_impact_refresh_request_failed", type(exc).__name__)
         return saved
     return refresh_public_impact(table, settings)
 

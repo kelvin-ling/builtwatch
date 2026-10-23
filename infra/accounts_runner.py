@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import contextlib
 import json
 import os
 import time
@@ -149,8 +148,10 @@ def lambda_handler(event, context):
         result = work(event, DynamoStore(table, event["tenant"]), settings, run_scan)
         if result.get("status") != "skipped":
             # Public totals reflect a finished check now, not after the cache ages out.
-            with contextlib.suppress(Exception):
+            try:
                 refresh_public_impact(table, settings)
+            except Exception as exc:  # noqa: BLE001 - the check itself succeeded
+                print("public_impact_refresh_failed", type(exc).__name__)
         return result
     if event.get("task") == "impact":
         # Background recompute asked for by a visitor who was served stale totals.

@@ -213,13 +213,14 @@ def test_first_totals_are_computed_inline(table, passport):
     assert requests == []
 
 
-def test_a_failed_refresh_request_still_answers_with_saved_totals(table):
+def test_a_failed_refresh_request_still_answers_with_saved_totals(table, capsys):
     _save_totals(table, {"systems_monitored": 2}, age=3600)
 
     def unavailable():
         raise RuntimeError("worker invoke throttled")
 
     assert public_impact(table, Settings(), unavailable) == {"systems_monitored": 2}
+    assert "public_impact_refresh_request_failed RuntimeError" in capsys.readouterr().out
 
 
 def test_an_unfinished_refresh_claim_expires(table, monkeypatch):
@@ -266,7 +267,7 @@ def test_totals_a_day_past_expiry_are_recomputed_inline(table, passport):
 @pytest.fixture
 def runner(table, monkeypatch):
     """The Lambda handler on the mocked table, with worker invokes recorded."""
-    sys.path.insert(0, str(ROOT / "infra"))
+    monkeypatch.syspath_prepend(str(ROOT / "infra"))
     import accounts_runner
 
     invoked = []
@@ -279,7 +280,7 @@ def runner(table, monkeypatch):
     monkeypatch.setenv("BW_WORKER", "worker")
     monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
     monkeypatch.setattr(accounts_runner.boto3, "client", lambda name: Lambda())
-    accounts_runner.invoked = invoked
+    monkeypatch.setattr(accounts_runner, "invoked", invoked, raising=False)
     return accounts_runner
 
 
