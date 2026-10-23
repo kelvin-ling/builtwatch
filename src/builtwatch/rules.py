@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import re
 from collections.abc import Iterator
+from functools import lru_cache
 from typing import TYPE_CHECKING
 
 from .deadlines import in_text
@@ -121,6 +122,9 @@ PRODUCT_ALIASES = (
 MAX_CANDIDATES = 50
 
 
+# Pure in the declared name, and asked again for every passage of every review on each
+# workspace read; it was most of the cost of deciding which reviews to show.
+@lru_cache(maxsize=1024)
 def dependency_aliases(value: str) -> tuple[str, ...]:
     """Use whole product names; a shared word is not proof of product identity."""
     from .quality import GENERIC_TERMS, MIN_TERM_LENGTH

@@ -69,6 +69,24 @@ def test_workspace_reads_do_not_grow_with_findings_or_apps(table, passport, snap
     assert calls["get_item"] <= 4, calls
 
 
+
+def test_product_names_are_resolved_once_per_workspace_read(table, passport, snapshot):
+    from builtwatch.rules import dependency_aliases
+
+    store = DynamoStore(table, tenant_id("alice"))
+    store.upsert_system(passport)
+    for n in range(30):
+        finding = make_finding(
+            passport, snapshot, finding_id=f"find_{n:02d}", development_key=f"dev-{n}"
+        )
+        finding.assessment_method = "rules-v2"
+        store.save_finding(finding)
+    dependency_aliases.cache_clear()
+
+    assert len(_workspace(store)["findings"]) == 30
+    # One lookup per declared product (Python, Gmail API, SendGrid), not one per review.
+    assert dependency_aliases.cache_info().misses <= 3
+
 def test_repeating_an_outcome_records_it_once(table, passport, snapshot):
     from builtwatch.accounts import public_impact
 
