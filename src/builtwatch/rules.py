@@ -12,6 +12,7 @@ import re
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
+from .deadlines import in_text
 from .models import (
     AppImpact,
     Evidence,
@@ -56,6 +57,37 @@ MATERIAL = re.compile(
 MIN_PASSAGE = 20
 MAX_PASSAGE = 1200
 MAX_PURPOSE = 600
+# Matches stored before review_title existed carry this heading; reads replace it.
+GENERIC_TITLE = "Review a source change connected to "
+# What a passage announces, judged only from its own words. The first match wins, most
+# consequential first; a passage that names none of them is simply a change.
+CHANGE_KINDS = tuple(
+    (label, re.compile(pattern, re.IGNORECASE))
+    for label, pattern in (
+        (
+            "Security issue",
+            r"\bCVE-\d|\bvulnerab\w*|\bexploit\w*|"
+            r"\bsecurity (?:fix|update|patch|advisory|bulletin|issue|flaw)",
+        ),
+        (
+            "Deprecation or removal",
+            r"\b(?:deprecat\w*|retir\w*|sunset\w*|discontinu\w*|end[- ]of[- ](?:life|support)|"
+            r"removal|(?:be|been|being|is|are|was|were) removed|"
+            r"no longer (?:be )?(?:supported|available|offered))|^\W*remov(?:e|es|ed|ing)\b",
+        ),
+        (
+            "Breaking change",
+            r"\b(?:breaking|no longer|not backwards?[- ]compatible|backwards?[- ]incompatible)",
+        ),
+        ("Migration", r"\bmigrat\w*"),
+        ("New requirement", r"\b(?:must|requir\w*|shall|mandatory)\b"),
+        ("Pricing change", r"\b(?:pric\w*|billing|billed)\b"),
+        ("Limit change", r"\b(?:rate[- ]limit\w*|quotas?|limits?)\b"),
+    )
+)
+# "No further action is required" announces the absence of a requirement.
+NOT_REQUIRED = re.compile(r"\b(?:no|not)\b(?:\s+\w+){0,3}?\s+required\b", re.IGNORECASE)
+MAX_TITLE_DEPENDENCY = 80
 
 
 def _has(text: str, term: str) -> bool:
@@ -194,6 +226,29 @@ def assess(
     return findings, problems
 
 
+def review_title(evidence: Evidence, dependency: str) -> str:
+    """A scannable heading built from the evidence's own words: the kind of change, the
+    recorded dependency it names, and its take-effect date when the source records one or
+    the passage states exactly one. It never depends on the day it is built, so a stored
+    heading and a rebuilt one agree, and both stay true after the date passes."""
+    words = NOT_REQUIRED.sub("", evidence.passage)
+    kind = next((label for label, pattern in CHANGE_KINDS if pattern.search(words)), "Change")
+    parts = [kind, dependency[:MAX_TITLE_DEPENDENCY]]
+    stated = {x.on for x in in_text(evidence.passage)}
+    if on := evidence.effective_at or (stated.pop() if len(stated) == 1 else None):
+        parts.append(f"effective {on:%b} {on.day}, {on.year}")
+    return " · ".join(parts)
+
+
+def current_title(finding: Finding) -> str:
+    """The heading to show: a stored generic rules heading is rebuilt from its evidence."""
+    if not (
+        finding.title.startswith(GENERIC_TITLE) and finding.evidence and finding.system_facts
+    ):
+        return finding.title
+    return review_title(finding.evidence[0], finding.system_facts[0].value)
+
+
 def _finding(
     passport: SystemPassport,
     snapshot: SourceSnapshot,
@@ -203,6 +258,13 @@ def _finding(
     refs: list[SystemFactRef],
 ) -> tuple[Finding, list[str]]:
     key, value = refs[0].key, refs[0].value
+    evidence = Evidence(
+        snapshot_id=snapshot.id,
+        source_id=source.id,
+        passage=passage,
+        published_at=snapshot.published_at,
+        effective_at=snapshot.effective_at,
+    )
     finding = Finding(
         id=new_id("find"),
         scan_run_id=scan_run_id,
@@ -210,20 +272,12 @@ def _finding(
         source_id=source.id,
         relevance=Relevance.RELEVANT,
         assessment_method=ENGINE,
-        title=f"Review a source change connected to {value}"[:160],
+        title=review_title(evidence, value),
         development_key=(
             f"rules:{source.id}:"
             + hashlib.sha256(" ".join(passage.lower().split()).encode()).hexdigest()[:20]
         ),
-        evidence=[
-            Evidence(
-                snapshot_id=snapshot.id,
-                source_id=source.id,
-                passage=passage,
-                published_at=snapshot.published_at,
-                effective_at=snapshot.effective_at,
-            )
-        ],
+        evidence=[evidence],
         system_facts=refs,
         facts=[passage],
         inferences=[

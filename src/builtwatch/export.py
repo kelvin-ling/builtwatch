@@ -23,8 +23,10 @@ DISCLAIMER = (
 
 
 def to_markdown(finding: Finding, passport: SystemPassport) -> str:
+    from .rules import current_title
+
     lines: list[str] = []
-    lines.append(f"# {finding.title}")
+    lines.append(f"# {current_title(finding)}")
     lines.append("")
     lines.append(f"**System:** {passport.name} (`{passport.id}`)  ")
     lines.append(f"**Verdict:** {finding.relevance.value}  ")

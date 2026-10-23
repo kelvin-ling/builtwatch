@@ -76,6 +76,7 @@ def shown_reviews(
 
 def workspace(store: Store, settings: Settings) -> dict[str, Any]:
     from .quality import friendly_failure
+    from .rules import current_title
 
     sources = {s.id: s for s in load_registry(settings.registry_path)}
     systems = store.list_systems()
@@ -86,7 +87,7 @@ def workspace(store: Store, settings: Settings) -> dict[str, Any]:
         sources,
     )
     findings = [
-        {**f.model_dump(mode="json"), "disposition": decision}
+        {**f.model_dump(mode="json"), "title": current_title(f), "disposition": decision}
         for f, decision in shown
     ]
     runs = [r.model_dump(mode="json") for r in store.list_runs()]

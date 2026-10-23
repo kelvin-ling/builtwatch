@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import '../web/status.js';
 import '../web/perspectives.js';
 import '../web/visuals.js';
@@ -8,19 +9,10 @@ import '../web/deadlines.js';
 const D=globalThis.BuiltWatchDeadlines;
 const dates=t=>D.inText(t).map(x=>[x.date.toISOString().slice(0,10),x.phrase]);
 
-test('take-effect dates are read only from requirement phrasing and keep the quoted phrase',()=>{
- assert.deepEqual(dates('Starting February 1, 2024, all email senders must meet'),[['2024-02-01','Starting February 1, 2024']]);
- assert.deepEqual(dates('From 1 February 2026, bulk senders must authenticate'),[['2026-02-01','From 1 February 2026']]);
- assert.deepEqual(dates('Requests must use TLS 1.3 by March 1, 2027.'),[['2027-03-01','by March 1, 2027']]);
- assert.deepEqual(dates('It is deprecated and will stop working after 2025-12-31.'),[['2025-12-31','deprecated and will stop working after 2025-12-31']]);
- assert.deepEqual(dates('Published March 3, 2025. The v1 endpoint will be removed on June 30th, 2026.'),[['2026-06-30','removed on June 30th, 2026']]);
-});
-
-test('publication dates, labelled dates and impossible dates are not deadlines',()=>{
- assert.deepEqual(dates('Posted 2026-09-11 by the team'),[]);
- assert.deepEqual(dates('from the FTC’s Labor Task Force work Date June 16, 2026'),[]);
- assert.deepEqual(dates('On September 3, 2024 we announced new features'),[]);
- assert.deepEqual(dates('Effective February 30, 2026 the rule applies'),[]);
+// Shared with tests/test_review_titles.py so the browser and server read dates alike.
+const cases=JSON.parse(readFileSync(new URL('./fixtures/take_effect_cases.json',import.meta.url),'utf8')).cases;
+test('take-effect dates come only from requirement phrasing and keep the quoted phrase; publication, labelled and impossible dates do not count',()=>{
+ for(const c of cases)assert.deepEqual(dates(c.text),c.dates,c.text);
 });
 
 test('a review reports its soonest upcoming date, else its latest past one',()=>{

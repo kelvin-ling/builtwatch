@@ -1,0 +1,14 @@
+{
+  "description": "Take-effect dates read from a passage. web/deadlines.js and src/builtwatch/deadlines.py are both held to these cases.",
+  "cases": [
+    {"text": "Starting February 1, 2024, all email senders must meet", "dates": [["2024-02-01", "Starting February 1, 2024"]]},
+    {"text": "From 1 February 2026, bulk senders must authenticate", "dates": [["2026-02-01", "From 1 February 2026"]]},
+    {"text": "Requests must use TLS 1.3 by March 1, 2027.", "dates": [["2027-03-01", "by March 1, 2027"]]},
+    {"text": "It is deprecated and will stop working after 2025-12-31.", "dates": [["2025-12-31", "deprecated and will stop working after 2025-12-31"]]},
+    {"text": "Published March 3, 2025. The v1 endpoint will be removed on June 30th, 2026.", "dates": [["2026-06-30", "removed on June 30th, 2026"]]},
+    {"text": "Posted 2026-09-11 by the team", "dates": []},
+    {"text": "from the FTC’s Labor Task Force work Date June 16, 2026", "dates": []},
+    {"text": "On September 3, 2024 we announced new features", "dates": []},
+    {"text": "Effective February 30, 2026 the rule applies", "dates": []}
+  ]
+}
