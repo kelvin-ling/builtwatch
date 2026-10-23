@@ -5,12 +5,23 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import time
 from datetime import timedelta
+from decimal import Decimal
 from pathlib import Path
 
+import pytest
 from conftest import make_finding
 
-from builtwatch.accounts import public_impact, serve
+from builtwatch import accounts
+from builtwatch.accounts import (
+    IMPACT_REFRESH_CLAIM,
+    IMPACT_STALE_LIMIT,
+    PUBLIC_IMPACT_TTL,
+    public_impact,
+    refresh_public_impact,
+    serve,
+)
 from builtwatch.config import Settings
 from builtwatch.dynamo_store import DynamoStore, tenant_id
 from builtwatch.models import Disposition, SourceSnapshot
@@ -152,3 +163,172 @@ def test_a_public_read_does_not_load_the_scan_pipeline():
         check=True,
     )
     assert result.stdout.strip() == "[]"
+
+
+def _save_totals(table, payload, age):
+    """Totals as a refresh `age` seconds ago saved them."""
+    now = time.time()
+    table.put_item(
+        Item={
+            "pk": "GLOBAL",
+            "sk": "impact",
+            "payload": json.dumps(payload),
+            "expires_at": Decimal(str(now - age + PUBLIC_IMPACT_TTL)),
+        }
+    )
+
+
+def test_stale_totals_answer_at_once_and_ask_for_one_background_refresh(table, passport):
+    store = DynamoStore(table, tenant_id("alice"))
+    store.upsert_system(passport)
+    _save_totals(table, {"systems_monitored": 0, "updated_at": "earlier"}, age=3600)
+    requests = []
+
+    reads = _items_read(table)
+    first = public_impact(table, Settings(), lambda: requests.append("refresh"))
+    second = public_impact(table, Settings(), lambda: requests.append("refresh"))
+
+    # Both visitors get the saved totals with their own timestamp; no partition is read.
+    assert first == second == {"systems_monitored": 0, "updated_at": "earlier"}
+    assert reads["items"] == 0
+    assert requests == ["refresh"]
+
+
+def test_fresh_totals_ask_for_no_refresh(table):
+    _save_totals(table, {"systems_monitored": 3}, age=60)
+    requests = []
+
+    assert public_impact(table, Settings(), lambda: requests.append(1)) == {"systems_monitored": 3}
+    assert requests == []
+
+
+def test_first_totals_are_computed_inline(table, passport):
+    store = DynamoStore(table, tenant_id("alice"))
+    store.upsert_system(passport)
+    requests = []
+
+    result = public_impact(table, Settings(), lambda: requests.append(1))
+
+    assert result["systems_monitored"] == 1
+    assert requests == []
+
+
+def test_a_failed_refresh_request_still_answers_with_saved_totals(table):
+    _save_totals(table, {"systems_monitored": 2}, age=3600)
+
+    def unavailable():
+        raise RuntimeError("worker invoke throttled")
+
+    assert public_impact(table, Settings(), unavailable) == {"systems_monitored": 2}
+
+
+def test_an_unfinished_refresh_claim_expires(table, monkeypatch):
+    _save_totals(table, {"systems_monitored": 2}, age=3600)
+    requests = []
+    public_impact(table, Settings(), lambda: requests.append(1))
+    later = time.time() + IMPACT_REFRESH_CLAIM + 1
+    monkeypatch.setattr(accounts.time, "time", lambda: later)
+
+    public_impact(table, Settings(), lambda: requests.append(1))
+
+    assert requests == [1, 1]
+
+
+def test_a_refresh_saves_new_totals_and_clears_the_claim(table, passport):
+    _save_totals(table, {"systems_monitored": 0}, age=3600)
+    public_impact(table, Settings(), lambda: None)
+    DynamoStore(table, tenant_id("alice")).upsert_system(passport)
+
+    refresh_public_impact(table, Settings())
+
+    item = table.get_item(Key={"pk": "GLOBAL", "sk": "impact"})["Item"]
+    assert "refreshing_until" not in item
+    assert public_impact(table, Settings(), lambda: None)["systems_monitored"] == 1
+
+
+def test_without_a_background_refresh_stale_totals_are_recomputed(table, passport):
+    _save_totals(table, {"systems_monitored": 0}, age=3600)
+    DynamoStore(table, tenant_id("alice")).upsert_system(passport)
+
+    assert public_impact(table, Settings())["systems_monitored"] == 1
+
+
+
+def test_totals_a_day_past_expiry_are_recomputed_inline(table, passport):
+    _save_totals(table, {"systems_monitored": 0}, age=PUBLIC_IMPACT_TTL + IMPACT_STALE_LIMIT + 60)
+    DynamoStore(table, tenant_id("alice")).upsert_system(passport)
+    requests = []
+
+    assert public_impact(table, Settings(), lambda: requests.append(1))["systems_monitored"] == 1
+    assert requests == []
+
+
+@pytest.fixture
+def runner(table, monkeypatch):
+    """The Lambda handler on the mocked table, with worker invokes recorded."""
+    sys.path.insert(0, str(ROOT / "infra"))
+    import accounts_runner
+
+    invoked = []
+
+    class Lambda:
+        def invoke(self, **kwargs):
+            invoked.append(json.loads(kwargs["Payload"]))
+
+    monkeypatch.setenv("BW_TABLE", table.name)
+    monkeypatch.setenv("BW_WORKER", "worker")
+    monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
+    monkeypatch.setattr(accounts_runner.boto3, "client", lambda name: Lambda())
+    accounts_runner.invoked = invoked
+    return accounts_runner
+
+
+def _public_get(runner):
+    event = {
+        "rawPath": "/api/public-impact",
+        "requestContext": {"http": {"method": "GET"}},
+    }
+    return runner.lambda_handler(event, None)
+
+
+def test_public_read_of_stale_totals_queues_the_worker(runner, table):
+    _save_totals(table, {"systems_monitored": 4}, age=3600)
+
+    result = _public_get(runner)
+
+    assert result["statusCode"] == 200
+    assert json.loads(result["body"]) == {"systems_monitored": 4}
+    assert runner.invoked == [{"task": "impact"}]
+
+
+def test_worker_impact_task_saves_fresh_totals(runner, table, passport):
+    _save_totals(table, {"systems_monitored": 0}, age=3600)
+    DynamoStore(table, tenant_id("alice")).upsert_system(passport)
+
+    runner.lambda_handler({"task": "impact"}, None)
+
+    assert json.loads(_public_get(runner)["body"])["systems_monitored"] == 1
+    assert runner.invoked == []
+
+
+def test_a_finished_check_refreshes_public_totals(runner, table, passport, monkeypatch):
+    _save_totals(table, {"systems_monitored": 0}, age=60)
+    store = DynamoStore(table, tenant_id("alice"))
+    store.upsert_system(passport)
+    monkeypatch.setattr(runner, "work", lambda *args: {"status": "complete"})
+
+    runner.lambda_handler({"task": "scan", "tenant": store.tenant, "job_id": "j"}, None)
+
+    # Fresh before the check, yet the page shows the new totals without waiting 15 minutes.
+    assert json.loads(_public_get(runner)["body"])["systems_monitored"] == 1
+
+
+def test_a_skipped_check_leaves_public_totals_alone(runner, table, passport, monkeypatch):
+    _save_totals(table, {"systems_monitored": 0}, age=60)
+    store = DynamoStore(table, tenant_id("alice"))
+    store.upsert_system(passport)
+    monkeypatch.setattr(runner, "work", lambda *args: {"status": "skipped"})
+
+    runner.lambda_handler({"task": "scan", "tenant": store.tenant, "job_id": "j"}, None)
+
+    assert json.loads(_public_get(runner)["body"])["systems_monitored"] == 0

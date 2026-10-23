@@ -12,6 +12,7 @@ import re
 import time
 import uuid
 from collections import Counter
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -66,6 +67,12 @@ PUBLIC_IMPACT_TTL = 900
 IMPACT_RECORDS = ("system#", "run#", "finding#", "disposition#")
 # Workspaces read at once; under botocore's default pool of 10 connections.
 IMPACT_READERS = 8
+IMPACT_KEY = {"pk": "GLOBAL", "sk": "impact"}
+# A claimed background refresh that never finished may be retried after this long.
+IMPACT_REFRESH_CLAIM = 300
+# Past this age saved totals are recomputed inline, so a refresh that keeps failing
+# cannot leave the page on old numbers indefinitely.
+IMPACT_STALE_LIMIT = 86400
 
 
 def _records(table: Any, pk: str, prefix: str) -> list[dict]:
@@ -155,23 +162,65 @@ def _tenant_totals(table: Any, tenant: str, sources: dict[str, Source]) -> tuple
     return totals, last_activity
 
 
-def public_impact(table: Any, settings: Settings) -> dict[str, Any]:
-    """Compute anonymous aggregate totals for the public Impact page.
+def _claim_impact_refresh(table: Any, now: float) -> bool:
+    """True for exactly one caller per refresh window, so a burst of visitors to stale
+    totals starts one background recompute rather than one each."""
+    try:
+        table.update_item(
+            Key=IMPACT_KEY,
+            UpdateExpression="SET refreshing_until = :until",
+            ConditionExpression="attribute_not_exists(refreshing_until) OR refreshing_until < :now",
+            ExpressionAttributeValues={
+                ":until": Decimal(str(now + IMPACT_REFRESH_CLAIM)),
+                ":now": Decimal(str(now)),
+            },
+        )
+        return True
+    except ClientError as exc:
+        if exc.response["Error"]["Code"] == "ConditionalCheckFailedException":
+            return False
+        raise
+
+
+def public_impact(
+    table: Any, settings: Settings, refresh: Callable[[], None] | None = None
+) -> dict[str, Any]:
+    """Anonymous aggregate totals for the public Impact page.
+
+    Saved totals are answered at once. Once they are older than fifteen minutes,
+    `refresh` (when given) is asked to recompute them in the background, and this
+    visitor still gets the saved ones with their own `updated_at`. A table with no
+    saved totals, totals a day past expiry, or a caller with no background refresh
+    computes inline.
+    """
+    now = time.time()
+    cached = table.get_item(Key=IMPACT_KEY).get("Item") or {}
+    try:
+        saved = json.loads(cached["payload"])
+        expires = float(cached.get("expires_at", 0))
+    except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+        saved, expires = None, 0.0
+    fresh = expires > now
+    usable = fresh or (refresh is not None and expires + IMPACT_STALE_LIMIT > now)
+    if isinstance(saved, dict) and usable:
+        if not fresh:
+            # Stale totals beat a visitor waiting on a recompute, and beat an error.
+            with contextlib.suppress(Exception):
+                if _claim_impact_refresh(table, now):
+                    refresh()
+        return saved
+    return refresh_public_impact(table, settings)
+
+
+def refresh_public_impact(table: Any, settings: Settings) -> dict[str, Any]:
+    """Recompute and save the public totals.
 
     Only coarse counters leave this function. Tenant identifiers, app names,
     evidence, prompts, and source URLs remain inside the account table. Computing
     them reads four record families from every tenant partition, several workspaces
-    at a time, and the inputs change only when a daily check finishes or an outcome
-    is recorded, so results are cached for fifteen minutes.
+    at a time; the inputs change only when a check finishes or an outcome is recorded.
     """
     now = time.time()
-    cached = table.get_item(Key={"pk": "GLOBAL", "sk": "impact"}).get("Item") or {}
-    try:
-        if float(cached.get("expires_at", 0)) > now:
-            return json.loads(cached.get("payload", "{}"))
-    except (TypeError, ValueError, json.JSONDecodeError):
-        pass
-
     directories: list[dict] = []
     args = {"KeyConditionExpression": Key("pk").eq("DIRECTORY")}
     while True:
@@ -223,10 +272,10 @@ def public_impact(table: Any, settings: Settings) -> dict[str, Any]:
             "and source URLs are never included."
         ),
     }
+    # Replacing the item also clears any refresh claim.
     table.put_item(
         Item={
-            "pk": "GLOBAL",
-            "sk": "impact",
+            **IMPACT_KEY,
             "payload": json.dumps(payload),
             "expires_at": Decimal(str(now + PUBLIC_IMPACT_TTL)),
         }
