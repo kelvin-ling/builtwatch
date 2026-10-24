@@ -14,7 +14,9 @@
  const TRIGGER=new RegExp(`(?:\\b(?:${STRONG})\\b[^.;:]{0,40}|\\b(?:${WEAK})\\s+(?:the\\s+)?)$`,'i');
  const PUBLISHED=/\b(published|posted|updated|last (?:modified|reviewed)|released|announced|written|copyright|dated?)\b[^.;:]{0,30}$/i;
  const monthIndex=m=>MONTHS.findIndex(x=>x.startsWith(m.toLowerCase().replace('.','').slice(0,3)));
- const day=x=>new Date(Date.UTC(x.getUTCFullYear(),x.getUTCMonth(),x.getUTCDate()));
+ // The viewer's own calendar day, as a UTC midnight like the quoted dates: after 8pm in New
+ // York the UTC day is already tomorrow, which would call tomorrow's date "today".
+ const day=x=>new Date(Date.UTC(x.getFullYear(),x.getMonth(),x.getDate()));
 
  function inText(text){
   const found=[],s=String(text||'');

@@ -60,3 +60,15 @@ test('calendar export holds only upcoming dates, quotes each phrase, and is vali
  assert.match(unfolded,/DESCRIPTION:HISTORICAL DEMO\\nQuoted: “by March 1\\, 2027”\\nSource: vendor\\nLands on: Payments/);
  assert.equal((D.ics([],{now}).match(/VEVENT/g)||[]).length,0);
 });
+
+test('"today" is the viewer\'s own calendar day, not the UTC one',()=>{
+ const tz=process.env.TZ;process.env.TZ='America/New_York';
+ try{
+  const now=Date.parse('2026-10-24T02:30:00Z'); // 22:30 on 23 October in New York
+  const w=D.of({facts:['Starting October 24, 2026, v1 is retired']},now);
+  assert.equal(w.days,1);assert.equal(w.label,'takes effect in 1 day');
+  const today=D.of({facts:['Starting October 23, 2026, v1 is retired']},now);
+  assert.equal(today.days,0);assert.equal(today.passed,false);
+  assert.match(D.ics([{id:'x',date:'2026-10-23',phrase:'Starting October 23, 2026',summary:'s',detail:''}],{now}),/DTSTART;VALUE=DATE:20261023/);
+ }finally{if(tz===undefined)delete process.env.TZ;else process.env.TZ=tz;}
+});
